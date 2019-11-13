@@ -33,10 +33,17 @@ class ChooseFragment : Fragment() {
 
         listView.onItemLongClickListener = AdapterView.OnItemLongClickListener { _, _, i: Int, _ ->
             Toast.makeText(context, "Setting ${usersList[i]}", Toast.LENGTH_LONG).show()
+            // pass arguments
+            navController.navigate(R.id.nav_set_user)
             true
         }
 
         listView.adapter = adapter
+
+        val addUserButton: Button = root.findViewById(R.id.add_user_button)
+        addUserButton.setOnClickListener {
+            navController.navigate(R.id.nav_set_user)
+        }
 
         return root
     }

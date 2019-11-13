@@ -13,4 +13,8 @@
     <string name="statistics">Statistics</string>
     <string name="choose_user">Choose user</string>
     <string name="add_user">Add new user</string>
+    <string name="ok">OK</string>
+    <string name="name">Name</string>
+    <string name="surname">Surname</string>
+    <string name="set_user">Set user</string>
 </resources>
