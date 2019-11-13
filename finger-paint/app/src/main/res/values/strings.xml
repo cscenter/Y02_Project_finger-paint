@@ -2,4 +2,13 @@
 
 <resources>
     <string name="app_name">FingerPaint</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+
+    <string name="menu_home">Home</string>
+    <string name="figure_game">Figure</string>
+    <string name="letter1_game">Letter1</string>
+    <string name="letter2_game">Letter2</string>
+    <string name="statistics">Statistics</string>
 </resources>
