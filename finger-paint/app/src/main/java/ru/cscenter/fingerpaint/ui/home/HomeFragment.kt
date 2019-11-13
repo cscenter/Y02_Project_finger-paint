@@ -1,5 +1,6 @@
 package ru.cscenter.fingerpaint.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import ru.cscenter.fingerpaint.R
+import ru.cscenter.fingerpaint.ui.games.GameActivity
+import ru.cscenter.fingerpaint.ui.games.GameType
 
 class HomeFragment : Fragment() {
 
@@ -33,6 +36,27 @@ class HomeFragment : Fragment() {
             navController.navigate(R.id.nav_statistics)
         }
 
+        val figureButton: Button = root.findViewById(R.id.figure_game_button)
+        figureButton.setOnClickListener {
+            runGame(GameType.SIMPLE_GAME_TYPE)
+        }
+
+        val letter1Button: Button = root.findViewById(R.id.letter1_game_button)
+        letter1Button.setOnClickListener {
+            runGame(GameType.SIMPLE_GAME_TYPE)
+        }
+
+        val letter2Button: Button = root.findViewById(R.id.letter2_game_button)
+        letter2Button.setOnClickListener {
+            runGame(GameType.SIMPLE_GAME_TYPE)
+        }
+
         return root
+    }
+
+    private fun runGame(type: GameType) {
+        val intent = Intent(activity, GameActivity::class.java)
+        intent.putExtra(getString(R.string.arg_game_type), type)
+        startActivity(intent)
     }
 }
