@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment.findNavController
+import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
+import ru.cscenter.fingerpaint.ui.title.toMainActivity
 
 class ChooseFragment : Fragment() {
     override fun onCreateView(
@@ -28,7 +30,13 @@ class ChooseFragment : Fragment() {
         val navController = findNavController(this)
 
         listView.onItemClickListener = AdapterView.OnItemClickListener  { _, _, _, _ ->
-            navController.popBackStack()
+            // write as current user
+            if (!MainApplication.hasCurrentUser) {
+                MainApplication.hasCurrentUser = true
+                toMainActivity(activity!!)
+            } else {
+                navController.popBackStack()
+            }
         }
 
         listView.onItemLongClickListener = AdapterView.OnItemLongClickListener { _, _, i: Int, _ ->
