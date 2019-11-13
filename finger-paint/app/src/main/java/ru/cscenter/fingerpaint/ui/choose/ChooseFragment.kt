@@ -1,0 +1,43 @@
+package ru.cscenter.fingerpaint.ui.choose
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.*
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment.findNavController
+import ru.cscenter.fingerpaint.R
+
+class ChooseFragment : Fragment() {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val root = inflater.inflate(R.layout.fragment_choose, container, false)
+        val listView: ListView = root.findViewById(R.id.users_list)
+
+        val usersList = listOf("Mike", "Tom", "Frederic", "Antonio")
+        val adapter = ArrayAdapter<String>(
+            container!!.context,
+            android.R.layout.simple_list_item_1,
+            usersList
+        )
+
+        val navController = findNavController(this)
+
+        listView.onItemClickListener = AdapterView.OnItemClickListener  { _, _, _, _ ->
+            navController.popBackStack()
+        }
+
+        listView.onItemLongClickListener = AdapterView.OnItemLongClickListener { _, _, i: Int, _ ->
+            Toast.makeText(context, "Setting ${usersList[i]}", Toast.LENGTH_LONG).show()
+            true
+        }
+
+        listView.adapter = adapter
+
+        return root
+    }
+}
