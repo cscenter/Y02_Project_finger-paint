@@ -12,6 +12,10 @@
             android:id="@+id/nav_choose"
             android:icon="@drawable/ic_menu_choose"
             android:title="@string/choose_user" />
+        <item
+            android:id="@+id/nav_recommendations"
+            android:icon="@drawable/ic_menu_recommendations"
+            android:title="@string/menu_recommendations" />
     </group>
     <item
         android:title="">
