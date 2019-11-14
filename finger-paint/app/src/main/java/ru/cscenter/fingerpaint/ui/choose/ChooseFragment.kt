@@ -9,9 +9,14 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
+import ru.cscenter.fingerpaint.db.UserName
 import ru.cscenter.fingerpaint.ui.title.toMainActivity
 
 class ChooseFragment : Fragment() {
+
+    private val usersList = MainApplication.dbController.getAllNames().toMutableList()
+    private lateinit var adapter: ArrayAdapter<UserName>
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -20,19 +25,11 @@ class ChooseFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_choose, container, false)
         val listView: ListView = root.findViewById(R.id.users_list)
 
-        val usersList = listOf("Mike", "Tom", "Frederic", "Antonio")
-        val adapter = ArrayAdapter<String>(
-            container!!.context,
-            android.R.layout.simple_list_item_1,
-            usersList
-        )
-
         val navController = findNavController(this)
 
-        listView.onItemClickListener = AdapterView.OnItemClickListener  { _, _, _, _ ->
-            // write as current user
-            if (!MainApplication.hasCurrentUser) {
-                MainApplication.hasCurrentUser = true
+        listView.onItemClickListener = AdapterView.OnItemClickListener  { _, _, index, _ ->
+            MainApplication.dbController.setCurrentUser(usersList[index].id)
+            if (MainApplication.isLoading) {
                 toMainActivity(activity!!)
             } else {
                 navController.popBackStack()
@@ -54,5 +51,17 @@ class ChooseFragment : Fragment() {
         }
 
         return root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        adapter = ArrayAdapter(context!!, android.R.layout.simple_list_item_1, usersList)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        usersList.clear()
+        usersList.addAll(MainApplication.dbController.getAllNames())
+        adapter.notifyDataSetChanged()
     }
 }

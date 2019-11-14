@@ -12,7 +12,7 @@ import ru.cscenter.fingerpaint.R
 class TitleActivity : AppCompatActivity() {
 
     private val onLoaded = {
-        if (MainApplication.hasCurrentUser) {
+        if (MainApplication.hasCurrentUser()) {
             toMainActivity(this)
         } else {
             val intent = Intent(this, TitleChooseActivity::class.java)
