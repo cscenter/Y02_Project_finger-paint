@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.Toast
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import ru.cscenter.fingerpaint.MainApplication
@@ -22,19 +22,25 @@ class SetUserFragment: Fragment() {
         val root = inflater.inflate(R.layout.fragment_set_user, container, false)
         // get arguments from navigation
 
+        val errorText = getString(R.string.empty_name_warning)
         val nameTextView: EditText = root.findViewById(R.id.text_edit_name)
-        val surnameTextView: EditText = root.findViewById(R.id.text_edit_surname)
+        nameTextView.doOnTextChanged { text, _, _, _ ->
+            nameTextView.error = if (text.isNullOrEmpty()) errorText else null
+        }
 
         val okButton: Button = root.findViewById(R.id.ok_button)
         okButton.setOnClickListener {
             val name = nameTextView.text.toString()
-            val surname = surnameTextView.text.toString()
-            if (name.isEmpty() or surname.isEmpty()) {
-                Toast.makeText(context, getString(R.string.empty_name_warning), Toast.LENGTH_LONG).show()
+            if (name.isEmpty()) {
+                nameTextView.error = errorText
                 return@setOnClickListener
             }
 
-            MainApplication.dbController.insertUser(name, surname)
+            val insertSuccess = MainApplication.dbController.insertUser(name)
+            if (!insertSuccess) {
+                nameTextView.error = getString(R.string.user_exists_warning)
+                return@setOnClickListener
+            }
 
             val navController = findNavController()
             // pass result

@@ -10,17 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:inputType="textCapWords"
         android:hint="@string/name"
-        android:importantForAutofill="no" />
-
-    <EditText
-        android:id="@+id/text_edit_surname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="@string/surname"
         android:importantForAutofill="no" />
 
     <Button

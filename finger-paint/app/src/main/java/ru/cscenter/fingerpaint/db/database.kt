@@ -2,11 +2,10 @@ package ru.cscenter.fingerpaint.db
 
 import androidx.room.*
 
-@Entity(indices = [Index(value = ["firstName", "lastName"], unique = true)])
+@Entity(indices = [Index(value = ["name"], unique = true)])
 data class User(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo var firstName: String,
-    @ColumnInfo var lastName: String,
+    @ColumnInfo var name: String,
     @ColumnInfo var figureChooseTotal: Int = 0,
     @ColumnInfo var figureChooseSuccess: Int = 0,
     @ColumnInfo var letterChooseTotal: Int = 0,
@@ -18,7 +17,7 @@ data class User(
     @ColumnInfo var contouringTotal: Int = 0,
     @ColumnInfo var contouringSuccess: Int = 0
 ) {
-    override fun toString() = "$firstName $lastName"
+    override fun toString() = name
 }
 
 
@@ -34,15 +33,14 @@ data class CurrentUser(
 
 data class UserName(
     @ColumnInfo val id: Int,
-    @ColumnInfo var firstName: String,
-    @ColumnInfo var lastName: String
+    @ColumnInfo var name: String
 ) {
-    override fun toString() = "$firstName $lastName"
+    override fun toString() = name
 }
 
 @Dao
 interface DbAccess {
-    @Query("SELECT id, firstName, lastName FROM User")
+    @Query("SELECT id, name FROM User")
     fun getAllNames(): List<UserName>
 
     @Query("SELECT * FROM User WHERE id = :id")
@@ -54,8 +52,8 @@ interface DbAccess {
     @Delete
     fun deleteUser(user: User)
 
-    @Insert
-    fun insertUser(user: User)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertUser(user: User): Long
 
     @Query("SELECT * FROM User WHERE id IN (SELECT user_id FROM CurrentUser)")
     fun getCurrentUser(): User?
