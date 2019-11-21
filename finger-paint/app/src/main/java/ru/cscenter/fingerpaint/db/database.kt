@@ -5,7 +5,21 @@ import androidx.room.*
 @Entity(indices = [Index(value = ["name"], unique = true)])
 data class User(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo var name: String,
+    @ColumnInfo var name: String
+) {
+    override fun toString() = name
+}
+
+@Entity(foreignKeys = [ForeignKey(
+    entity = User::class,
+    parentColumns = arrayOf("id"),
+    childColumns = arrayOf("user_id"))],
+    indices = [Index("user_id")],
+    primaryKeys = ["user_id", "date"]
+    )
+data class Statistic(
+    @ColumnInfo(name = "user_id") var userId: Int,
+    @ColumnInfo var date: Int = currentDay(),
     @ColumnInfo var figureChooseTotal: Int = 0,
     @ColumnInfo var figureChooseSuccess: Int = 0,
     @ColumnInfo var letterChooseTotal: Int = 0,
@@ -16,10 +30,7 @@ data class User(
     @ColumnInfo var coloringSuccess: Int = 0,
     @ColumnInfo var contouringTotal: Int = 0,
     @ColumnInfo var contouringSuccess: Int = 0
-) {
-    override fun toString() = name
-}
-
+)
 
 @Entity(foreignKeys = [ForeignKey(
     entity = User::class,
@@ -63,9 +74,25 @@ interface DbAccess {
 
     @Insert
     fun addCurrentUser(currentUser: CurrentUser)
+
+    @Query("SELECT * FROM Statistic WHERE user_id = :userId ORDER BY date LIMIT 1")
+    fun getUserStatistics(userId: Int?): Statistic?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertStatistics(statistic: Statistic)
+
+    @Query("SELECT * FROM Statistic WHERE user_id = :id ORDER BY date")
+    fun getUserAllStatistics(id: Int): List<Statistic>
 }
 
-@Database(entities = [User::class, CurrentUser::class], exportSchema = false, version = 1)
+@Database(entities = [User::class, CurrentUser::class, Statistic::class],
+    exportSchema = false, version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun dao(): DbAccess
 }
+
+private const val MILLIS_PER_DAY = 1000 * 60 * 60 * 24
+
+fun timeToDate(millis: Long): Int = (millis / MILLIS_PER_DAY).toInt()
+
+fun currentDay() = timeToDate(System.currentTimeMillis())

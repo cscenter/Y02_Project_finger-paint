@@ -18,6 +18,18 @@ class DbController(context: Context) {
     fun getUser(id: Int) = db.getUser(id)
     fun setUser(user: User) = db.setUser(user)
     fun deleteUser(user: User) = db.deleteUser(user)
+    fun getUserStatistics(id: Int): Statistic {
+        val statistic = db.getUserStatistics(id)
+        if (statistic == null || statistic.date != currentDay()) {
+            return Statistic(userId = id, date = currentDay())
+        }
+        return statistic
+    }
+    fun getUserAllStatistics(id: Int) = db.getUserAllStatistics(id)
+    fun getCurrentUserStatistics(): Statistic? = currentUser?.let {
+        getUserStatistics(it.id)
+    }
+    fun setStatistics(statistic: Statistic) = db.insertStatistics(statistic)
     fun insertUser(name: String): Boolean
             = db.insertUser(User(name = name)) != (-1).toLong()
     fun setCurrentUser(userId: Int) {
