@@ -13,6 +13,7 @@ class DbController(context: Context) {
         .dao()
 
     var currentUser: User? = db.getCurrentUser()
+    fun hasCurrentUser() = currentUser != null
 
     fun getAllNames() = db.getAllNames()
     fun getUser(id: Int) = db.getUser(id)
