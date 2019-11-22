@@ -5,6 +5,7 @@ import androidx.room.Room
 
 private const val DATABASE_NAME: String = "users.db"
 
+@Suppress("unused") // TODO will be used in future
 class DbController(context: Context) {
     private val db = Room
         .databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
@@ -19,12 +20,9 @@ class DbController(context: Context) {
     fun getUser(id: Int) = db.getUser(id)
     fun setUser(user: User) = db.setUser(user)
     fun deleteUser(user: User) = db.deleteUser(user)
+    @Suppress("MemberVisibilityCanBePrivate") // TODO will be used in future
     fun getUserStatistics(id: Int): Statistic {
-        val statistic = db.getUserStatistics(id)
-        if (statistic == null || statistic.date != currentDay()) {
-            return Statistic(userId = id, date = currentDay())
-        }
-        return statistic
+        return db.getUserStatistics(id) ?: Statistic(userId = id, date = currentDay())
     }
     fun getUserAllStatistics(id: Int) = db.getUserAllStatistics(id)
     fun getCurrentUserStatistics(): Statistic? = currentUser?.let {

@@ -1,6 +1,7 @@
 package ru.cscenter.fingerpaint.db
 
 import androidx.room.*
+import java.util.*
 
 @Entity(indices = [Index(value = ["name"], unique = true)])
 data class User(
@@ -19,7 +20,7 @@ data class User(
     )
 data class Statistic(
     @ColumnInfo(name = "user_id") var userId: Int,
-    @ColumnInfo var date: Int = currentDay(),
+    @ColumnInfo var date: Long = currentDay(),
     @ColumnInfo var figureChooseTotal: Int = 0,
     @ColumnInfo var figureChooseSuccess: Int = 0,
     @ColumnInfo var letterChooseTotal: Int = 0,
@@ -75,8 +76,8 @@ interface DbAccess {
     @Insert
     fun addCurrentUser(currentUser: CurrentUser)
 
-    @Query("SELECT * FROM Statistic WHERE user_id = :userId ORDER BY date LIMIT 1")
-    fun getUserStatistics(userId: Int?): Statistic?
+    @Query("SELECT * FROM Statistic WHERE user_id = :userId AND date = :day")
+    fun getUserStatistics(userId: Int?, day: Long = currentDay()): Statistic?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertStatistics(statistic: Statistic)
@@ -91,8 +92,19 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun dao(): DbAccess
 }
 
-private const val MILLIS_PER_DAY = 1000 * 60 * 60 * 24
+fun currentDay(): Long {
+    val localCalendar = GregorianCalendar.getInstance()
+    val year = localCalendar.get(Calendar.YEAR)
+    val month = localCalendar.get(Calendar.MONTH)
+    val day = localCalendar.get(Calendar.DAY_OF_MONTH)
 
-fun timeToDate(millis: Long): Int = (millis / MILLIS_PER_DAY).toInt()
-
-fun currentDay() = timeToDate(System.currentTimeMillis())
+    val utcCalendar = GregorianCalendar(TimeZone.getTimeZone("UTC"))
+    utcCalendar.set(Calendar.YEAR, year)
+    utcCalendar.set(Calendar.MONTH, month)
+    utcCalendar.set(Calendar.DAY_OF_MONTH, day)
+    utcCalendar.set(Calendar.HOUR_OF_DAY, 12)
+    utcCalendar.set(Calendar.MINUTE, 0)
+    utcCalendar.set(Calendar.SECOND, 0)
+    utcCalendar.set(Calendar.MILLISECOND, 0)
+    return utcCalendar.timeInMillis
+}
