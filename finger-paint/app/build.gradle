@@ -37,6 +37,7 @@ android {
     lintOptions {
         disable 'AllowBackup'
         disable 'GoogleAppIndexingWarning'
+        disable 'IconLocation'
         abortOnError true
         warningsAsErrors true
     }

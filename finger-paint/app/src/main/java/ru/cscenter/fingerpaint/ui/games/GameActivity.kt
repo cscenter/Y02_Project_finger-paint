@@ -3,7 +3,6 @@ package ru.cscenter.fingerpaint.ui.games
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 
 class GameActivity : AppCompatActivity() {
@@ -16,7 +15,9 @@ class GameActivity : AppCompatActivity() {
         val type = intent.getSerializableExtra(getString(R.string.arg_game_type)) as GameType
 
         when (type) {
-            GameType.SIMPLE_GAME_TYPE -> runGame(SimpleGame(onSimpleGameResult))
+            GameType.FIGURES_GAME -> runGame(getChooseFigureGame())
+            GameType.LETTERS_1_GAME -> finish()
+            GameType.LETTERS_2_GAME -> finish()
         }
     }
 
@@ -26,15 +27,8 @@ class GameActivity : AppCompatActivity() {
         .addToBackStack(null)
         .commit()
 
-    private val onSimpleGameResult = { result: Boolean ->
-        val db = MainApplication.dbController
-        val statistic = db.getCurrentUserStatistics()
-        statistic?.let {
-            it.figureChooseTotal++
-            it.figureChooseSuccess += if (result) 1 else 0
-            db.setStatistics(it)
-        }
-        Toast.makeText(this, "Your shore is ${statistic?.figureChooseSuccess}.", Toast.LENGTH_LONG).show()
+    private val onChooseGameResult = { result: Boolean ->
+        Toast.makeText(this, "You ${if (result) "win" else "loose"}!!", Toast.LENGTH_LONG).show()
         finish()
     }
 
@@ -45,8 +39,18 @@ class GameActivity : AppCompatActivity() {
             super.onBackPressed()
         }
     }
+
+    private fun getChooseFigureGame(): Game =
+        ChooseGameFragment(
+            "CHOOSE QUESTION(correct answer is one)",
+            R.drawable.image_1,
+            R.drawable.image_2,
+            onChooseGameResult
+        )
 }
 
 enum class GameType {
-    SIMPLE_GAME_TYPE
+    FIGURES_GAME,
+    LETTERS_1_GAME,
+    LETTERS_2_GAME
 }
