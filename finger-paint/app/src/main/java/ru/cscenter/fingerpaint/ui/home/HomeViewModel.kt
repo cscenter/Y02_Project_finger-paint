@@ -1,7 +1,8 @@
 package ru.cscenter.fingerpaint.ui.home
 
 import androidx.lifecycle.ViewModel
+import ru.cscenter.fingerpaint.MainApplication
 
 class HomeViewModel : ViewModel() {
-    var currentName: String = "Mike"
+    fun currentName() = MainApplication.dbController.currentUser?.toString() ?: ""
 }

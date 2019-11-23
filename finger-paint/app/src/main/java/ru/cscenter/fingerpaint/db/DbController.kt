@@ -1,0 +1,42 @@
+package ru.cscenter.fingerpaint.db
+
+import android.content.Context
+import androidx.room.Room
+
+private const val DATABASE_NAME: String = "users.db"
+
+@Suppress("unused") // TODO will be used in future
+class DbController(context: Context) {
+    private val db = Room
+        .databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
+        .allowMainThreadQueries()
+        .build()
+        .dao()
+
+    var currentUser: User? = db.getCurrentUser()
+    fun hasCurrentUser() = currentUser != null
+
+    fun getAllNames() = db.getAllNames()
+    fun getUser(id: Int) = db.getUser(id)
+    fun setUser(user: User) = db.setUser(user)
+    fun deleteUser(user: User) = db.deleteUser(user)
+    @Suppress("MemberVisibilityCanBePrivate") // TODO will be used in future
+    fun getUserStatistics(id: Int): Statistic {
+        return db.getUserStatistics(id) ?: Statistic(userId = id, date = currentDay())
+    }
+    fun getUserAllStatistics(id: Int) = db.getUserAllStatistics(id)
+    fun getCurrentUserStatistics(): Statistic? = currentUser?.let {
+        getUserStatistics(it.id)
+    }
+    fun setStatistics(statistic: Statistic) = db.insertStatistics(statistic)
+    fun insertUser(name: String): Boolean
+            = db.insertUser(User(name = name)) != (-1).toLong()
+    fun setCurrentUser(userId: Int) {
+        if (currentUser == null) {
+            db.addCurrentUser(CurrentUser(userId))
+        } else {
+            db.setCurrentUser(CurrentUser(userId))
+        }
+        currentUser = db.getCurrentUser()
+    }
+}

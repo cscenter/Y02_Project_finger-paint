@@ -1,0 +1,110 @@
+package ru.cscenter.fingerpaint.db
+
+import androidx.room.*
+import java.util.*
+
+@Entity(indices = [Index(value = ["name"], unique = true)])
+data class User(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @ColumnInfo var name: String
+) {
+    override fun toString() = name
+}
+
+@Entity(foreignKeys = [ForeignKey(
+    entity = User::class,
+    parentColumns = arrayOf("id"),
+    childColumns = arrayOf("user_id"))],
+    indices = [Index("user_id")],
+    primaryKeys = ["user_id", "date"]
+    )
+data class Statistic(
+    @ColumnInfo(name = "user_id") var userId: Int,
+    @ColumnInfo var date: Long = currentDay(),
+    @ColumnInfo var figureChooseTotal: Int = 0,
+    @ColumnInfo var figureChooseSuccess: Int = 0,
+    @ColumnInfo var letterChooseTotal: Int = 0,
+    @ColumnInfo var letterChooseSuccess: Int = 0,
+    @ColumnInfo var colorChooseTotal: Int = 0,
+    @ColumnInfo var colorChooseSuccess: Int = 0,
+    @ColumnInfo var coloringTotal: Int = 0,
+    @ColumnInfo var coloringSuccess: Int = 0,
+    @ColumnInfo var contouringTotal: Int = 0,
+    @ColumnInfo var contouringSuccess: Int = 0
+)
+
+@Entity(foreignKeys = [ForeignKey(
+    entity = User::class,
+    parentColumns = arrayOf("id"),
+    childColumns = arrayOf("user_id"))],
+    indices = [Index("user_id")])
+data class CurrentUser(
+    @ColumnInfo(name = "user_id") var userId: Int,
+    @PrimaryKey  val id: Int = 0
+)
+
+data class UserName(
+    @ColumnInfo val id: Int,
+    @ColumnInfo var name: String
+) {
+    override fun toString() = name
+}
+
+@Dao
+interface DbAccess {
+    @Query("SELECT id, name FROM User")
+    fun getAllNames(): List<UserName>
+
+    @Query("SELECT * FROM User WHERE id = :id")
+    fun getUser(id: Int): User?
+
+    @Update
+    fun setUser(user: User)
+
+    @Delete
+    fun deleteUser(user: User)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertUser(user: User): Long
+
+    @Query("SELECT * FROM User WHERE id IN (SELECT user_id FROM CurrentUser)")
+    fun getCurrentUser(): User?
+
+    @Update
+    fun setCurrentUser(currentUser: CurrentUser)
+
+    @Insert
+    fun addCurrentUser(currentUser: CurrentUser)
+
+    @Query("SELECT * FROM Statistic WHERE user_id = :userId AND date = :day")
+    fun getUserStatistics(userId: Int?, day: Long = currentDay()): Statistic?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insertStatistics(statistic: Statistic)
+
+    @Query("SELECT * FROM Statistic WHERE user_id = :id ORDER BY date")
+    fun getUserAllStatistics(id: Int): List<Statistic>
+}
+
+@Database(entities = [User::class, CurrentUser::class, Statistic::class],
+    exportSchema = false, version = 1)
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun dao(): DbAccess
+}
+
+fun currentDay(): Long {
+    val localCalendar = GregorianCalendar.getInstance()
+    val year = localCalendar.get(Calendar.YEAR)
+    val month = localCalendar.get(Calendar.MONTH)
+    val day = localCalendar.get(Calendar.DAY_OF_MONTH)
+
+    val utcCalendar = GregorianCalendar(TimeZone.getTimeZone("UTC"))
+    utcCalendar.set(Calendar.YEAR, year)
+    utcCalendar.set(Calendar.MONTH, month)
+    utcCalendar.set(Calendar.DAY_OF_MONTH, day)
+    utcCalendar.set(Calendar.HOUR_OF_DAY, 12)
+    utcCalendar.set(Calendar.MINUTE, 0)
+    utcCalendar.set(Calendar.SECOND, 0)
+    utcCalendar.set(Calendar.MILLISECOND, 0)
+    return utcCalendar.timeInMillis
+}

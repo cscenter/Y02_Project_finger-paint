@@ -17,6 +17,7 @@ import ru.cscenter.fingerpaint.ui.games.GameType
 class HomeFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
+    private var currentNameTextView: TextView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,8 +28,8 @@ class HomeFragment : Fragment() {
             ViewModelProviders.of(this).get(HomeViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_home, container, false)
 
-        val currentNameTextView: TextView = root.findViewById(R.id.current_name_text_view)
-        currentNameTextView.text = homeViewModel.currentName
+        currentNameTextView = root.findViewById(R.id.current_name_text_view)
+        currentNameTextView!!.text = homeViewModel.currentName()
 
         val statisticsButton: Button = root.findViewById(R.id.statistics_button)
         statisticsButton.setOnClickListener{
@@ -58,5 +59,10 @@ class HomeFragment : Fragment() {
         val intent = Intent(activity, GameActivity::class.java)
         intent.putExtra(getString(R.string.arg_game_type), type)
         startActivity(intent)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        currentNameTextView?.text = homeViewModel.currentName()
     }
 }

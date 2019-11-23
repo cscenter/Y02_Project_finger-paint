@@ -3,6 +3,7 @@ package ru.cscenter.fingerpaint.ui.games
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 
 class GameActivity : AppCompatActivity() {
@@ -26,7 +27,14 @@ class GameActivity : AppCompatActivity() {
         .commit()
 
     private val onSimpleGameResult = { result: Boolean ->
-        Toast.makeText(this, "You ${if (result) "win" else "loose"}!!", Toast.LENGTH_LONG).show()
+        val db = MainApplication.dbController
+        val statistic = db.getCurrentUserStatistics()
+        statistic?.let {
+            it.figureChooseTotal++
+            it.figureChooseSuccess += if (result) 1 else 0
+            db.setStatistics(it)
+        }
+        Toast.makeText(this, "Your shore is ${statistic?.figureChooseSuccess}.", Toast.LENGTH_LONG).show()
         finish()
     }
 
