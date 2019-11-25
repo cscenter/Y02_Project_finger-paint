@@ -13,10 +13,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/nav_choose"
-        android:name="ru.cscenter.fingerpaint.ui.choose.ChooseFragment"
+        android:id="@+id/nav_choose_user"
+        android:name="ru.cscenter.fingerpaint.ui.chooseuser.ChooseUserFragment"
         android:label="@string/choose_user"
-        tools:layout="@layout/fragment_choose"/>
+        tools:layout="@layout/fragment_choose_user"/>
 
     <fragment
         android:id="@+id/nav_set_user"
@@ -42,8 +42,8 @@
         android:label="@string/statistics"
         tools:layout="@layout/fragment_statistics">
         <action
-            android:id="@+id/action_nav_statistics_to_nav_choose"
-            app:destination="@id/nav_choose"
+            android:id="@+id/action_nav_statistics_to_nav_choose_user"
+            app:destination="@id/nav_choose_user"
             app:popUpTo="@+id/nav_statistics"
             app:popUpToInclusive="true" />
         <action
