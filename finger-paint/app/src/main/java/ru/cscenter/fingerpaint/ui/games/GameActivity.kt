@@ -1,9 +1,10 @@
 package ru.cscenter.fingerpaint.ui.games
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
+import ru.cscenter.fingerpaint.db.Statistic
 
 class GameActivity : AppCompatActivity() {
 
@@ -27,11 +28,6 @@ class GameActivity : AppCompatActivity() {
         .addToBackStack(null)
         .commit()
 
-    private val onChooseGameResult = { result: Boolean ->
-        Toast.makeText(this, "You ${if (result) "win" else "loose"}!!", Toast.LENGTH_LONG).show()
-        finish()
-    }
-
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount == 1) {
             finish()
@@ -45,8 +41,38 @@ class GameActivity : AppCompatActivity() {
             "CHOOSE QUESTION(correct answer is one)",
             R.drawable.image_1,
             R.drawable.image_2,
-            onChooseGameResult
+            ChooseFigureGameCallback()
         )
+
+    abstract inner class GameCallback {
+        private val db = MainApplication.dbController
+
+        abstract fun updateStatistics(statistic: Statistic, result: GameResult): Statistic
+        abstract fun nextGame(): Game?
+        fun onResult(result: GameResult) {
+            supportFragmentManager.popBackStack()
+            db.getCurrentUserStatistics()?.let {
+                val statistic = updateStatistics(it, result)
+                db.setStatistics(statistic)
+            }
+            when (result) {
+                GameResult.SUCCESS -> nextGame()?.let { runGame(it) } ?: finish()
+                GameResult.FAIL -> finish()
+            }
+        }
+    }
+
+    inner class ChooseFigureGameCallback: GameCallback() {
+        override fun nextGame(): Game? {
+            return null
+        }
+
+        override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
+            statistic.figureChooseTotal++
+            statistic.figureChooseSuccess += if (result == GameResult.SUCCESS) 1 else 0
+            return statistic
+        }
+    }
 }
 
 enum class GameType {

@@ -16,8 +16,8 @@ class ChooseGameFragment(
     private val question: String,
     private val correctChooseResourceId: Int,
     private val incorrectChooseResourceId: Int,
-    onFinished: (Boolean) -> Unit
-) : Game(onFinished) {
+    private val callback: GameActivity.GameCallback
+) : Game() {
 
     private var attempts = 1
 
@@ -38,13 +38,13 @@ class ChooseGameFragment(
         }
         correctChooseView.setImageResource(correctChooseResourceId)
         correctChooseView.setOnClickListener {
-            onFinish(true)
+            callback.onResult(GameResult.SUCCESS)
         }
 
         incorrectChooseView.setImageResource(incorrectChooseResourceId)
         incorrectChooseView.setOnClickListener {
             if (attempts >= MAX_ATTEMPTS) {
-                onFinish(false)
+                callback.onResult(GameResult.FAIL)
             } else {
                 attempts++
                 // TODO vibrate here
