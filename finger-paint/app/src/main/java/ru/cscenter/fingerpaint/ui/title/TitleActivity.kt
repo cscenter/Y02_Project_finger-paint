@@ -15,7 +15,7 @@ class TitleActivity : AppCompatActivity() {
         if (MainApplication.dbController.hasCurrentUser()) {
             toMainActivity(this)
         } else {
-            val intent = Intent(this, TitleChooseActivity::class.java)
+            val intent = Intent(this, TitleChooseUserActivity::class.java)
             startActivity(intent)
             finish()
         }

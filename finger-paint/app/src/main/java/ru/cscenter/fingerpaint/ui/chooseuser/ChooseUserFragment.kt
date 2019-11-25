@@ -1,4 +1,4 @@
-package ru.cscenter.fingerpaint.ui.choose
+package ru.cscenter.fingerpaint.ui.chooseuser
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +12,7 @@ import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.UserName
 import ru.cscenter.fingerpaint.ui.title.toMainActivity
 
-class ChooseFragment : Fragment() {
+class ChooseUserFragment : Fragment() {
 
     private val usersList = MainApplication.dbController.getAllNames().toMutableList()
     private lateinit var adapter: ArrayAdapter<UserName>
@@ -22,7 +22,7 @@ class ChooseFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val root = inflater.inflate(R.layout.fragment_choose, container, false)
+        val root = inflater.inflate(R.layout.fragment_choose_user, container, false)
         val listView: ListView = root.findViewById(R.id.users_list)
 
         val navController = findNavController(this)
