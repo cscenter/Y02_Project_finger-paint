@@ -39,17 +39,17 @@ class HomeFragment : Fragment() {
 
         val figureButton: Button = root.findViewById(R.id.figure_game_button)
         figureButton.setOnClickListener {
-            runGame(GameType.SIMPLE_GAME_TYPE)
+            runGame(GameType.FIGURES_GAME)
         }
 
         val letter1Button: Button = root.findViewById(R.id.letter1_game_button)
         letter1Button.setOnClickListener {
-            runGame(GameType.SIMPLE_GAME_TYPE)
+            runGame(GameType.LETTERS_1_GAME)
         }
 
         val letter2Button: Button = root.findViewById(R.id.letter2_game_button)
         letter2Button.setOnClickListener {
-            runGame(GameType.SIMPLE_GAME_TYPE)
+            runGame(GameType.LETTERS_2_GAME)
         }
 
         return root

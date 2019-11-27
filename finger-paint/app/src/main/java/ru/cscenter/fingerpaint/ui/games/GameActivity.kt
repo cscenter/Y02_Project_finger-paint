@@ -1,10 +1,10 @@
 package ru.cscenter.fingerpaint.ui.games
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
+import ru.cscenter.fingerpaint.db.Statistic
 
 class GameActivity : AppCompatActivity() {
 
@@ -16,7 +16,9 @@ class GameActivity : AppCompatActivity() {
         val type = intent.getSerializableExtra(getString(R.string.arg_game_type)) as GameType
 
         when (type) {
-            GameType.SIMPLE_GAME_TYPE -> runGame(SimpleGame(onSimpleGameResult))
+            GameType.FIGURES_GAME -> runGame(getChooseFigureGame())
+            GameType.LETTERS_1_GAME -> finish()
+            GameType.LETTERS_2_GAME -> finish()
         }
     }
 
@@ -26,18 +28,6 @@ class GameActivity : AppCompatActivity() {
         .addToBackStack(null)
         .commit()
 
-    private val onSimpleGameResult = { result: Boolean ->
-        val db = MainApplication.dbController
-        val statistic = db.getCurrentUserStatistics()
-        statistic?.let {
-            it.figureChooseTotal++
-            it.figureChooseSuccess += if (result) 1 else 0
-            db.setStatistics(it)
-        }
-        Toast.makeText(this, "Your shore is ${statistic?.figureChooseSuccess}.", Toast.LENGTH_LONG).show()
-        finish()
-    }
-
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount == 1) {
             finish()
@@ -45,8 +35,48 @@ class GameActivity : AppCompatActivity() {
             super.onBackPressed()
         }
     }
+
+    private fun getChooseFigureGame(): Game =
+        ChooseGameFragment(
+            "CHOOSE QUESTION(correct answer is one)",
+            R.drawable.image_1,
+            R.drawable.image_2,
+            ChooseFigureGameCallback()
+        )
+
+    abstract inner class GameCallback {
+        private val db = MainApplication.dbController
+
+        abstract fun updateStatistics(statistic: Statistic, result: GameResult): Statistic
+        abstract fun nextGame(): Game?
+        fun onResult(result: GameResult) {
+            supportFragmentManager.popBackStack()
+            db.getCurrentUserStatistics()?.let {
+                val statistic = updateStatistics(it, result)
+                db.setStatistics(statistic)
+            }
+            when (result) {
+                GameResult.SUCCESS -> nextGame()?.let { runGame(it) } ?: finish()
+                GameResult.FAIL -> finish()
+            }
+        }
+    }
+
+    inner class ChooseFigureGameCallback: GameCallback() {
+        override fun nextGame(): Game? {
+            return null
+        }
+
+        override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
+            statistic.figureChooseTotal++
+            statistic.figureChooseSuccess += if (result == GameResult.SUCCESS) 1 else 0
+            return statistic
+        }
+    }
 }
 
 enum class GameType {
-    SIMPLE_GAME_TYPE
+    FIGURES_GAME,
+    LETTERS_1_GAME,
+    LETTERS_2_GAME
 }
