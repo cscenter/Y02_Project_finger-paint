@@ -4,7 +4,9 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.media.Image
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.res.ResourcesCompat
@@ -42,22 +44,38 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
+    // TODO change 1000-1000 to width-height of DrawingView inside of DrawingGame(maybe can be obtained from xml)
     private fun getChooseFigureGame(): Game =
-        ChooseGameFragment(
-            "Choose One",
-            R.drawable.image_1,
-            R.drawable.image_2,
+        ChooseGame(
+            "Choose queue",
+            Images.getFigureImageBitmap(
+                FigureType.RECTANGLE,
+                1000,
+                1000,
+                50f /* in px */
+            ), // correct choice
+            Images.getFigureImageBitmap(
+                FigureType.CIRCLE,
+                1000,
+                1000,
+                50f /* in px */
+            ), // incorrect choice
             ChooseFigureGameCallback()
         )
 
+    // TODO change 1000-1000 to width-height of DrawingView inside of DrawingGame(maybe can be obtained from xml)
     private fun getDrawingGame(): Game =
         DrawingGame(
             "Replace Black to Yellow by your finger",
-            drawableToBitmap(ResourcesCompat.getDrawable(resources, R.drawable.image_2, null)!!),
-            0.7f,
-            0.03f,
+            Images.getTextImageBitmap(
+                "G",
+                1000,
+                1000
+            ),
+            Pair(0.8f, 0.1f),
             DrawingGameCallback()
         )
+
 
     abstract inner class GameCallback {
         private val db = MainApplication.dbController
@@ -108,31 +126,6 @@ class GameActivity : AppCompatActivity() {
             ).show()
             super.onResult(result)
         }
-    }
-
-    private fun drawableToBitmap(drawable: Drawable): Bitmap {
-        if (drawable is BitmapDrawable) {
-            if (drawable.bitmap != null) {
-                return drawable.bitmap
-            }
-        }
-        val bitmap: Bitmap = if (drawable.intrinsicWidth <= 0 || drawable.intrinsicHeight <= 0) {
-            Bitmap.createBitmap(
-                1,
-                1,
-                Bitmap.Config.ARGB_8888
-            ) // Single color bitmap will be created of 1x1 pixel
-        } else {
-            Bitmap.createBitmap(
-                drawable.intrinsicWidth,
-                drawable.intrinsicHeight,
-                Bitmap.Config.ARGB_8888
-            )
-        }
-        val canvas = Canvas(bitmap)
-        drawable.setBounds(0, 0, canvas.width, canvas.height)
-        drawable.draw(canvas)
-        return bitmap
     }
 }
 

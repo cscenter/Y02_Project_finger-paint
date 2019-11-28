@@ -6,14 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import ru.cscenter.fingerpaint.R
 
 class DrawingGame(
     private val question: String,
     private val image: Bitmap,
-    private val thresholdSuccess: Float,
-    private val thresholdFail: Float,
+    private val thresholds: Pair<Float, Float>,
     private val callback: GameActivity.GameCallback
 ) : Game() {
 
@@ -28,13 +28,16 @@ class DrawingGame(
 
         questionView.text = question
 
+        val goodProgress: ProgressBar = root.findViewById(R.id.good_progress)
+        val badProgress: ProgressBar = root.findViewById(R.id.bad_progress)
+
         val currentLayout: LinearLayout = root.findViewById(R.id.drawing_layout)
 
         val drawingView = DrawingView(
             context,
             image,
-            thresholdSuccess,
-            thresholdFail,
+            thresholds,
+            Pair(goodProgress, badProgress),
             callback
         )
         drawingView.setImageBitmap(image)

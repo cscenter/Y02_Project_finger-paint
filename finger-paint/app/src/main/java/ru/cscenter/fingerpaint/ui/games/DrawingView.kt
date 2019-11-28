@@ -5,11 +5,11 @@ import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.util.Log
+import android.util.TypedValue
 import android.view.MotionEvent
-import android.widget.LinearLayout
 import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatImageView
-import ru.cscenter.fingerpaint.R
+import java.lang.reflect.Type
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.abs
@@ -30,10 +30,16 @@ class DrawingView : AppCompatImageView {
     private var blackPixels: ArrayList<Pair<Int, Int>> = ArrayList()
     private var whitePixels: ArrayList<Pair<Int, Int>> = ArrayList()
     private lateinit var bitmap: Bitmap
-    private var thresholdSuccess: Float = 0f
-    private var thresholdFail: Float = 0f
+    private lateinit var thresholds: Pair<Float, Float>
+    private lateinit var progressBars: Pair<ProgressBar, ProgressBar>
     private lateinit var callback: GameActivity.GameCallback
+    // constants, assigned in contructor
+    private var TOUCH_TOLERANCE_PX = 0f
+    private var PAINT_STROKE_WIDTH_PX = 0f
+    private var CIRCLE_PAINT_STROKE_WIDTH_PX = 0f
+    private var CIRCLE_PAINT_RADIUS_PX = 0f
 
+    // lint requires
     constructor(c: Context) : super(c)
     constructor(c: Context, attrs: AttributeSet) : super(c, attrs)
     constructor(c: Context, attrs: AttributeSet, magic: Int) : super(c, attrs, magic)
@@ -41,14 +47,23 @@ class DrawingView : AppCompatImageView {
     constructor(
         c: Context?,
         bitmap: Bitmap,
-        thresholdSuccess: Float,
-        thresholdFail: Float,
+        thresholds: Pair<Float, Float>,
+        progressBars: Pair<ProgressBar, ProgressBar>,
         callback: GameActivity.GameCallback
     ) : super(c) {
         this.bitmap = bitmap
-        this.thresholdSuccess = thresholdSuccess
-        this.thresholdFail = thresholdFail
+        this.thresholds = thresholds
+        this.progressBars = progressBars
         this.callback = callback
+
+        // convert constants in pixels to constants in dp
+        fun fromDpToPx(dp: Float): Float =
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
+        TOUCH_TOLERANCE_PX = fromDpToPx(TOUCH_TOLERANCE_DP)
+        PAINT_STROKE_WIDTH_PX = fromDpToPx(PAINT_STROKE_WIDTH_DP)
+        CIRCLE_PAINT_STROKE_WIDTH_PX = fromDpToPx(CIRCLE_PAINT_STROKE_WIDTH_DP)
+        CIRCLE_PAINT_RADIUS_PX = fromDpToPx(CIRCLE_PAINT_RADIUS_DP)
+
         for (y in 0 until bitmap.height) {
             for (x in 0 until bitmap.width) {
                 val pixel = bitmap.getPixel(x, y)
@@ -66,52 +81,50 @@ class DrawingView : AppCompatImageView {
         whitePixels.shuffle(Random(239))
         whitePixels =
             ArrayList(whitePixels.take(3000)) // number of random (not black) pixels for progress bar
-        mPaint = Paint()
-        mPaint.isAntiAlias = true
-        mPaint.isDither = true
-        mPaint.color = Color.YELLOW
-        mPaint.style = Paint.Style.STROKE
-        mPaint.strokeJoin = Paint.Join.ROUND
-        mPaint.strokeCap = Paint.Cap.ROUND
-        mPaint.strokeWidth = PAINT_STROKE_WIDTH
+
+        mPaint = Paint().apply {
+            isAntiAlias = true
+            isDither = true
+            color = Color.YELLOW
+            style = Paint.Style.STROKE
+            strokeJoin = Paint.Join.ROUND
+            strokeCap = Paint.Cap.ROUND
+            strokeWidth = PAINT_STROKE_WIDTH_PX
+        }
 
         mPath = Path()
         mBitmapPaint = Paint(Paint.DITHER_FLAG)
-        circlePaint = Paint()
+
         circlePath = Path()
-        circlePaint.isAntiAlias = true
-        circlePaint.color = Color.BLUE
-        circlePaint.style = Paint.Style.STROKE
-        circlePaint.strokeJoin = Paint.Join.MITER
-        circlePaint.strokeWidth = CIRCLE_PAINT_STROKE_WIDTH
+        circlePaint = Paint().apply {
+            isAntiAlias = true
+            color = Color.BLUE
+            style = Paint.Style.STROKE
+            strokeJoin = Paint.Join.MITER
+            strokeWidth = CIRCLE_PAINT_STROKE_WIDTH_PX
+        }
     }
 
     private fun updateProgress(bm: Bitmap) {
-        var countBlack = 0
-        var countWhite = 0
+        val countBlack = blackPixels.filter {
+            bm.getPixel(
+                (it.first * bitmapScaleRate).roundToInt(),
+                (it.second * bitmapScaleRate).roundToInt()
+            ) != Color.TRANSPARENT
+        }.size
 
-        for ((x, y) in blackPixels) {
-            if (bm.getPixel(
-                    (x * bitmapScaleRate).roundToInt(),
-                    (y * bitmapScaleRate).roundToInt()
-                ) != Color.TRANSPARENT
-            ) {
-                countBlack++
-            }
-        }
+        val countWhite = whitePixels.filter {
+            bm.getPixel(
+                (it.first * bitmapScaleRate).roundToInt(),
+                (it.second * bitmapScaleRate).roundToInt()
+            ) != Color.TRANSPARENT
+        }.size
 
-        for ((x, y) in whitePixels) {
-            if (bm.getPixel(
-                    (x * bitmapScaleRate).roundToInt(),
-                    (y * bitmapScaleRate).roundToInt()
-                ) != Color.TRANSPARENT
-            ) {
-                countWhite++
-            }
-        }
-        val progressLayout: LinearLayout = rootView.findViewById(R.id.drawing_progress_layout)
-        val goodProgress: ProgressBar = progressLayout.findViewById(R.id.good_progress)
-        val badProgress: ProgressBar = progressLayout.findViewById(R.id.bad_progress)
+        val goodProgress: ProgressBar = progressBars.first
+        val thresholdSuccess = thresholds.first
+        val badProgress: ProgressBar = progressBars.second
+        val thresholdFail = thresholds.second
+
         goodProgress.max = blackPixels.size
         goodProgress.progress = countBlack
 
@@ -121,14 +134,13 @@ class DrawingView : AppCompatImageView {
         Log.d("FingerPaint", "Black(good): $countBlack / ${blackPixels.size}")
         Log.d("FingerPaint", "White(bad): $countWhite / ${whitePixels.size}")
 
-        if (countWhite.toFloat() / whitePixels.size + 0.001 >= thresholdFail) {
+        if (countWhite.toFloat() / whitePixels.size >= thresholdFail) {
             callback.onResult(GameResult.FAIL)
         }
 
-        if (countBlack.toFloat() / blackPixels.size + 0.001 >= thresholdSuccess) {
+        if (countBlack.toFloat() / blackPixels.size >= thresholdSuccess) {
             callback.onResult(GameResult.SUCCESS)
         }
-
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -136,8 +148,10 @@ class DrawingView : AppCompatImageView {
         if (d != null) {
             val rate1: Float = MeasureSpec.getSize(widthMeasureSpec).toFloat() / d.intrinsicWidth
             val rate2: Float = MeasureSpec.getSize(heightMeasureSpec).toFloat() / d.intrinsicHeight
+
             scaleRate = min(rate1, rate2) // min for INSIDE, max for CROP
             bitmapScaleRate = (d.intrinsicWidth.toFloat() / bitmap.width) * scaleRate
+
             Log.d(
                 "FingerPaint",
                 "measureSpecSize: ${MeasureSpec.getSize(widthMeasureSpec)} " +
@@ -148,8 +162,7 @@ class DrawingView : AppCompatImageView {
                         "scaleRate: $scaleRate\n" +
                         "bitmapScaleRate: $bitmapScaleRate"
             )
-            mPaint.strokeWidth = PAINT_STROKE_WIDTH * scaleRate
-            circlePaint.strokeWidth = CIRCLE_PAINT_STROKE_WIDTH * scaleRate
+
             setMeasuredDimension(
                 (d.intrinsicWidth * scaleRate).roundToInt(),
                 (d.intrinsicHeight * scaleRate).roundToInt()
@@ -183,14 +196,14 @@ class DrawingView : AppCompatImageView {
     private fun touchMove(x: Float, y: Float) {
         val dx = abs(x - mX)
         val dy = abs(y - mY)
-        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
+        if (dx >= TOUCH_TOLERANCE_PX || dy >= TOUCH_TOLERANCE_PX) {
             mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2)
             mX = x
             mY = y
-            circlePath.reset()
-            circlePath.addCircle(mX, mY, CIRCLE_PAINT_RADIUS * scaleRate, Path.Direction.CW)
             touchUp()
             touchStart(x, y)
+            circlePath.reset()
+            circlePath.addCircle(mX, mY, CIRCLE_PAINT_RADIUS_PX, Path.Direction.CW)
         }
     }
 
@@ -227,9 +240,10 @@ class DrawingView : AppCompatImageView {
 
 
     companion object {
-        private const val TOUCH_TOLERANCE = 4f
-        private const val PAINT_STROKE_WIDTH = 25f
-        private const val CIRCLE_PAINT_STROKE_WIDTH = 8f
-        private const val CIRCLE_PAINT_RADIUS = 30f
+        // !!! should be converted to px in constructor
+        private const val TOUCH_TOLERANCE_DP = 4f // in dp
+        private const val PAINT_STROKE_WIDTH_DP = 20f // in dp
+        private const val CIRCLE_PAINT_STROKE_WIDTH_DP = 5f // in dp
+        private const val CIRCLE_PAINT_RADIUS_DP = 30f // in dp
     }
 }

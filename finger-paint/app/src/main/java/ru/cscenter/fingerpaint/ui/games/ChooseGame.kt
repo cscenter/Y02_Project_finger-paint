@@ -1,5 +1,6 @@
 package ru.cscenter.fingerpaint.ui.games
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,10 +13,10 @@ import kotlin.random.Random
 
 private const val MAX_ATTEMPTS = 3
 
-class ChooseGameFragment(
+class ChooseGame(
     private val question: String,
-    private val correctChooseResourceId: Int,
-    private val incorrectChooseResourceId: Int,
+    private val correctChooseBitmap: Bitmap,
+    private val incorrectChooseBitmap: Bitmap,
     private val callback: GameActivity.GameCallback
 ) : Game() {
 
@@ -34,14 +35,14 @@ class ChooseGameFragment(
         var correctChooseView: ImageView = root.findViewById(R.id.first_choose)
         var incorrectChooseView: ImageView = root.findViewById(R.id.second_choose)
         if (Random.nextBoolean()) {
-            correctChooseView = incorrectChooseView.also {incorrectChooseView = correctChooseView}
+            correctChooseView = incorrectChooseView.also { incorrectChooseView = correctChooseView }
         }
-        correctChooseView.setImageResource(correctChooseResourceId)
+        correctChooseView.setImageBitmap(correctChooseBitmap)
         correctChooseView.setOnClickListener {
             callback.onResult(GameResult.SUCCESS)
         }
 
-        incorrectChooseView.setImageResource(incorrectChooseResourceId)
+        incorrectChooseView.setImageBitmap(incorrectChooseBitmap)
         incorrectChooseView.setOnClickListener {
             if (attempts >= MAX_ATTEMPTS) {
                 callback.onResult(GameResult.FAIL)
