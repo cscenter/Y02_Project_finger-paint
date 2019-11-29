@@ -1,22 +1,26 @@
 package ru.cscenter.fingerpaint.ui.games
 
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import com.google.android.material.snackbar.Snackbar
 import ru.cscenter.fingerpaint.R
 import kotlin.random.Random
+
 
 private const val MAX_ATTEMPTS = 3
 
 class ChooseGame(
     private val question: String,
-    private val correctChooseBitmap: Bitmap,
-    private val incorrectChooseBitmap: Bitmap,
+    private val correctImageSupplier: (width: Int, height: Int) -> Bitmap,
+    private val incorrectImageSupplier: (width: Int, height: Int) -> Bitmap,
     private val callback: GameActivity.GameCallback
 ) : Game() {
 
@@ -37,12 +41,14 @@ class ChooseGame(
         if (Random.nextBoolean()) {
             correctChooseView = incorrectChooseView.also { incorrectChooseView = correctChooseView }
         }
-        correctChooseView.setImageBitmap(correctChooseBitmap)
+
+        setImageAsSoonAsPossible(correctChooseView, correctImageSupplier)
+        setImageAsSoonAsPossible(incorrectChooseView, incorrectImageSupplier)
+
         correctChooseView.setOnClickListener {
             callback.onResult(GameResult.SUCCESS)
         }
 
-        incorrectChooseView.setImageBitmap(incorrectChooseBitmap)
         incorrectChooseView.setOnClickListener {
             if (attempts >= MAX_ATTEMPTS) {
                 callback.onResult(GameResult.FAIL)

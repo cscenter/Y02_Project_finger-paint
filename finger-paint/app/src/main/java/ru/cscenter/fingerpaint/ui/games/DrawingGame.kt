@@ -12,7 +12,8 @@ import ru.cscenter.fingerpaint.R
 
 class DrawingGame(
     private val question: String,
-    private val image: Bitmap,
+    private val imageSupplier: (width: Int, height: Int) -> Bitmap,
+    private val backgroundImageSupplier: (width: Int, height: Int) -> Bitmap,
     private val thresholds: Pair<Float, Float>,
     private val callback: GameActivity.GameCallback
 ) : Game() {
@@ -35,13 +36,12 @@ class DrawingGame(
 
         val drawingView = DrawingView(
             context,
-            image,
+            imageSupplier,
+            backgroundImageSupplier,
             thresholds,
             Pair(goodProgress, badProgress),
             callback
         )
-        drawingView.setImageBitmap(image)
-
         currentLayout.addView(drawingView)
 
         return root

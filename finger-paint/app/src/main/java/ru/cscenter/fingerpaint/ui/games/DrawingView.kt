@@ -29,6 +29,8 @@ class DrawingView : AppCompatImageView {
     private var bitmapScaleRate: Float = 1f
     private var blackPixels: ArrayList<Pair<Int, Int>> = ArrayList()
     private var whitePixels: ArrayList<Pair<Int, Int>> = ArrayList()
+    private lateinit var imageSupplier: (width: Int, height: Int) -> Bitmap // supply bitmap
+    private lateinit var backgroundImageSupplier: (width: Int, height: Int) -> Bitmap
     private lateinit var bitmap: Bitmap
     private lateinit var thresholds: Pair<Float, Float>
     private lateinit var progressBars: Pair<ProgressBar, ProgressBar>
@@ -41,17 +43,20 @@ class DrawingView : AppCompatImageView {
 
     // lint requires
     constructor(c: Context) : super(c)
+
     constructor(c: Context, attrs: AttributeSet) : super(c, attrs)
     constructor(c: Context, attrs: AttributeSet, magic: Int) : super(c, attrs, magic)
 
     constructor(
         c: Context?,
-        bitmap: Bitmap,
+        imageSupplier: (width: Int, height: Int) -> Bitmap,
+        backgroundImageSupplier: (width: Int, height: Int) -> Bitmap,
         thresholds: Pair<Float, Float>,
         progressBars: Pair<ProgressBar, ProgressBar>,
         callback: GameActivity.GameCallback
     ) : super(c) {
-        this.bitmap = bitmap
+        this.imageSupplier = imageSupplier
+        this.backgroundImageSupplier = backgroundImageSupplier
         this.thresholds = thresholds
         this.progressBars = progressBars
         this.callback = callback
@@ -63,24 +68,6 @@ class DrawingView : AppCompatImageView {
         PAINT_STROKE_WIDTH_PX = fromDpToPx(PAINT_STROKE_WIDTH_DP)
         CIRCLE_PAINT_STROKE_WIDTH_PX = fromDpToPx(CIRCLE_PAINT_STROKE_WIDTH_DP)
         CIRCLE_PAINT_RADIUS_PX = fromDpToPx(CIRCLE_PAINT_RADIUS_DP)
-
-        for (y in 0 until bitmap.height) {
-            for (x in 0 until bitmap.width) {
-                val pixel = bitmap.getPixel(x, y)
-                if (pixel == Color.BLACK) {
-                    blackPixels.add(Pair(x, y))
-                } else {
-                    whitePixels.add(Pair(x, y))
-                }
-            }
-        }
-        Log.d("FingerPaint", "Found ${blackPixels.size} black pixels and ${whitePixels.size} other")
-        blackPixels.shuffle(Random(42))
-        blackPixels =
-            ArrayList(blackPixels.take(3000)) // number of random black pixels for progress bar
-        whitePixels.shuffle(Random(239))
-        whitePixels =
-            ArrayList(whitePixels.take(3000)) // number of random (not black) pixels for progress bar
 
         mPaint = Paint().apply {
             isAntiAlias = true
@@ -103,6 +90,26 @@ class DrawingView : AppCompatImageView {
             strokeJoin = Paint.Join.MITER
             strokeWidth = CIRCLE_PAINT_STROKE_WIDTH_PX
         }
+    }
+
+    private fun calculateGoodBadPixels() {
+        for (y in 0 until bitmap.height) {
+            for (x in 0 until bitmap.width) {
+                val pixel = bitmap.getPixel(x, y)
+                if (pixel == Color.BLACK) {
+                    blackPixels.add(Pair(x, y))
+                } else {
+                    whitePixels.add(Pair(x, y))
+                }
+            }
+        }
+        Log.d("FingerPaint", "Found ${blackPixels.size} black pixels and ${whitePixels.size} other")
+        blackPixels.shuffle(Random(42))
+        blackPixels =
+            ArrayList(blackPixels.take(3000)) // number of random black pixels for progress bar
+        whitePixels.shuffle(Random(239))
+        whitePixels =
+            ArrayList(whitePixels.take(3000)) // number of random (not black) pixels for progress bar
     }
 
     private fun updateProgress(bm: Bitmap) {
@@ -144,12 +151,22 @@ class DrawingView : AppCompatImageView {
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val widthMeasure = MeasureSpec.getSize(widthMeasureSpec)
+        val heightMeasure = MeasureSpec.getSize(heightMeasureSpec)
+        setImageBitmap(backgroundImageSupplier(widthMeasure, heightMeasure))
         val d = drawable
         if (d != null) {
-            val rate1: Float = MeasureSpec.getSize(widthMeasureSpec).toFloat() / d.intrinsicWidth
-            val rate2: Float = MeasureSpec.getSize(heightMeasureSpec).toFloat() / d.intrinsicHeight
+            val rate1: Float = widthMeasure.toFloat() / d.intrinsicWidth
+            val rate2: Float = heightMeasure.toFloat() / d.intrinsicHeight
 
             scaleRate = min(rate1, rate2) // min for INSIDE, max for CROP
+
+            val newWidth = (d.intrinsicWidth * scaleRate).roundToInt()
+            val newHeight = (d.intrinsicHeight * scaleRate).roundToInt()
+
+            bitmap = imageSupplier(newWidth, newHeight)
+            calculateGoodBadPixels()
+
             bitmapScaleRate = (d.intrinsicWidth.toFloat() / bitmap.width) * scaleRate
 
             Log.d(
@@ -163,10 +180,7 @@ class DrawingView : AppCompatImageView {
                         "bitmapScaleRate: $bitmapScaleRate"
             )
 
-            setMeasuredDimension(
-                (d.intrinsicWidth * scaleRate).roundToInt(),
-                (d.intrinsicHeight * scaleRate).roundToInt()
-            )
+            setMeasuredDimension(newWidth, newHeight)
         } else super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 

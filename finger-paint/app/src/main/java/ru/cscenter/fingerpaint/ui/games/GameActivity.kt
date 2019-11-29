@@ -2,6 +2,7 @@ package ru.cscenter.fingerpaint.ui.games
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.media.Image
@@ -13,6 +14,7 @@ import androidx.core.content.res.ResourcesCompat
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.Statistic
+import kotlin.math.min
 
 class GameActivity : AppCompatActivity() {
 
@@ -48,18 +50,23 @@ class GameActivity : AppCompatActivity() {
     private fun getChooseFigureGame(): Game =
         ChooseGame(
             "Choose queue",
-            Images.getFigureImageBitmap(
-                FigureType.RECTANGLE,
-                1000,
-                1000,
-                50f /* in px */
-            ), // correct choice
-            Images.getFigureImageBitmap(
-                FigureType.CIRCLE,
-                1000,
-                1000,
-                50f /* in px */
-            ), // incorrect choice
+            { width, height ->
+                Images.getTextImageBitmap(
+                    "Q",
+                    width,
+                    height
+                )
+            }, // correct choice
+            { width, height ->
+                Images.getFigureImageBitmap(
+                    FigureType.CIRCLE,
+                    width,
+                    height,
+                    min(width, height) / 50f, /* in px */
+                    true,
+                    Color.BLUE
+                )
+            }, // incorrect choice
             ChooseFigureGameCallback()
         )
 
@@ -67,11 +74,26 @@ class GameActivity : AppCompatActivity() {
     private fun getDrawingGame(): Game =
         DrawingGame(
             "Replace Black to Yellow by your finger",
-            Images.getTextImageBitmap(
-                "G",
-                1000,
-                1000
-            ),
+            { width, height ->
+                Images.getFigureImageBitmap(
+                    FigureType.RECTANGLE,
+                    width / 8, // for speed up
+                    height / 8, // for speed up
+                    min(width, height) / 8 / 50f, /* in px */
+                    true,
+                    Color.BLACK
+                )
+            }, // black-white image with good-bad pixels
+            { width, height ->
+                Images.getFigureImageBitmap(
+                    FigureType.RECTANGLE,
+                    width / 8, // for speed up
+                    height / 8, // for speed up
+                    min(width, height) / 8 / 50f /* in px */,
+                    false,
+                    Color.MAGENTA
+                )
+            }, // background image. User draw onto it
             Pair(0.8f, 0.1f),
             DrawingGameCallback()
         )
