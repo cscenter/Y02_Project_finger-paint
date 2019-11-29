@@ -1,10 +1,10 @@
 package ru.cscenter.fingerpaint.ui.title
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import ru.cscenter.fingerpaint.ActivitySetUserListenerContainer
 import ru.cscenter.fingerpaint.R
 
-class TitleChooseUserActivity : AppCompatActivity() {
+class TitleChooseUserActivity : ActivitySetUserListenerContainer() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

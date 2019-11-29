@@ -18,19 +18,21 @@ class DbController(context: Context) {
 
     fun getAllNames() = db.getAllNames()
     fun getUser(id: Int) = db.getUser(id)
-    fun setUser(user: User) = db.setUser(user)
+    fun getUserId(name: String) = db.getUserId(name)
+    fun setUser(user: User): Boolean = db.setUser(user) > 0
     fun deleteUser(user: User) = db.deleteUser(user)
     @Suppress("MemberVisibilityCanBePrivate") // TODO will be used in future
     fun getUserStatistics(id: Int): Statistic {
         return db.getUserStatistics(id) ?: Statistic(userId = id, date = currentDay())
     }
+
     fun getUserAllStatistics(id: Int) = db.getUserAllStatistics(id)
     fun getCurrentUserStatistics(): Statistic? = currentUser?.let {
         getUserStatistics(it.id)
     }
+
     fun setStatistics(statistic: Statistic) = db.insertStatistics(statistic)
-    fun insertUser(name: String): Boolean
-            = db.insertUser(User(name = name)) != (-1).toLong()
+    fun insertUser(name: String): Boolean = db.insertUser(User(name = name)) != -1L
     fun setCurrentUser(userId: Int) {
         if (currentUser == null) {
             db.addCurrentUser(CurrentUser(userId))
