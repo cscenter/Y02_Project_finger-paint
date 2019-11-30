@@ -60,7 +60,7 @@ object Images {
             paint.textSize = testTextSize
             paint.getTextBounds(text, 0, text.length, bounds)
         } while (bounds.width() < desiredWidth && bounds.height() < desiredHeight)
-        paint.textSize = testTextSize - 1
+        paint.textSize = testTextSize * 0.8f
     }
 
     fun getTextImageBitmap(
@@ -107,17 +107,25 @@ object Images {
         val bm = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bm)
         when (figureType) {
-            // TODO fix magic constants
+            // TODO develop better system for drawing figures. For example: draw vertical rectangle if height > width
             FigureType.CIRCLE -> canvas.drawCircle(
                 width / 2f,
                 height / 2f,
-                min(width, height) / 2.1f,
+                min(width, height) * CIRCLE_RADIUS_RATE,
                 paint
             )
 
             FigureType.SQUARE -> {
                 val side = min(width, height).toFloat()
-                canvas.drawRect(side / 10, side / 10, 9 * side / 10, 9 * side / 10, paint)
+                val centerX = width / 2
+                val centerY = height / 2
+                canvas.drawRect(
+                    centerX - side * SQUARE_SIZE_RATE,
+                    centerY - side * SQUARE_SIZE_RATE,
+                    centerX + side * SQUARE_SIZE_RATE,
+                    centerY + side * SQUARE_SIZE_RATE,
+                    paint
+                )
             }
 
             FigureType.RECTANGLE -> {
@@ -126,4 +134,7 @@ object Images {
         }
         return bm
     }
+
+    private const val CIRCLE_RADIUS_RATE = 1 / 2.5f // radius = screen_size * CIRCLE_RADIUS_RATE
+    private const val SQUARE_SIZE_RATE = 1 / 3f // side = screen_size * SQUARE_SIZE_RATE * 2
 }

@@ -35,7 +35,10 @@ class DrawingView : AppCompatImageView {
     private lateinit var thresholds: Pair<Float, Float>
     private lateinit var progressBars: Pair<ProgressBar, ProgressBar>
     private lateinit var callback: GameActivity.GameCallback
-    // constants, assigned in contructor
+    private var mX = 0f
+    private var mY = 0f
+    // CONSTANS, assigned ONCE in contructor AND depends ONLY from CONSTANTS and DPI
+    // can't be val because of lint and no primary constructor
     private var TOUCH_TOLERANCE_PX = 0f
     private var PAINT_STROKE_WIDTH_PX = 0f
     private var CIRCLE_PAINT_STROKE_WIDTH_PX = 0f
@@ -61,9 +64,9 @@ class DrawingView : AppCompatImageView {
         this.progressBars = progressBars
         this.callback = callback
 
-        // convert constants in pixels to constants in dp
         fun fromDpToPx(dp: Float): Float =
             TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
+        // convert constants in dp to constants in pixels
         TOUCH_TOLERANCE_PX = fromDpToPx(TOUCH_TOLERANCE_DP)
         PAINT_STROKE_WIDTH_PX = fromDpToPx(PAINT_STROKE_WIDTH_DP)
         CIRCLE_PAINT_STROKE_WIDTH_PX = fromDpToPx(CIRCLE_PAINT_STROKE_WIDTH_DP)
@@ -105,37 +108,31 @@ class DrawingView : AppCompatImageView {
         }
         Log.d("FingerPaint", "Found ${blackPixels.size} black pixels and ${whitePixels.size} other")
         blackPixels.shuffle(Random(42))
-        blackPixels =
-            ArrayList(blackPixels.take(3000)) // number of random black pixels for progress bar
-        whitePixels.shuffle(Random(239))
-        whitePixels =
-            ArrayList(whitePixels.take(3000)) // number of random (not black) pixels for progress bar
+        blackPixels = ArrayList((blackPixels.shuffled(Random(42)).take(RANDOM_BLACK_PIXELS_COUNT)))
+        whitePixels = ArrayList((whitePixels.shuffled(Random(239)).take(RANDOM_WHITE_PIXELS_COUNT)))
+        progressBars.first.max = (blackPixels.size * thresholds.first + 1).toInt()
+        progressBars.second.max = (whitePixels.size * thresholds.second + 1).toInt()
     }
 
     private fun updateProgress(bm: Bitmap) {
-        val countBlack = blackPixels.filter {
+        val countBlack = blackPixels.count {
             bm.getPixel(
                 (it.first * bitmapScaleRate).roundToInt(),
                 (it.second * bitmapScaleRate).roundToInt()
             ) != Color.TRANSPARENT
-        }.size
+        }
 
-        val countWhite = whitePixels.filter {
+        val countWhite = whitePixels.count {
             bm.getPixel(
                 (it.first * bitmapScaleRate).roundToInt(),
                 (it.second * bitmapScaleRate).roundToInt()
             ) != Color.TRANSPARENT
-        }.size
+        }
 
-        val goodProgress: ProgressBar = progressBars.first
-        val thresholdSuccess = thresholds.first
-        val badProgress: ProgressBar = progressBars.second
-        val thresholdFail = thresholds.second
+        val (goodProgress, badProgress) = progressBars
+        val (thresholdSuccess, thresholdFail) = thresholds
 
-        goodProgress.max = blackPixels.size
         goodProgress.progress = countBlack
-
-        badProgress.max = whitePixels.size
         badProgress.progress = countWhite
 
         Log.d("FingerPaint", "Black(good): $countBlack / ${blackPixels.size}")
@@ -197,9 +194,6 @@ class DrawingView : AppCompatImageView {
         canvas.drawPath(circlePath, circlePaint)
     }
 
-    private var mX = 0f
-    private var mY = 0f
-
     private fun touchStart(x: Float, y: Float) {
         mPath.reset()
         mPath.moveTo(x, y)
@@ -259,5 +253,7 @@ class DrawingView : AppCompatImageView {
         private const val PAINT_STROKE_WIDTH_DP = 20f // in dp
         private const val CIRCLE_PAINT_STROKE_WIDTH_DP = 5f // in dp
         private const val CIRCLE_PAINT_RADIUS_DP = 30f // in dp
+        private const val RANDOM_BLACK_PIXELS_COUNT = 3000 // should be depended on cpu speed
+        private const val RANDOM_WHITE_PIXELS_COUNT = 3000
     }
 }

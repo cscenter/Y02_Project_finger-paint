@@ -46,7 +46,6 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    // TODO change 1000-1000 to width-height of DrawingView inside of DrawingGame(maybe can be obtained from xml)
     private fun getChooseFigureGame(): Game =
         ChooseGame(
             "Choose queue",
@@ -70,7 +69,6 @@ class GameActivity : AppCompatActivity() {
             ChooseFigureGameCallback()
         )
 
-    // TODO change 1000-1000 to width-height of DrawingView inside of DrawingGame(maybe can be obtained from xml)
     private fun getDrawingGame(): Game =
         DrawingGame(
             "Replace Black to Yellow by your finger",
