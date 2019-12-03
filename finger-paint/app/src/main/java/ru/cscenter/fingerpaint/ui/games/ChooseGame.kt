@@ -1,15 +1,12 @@
 package ru.cscenter.fingerpaint.ui.games
 
 import android.graphics.Bitmap
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import com.google.android.material.snackbar.Snackbar
 import ru.cscenter.fingerpaint.R
 import kotlin.random.Random

@@ -1,20 +1,12 @@
 package ru.cscenter.fingerpaint.ui.games
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
-import android.media.Image
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.res.ResourcesCompat
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.Statistic
-import kotlin.math.min
 
 class GameActivity : AppCompatActivity() {
 
@@ -27,8 +19,8 @@ class GameActivity : AppCompatActivity() {
 
         when (type) {
             GameType.FIGURES_GAME -> runGame(getChooseFigureGame())
-            GameType.LETTERS_1_GAME -> runGame(getDrawingGame())
-            GameType.LETTERS_2_GAME -> finish()
+            GameType.LETTERS_1_GAME -> runGame(getChooseLetterColorGame())
+            GameType.LETTERS_2_GAME -> runGame(getChooseLetterGame())
         }
     }
 
@@ -48,54 +40,53 @@ class GameActivity : AppCompatActivity() {
 
     private fun getChooseFigureGame(): Game =
         ChooseGame(
-            "Choose queue",
-            { width, height ->
-                Images.getTextImageBitmap(
-                    "Q",
-                    width,
-                    height
-                )
-            }, // correct choice
-            { width, height ->
-                Images.getFigureImageBitmap(
-                    FigureType.CIRCLE,
-                    width,
-                    height,
-                    min(width, height) / 50f, /* in px */
-                    true,
-                    Color.BLUE
-                )
-            }, // incorrect choice
-            ChooseFigureGameCallback()
+            "Choose rectangle",
+            correctImageSupplier = getFigureImage(FigureType.RECTANGLE, Color.BLUE, false),
+            incorrectImageSupplier = getFigureImage(FigureType.SQUARE, Color.BLUE, false),
+            callback = ChooseFigureGameCallback()
         )
 
-    private fun getDrawingGame(): Game =
+    private fun getChooseFigureColorGame(): Game =
+        ChooseGame(
+            "Choose red",
+            correctImageSupplier = getFigureImage(FigureType.TRIANGLE, Color.RED, true),
+            incorrectImageSupplier = getFigureImage(FigureType.CIRCLE, Color.BLUE, true),
+            callback = ChooseFigureColorGameCallback()
+        )
+
+    private fun getDrawingFigureGame(): Game =
         DrawingGame(
             "Replace Black to Yellow by your finger",
-            { width, height ->
-                Images.getFigureImageBitmap(
-                    FigureType.RECTANGLE,
-                    width / 8, // for speed up
-                    height / 8, // for speed up
-                    min(width, height) / 8 / 50f, /* in px */
-                    true,
-                    Color.BLACK
-                )
-            }, // black-white image with good-bad pixels
-            { width, height ->
-                Images.getFigureImageBitmap(
-                    FigureType.RECTANGLE,
-                    width / 8, // for speed up
-                    height / 8, // for speed up
-                    min(width, height) / 8 / 50f /* in px */,
-                    false,
-                    Color.MAGENTA
-                )
-            }, // background image. User draw onto it
-            Pair(0.8f, 0.1f),
+            getFigureImageCompressed(FigureType.RECTANGLE),
+            getFigureImageCompressed(FigureType.RECTANGLE, Color.MAGENTA, false),
+            figureThresholds,
             DrawingGameCallback()
         )
 
+    private fun getChooseLetterGame(): Game =
+        ChooseGame(
+            "Choose Ы",
+            correctImageSupplier = getLetterImage("Ы"),
+            incorrectImageSupplier = getLetterImage("И"),
+            callback = ChooseLetterGameCallback()
+        )
+
+    private fun getChooseLetterColorGame(): Game =
+        ChooseGame(
+            "Choose red",
+            correctImageSupplier = getLetterImage("Ы", color = Color.RED),
+            incorrectImageSupplier = getLetterImage("Ы", color = Color.GREEN),
+            callback = ChooseLetterColorGameCallback()
+        )
+
+    private fun getDrawingLetterGame(): Game =
+        DrawingGame(
+            "Replace Black to Yellow by your finger",
+            getLetterImageCompressed("Ы"),
+            getLetterImageCompressed("Ы"),
+            letterThresholds,
+            DrawingGameCallback()
+        )
 
     abstract inner class GameCallback {
         private val db = MainApplication.dbController
@@ -117,12 +108,24 @@ class GameActivity : AppCompatActivity() {
 
     inner class ChooseFigureGameCallback : GameCallback() {
         override fun nextGame(): Game? {
-            return null
+            return getChooseFigureColorGame()
         }
 
         override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
             statistic.figureChooseTotal++
             statistic.figureChooseSuccess += if (result == GameResult.SUCCESS) 1 else 0
+            return statistic
+        }
+    }
+
+    inner class ChooseFigureColorGameCallback : GameCallback() {
+        override fun nextGame(): Game? {
+            return getDrawingFigureGame()
+        }
+
+        override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
+            statistic.colorChooseTotal++
+            statistic.colorChooseSuccess += if (result == GameResult.SUCCESS) 1 else 0
             return statistic
         }
     }
@@ -147,6 +150,36 @@ class GameActivity : AppCompatActivity() {
             super.onResult(result)
         }
     }
+
+    inner class ChooseLetterGameCallback : GameCallback() {
+        override fun nextGame(): Game? {
+            return getChooseLetterColorGame()
+        }
+
+        override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
+            statistic.letterChooseTotal++
+            statistic.letterChooseSuccess += if (result == GameResult.SUCCESS) 1 else 0
+            return statistic
+        }
+    }
+
+    inner class ChooseLetterColorGameCallback : GameCallback() {
+        override fun nextGame(): Game? {
+            return getDrawingLetterGame()
+        }
+
+        override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
+            statistic.colorChooseTotal++
+            statistic.colorChooseSuccess += if (result == GameResult.SUCCESS) 1 else 0
+            return statistic
+        }
+    }
+
+    companion object {
+        private val figureThresholds = Pair(0.8f, 0.1f)
+        private val letterThresholds = Pair(0.75f, 0.1f)
+    }
+
 }
 
 enum class GameType {
