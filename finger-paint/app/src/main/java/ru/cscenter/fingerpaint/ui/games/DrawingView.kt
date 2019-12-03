@@ -34,8 +34,8 @@ class DrawingView(
     private var scaleRate: Float = 1f
     private var bitmapScaleRate: Float = 1f
 
-    private var blackPixels: ArrayList<Pair<Int, Int>> = ArrayList()
-    private var whitePixels: ArrayList<Pair<Int, Int>> = ArrayList()
+    private var blackPixels = mutableListOf<Pair<Int, Int>>()
+    private var whitePixels = mutableListOf<Pair<Int, Int>>()
 
     private var mX = 0f
     private var mY = 0f
@@ -78,9 +78,11 @@ class DrawingView(
             }
         }
         Log.d("FingerPaint", "Found ${blackPixels.size} black pixels and ${whitePixels.size} other")
-        blackPixels.shuffle(Random(42))
-        blackPixels = ArrayList((blackPixels.shuffled(Random(42)).take(RANDOM_BLACK_PIXELS_COUNT)))
-        whitePixels = ArrayList((whitePixels.shuffled(Random(239)).take(RANDOM_WHITE_PIXELS_COUNT)))
+
+        val randomGenerator = Random(42)
+        blackPixels = blackPixels.shuffled(randomGenerator).take(RANDOM_BLACK_PIXELS_COUNT).toMutableList()
+        whitePixels = whitePixels.shuffled(randomGenerator).take(RANDOM_WHITE_PIXELS_COUNT).toMutableList()
+
         progressBars.first.max = (blackPixels.size * thresholds.first + 1).toInt()
         progressBars.second.max = (whitePixels.size * thresholds.second + 1).toInt()
     }

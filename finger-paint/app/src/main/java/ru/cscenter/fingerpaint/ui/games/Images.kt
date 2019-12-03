@@ -11,7 +11,8 @@ import kotlin.math.min
 enum class FigureType {
     CIRCLE,
     SQUARE,
-    RECTANGLE
+    RECTANGLE,
+    TRIANGLE
 }
 
 fun setImageAsSoonAsPossible(view: ImageView, imageSupplier: (width: Int, height: Int) -> Bitmap) {
@@ -130,6 +131,16 @@ object Images {
 
             FigureType.RECTANGLE -> {
                 canvas.drawRect(width / 10f, height / 4f, 9 * width / 10f, 3 * height / 4f, paint)
+            }
+
+            FigureType.TRIANGLE -> {
+                val path = Path().apply {
+                    moveTo(width.toFloat() / 2, height.toFloat() / 5)
+                    lineTo(4 * width.toFloat() / 5, 4 * height.toFloat() / 5)
+                    lineTo(width.toFloat() / 5, 4 * height.toFloat() / 5)
+                    lineTo(width.toFloat() / 2, height.toFloat() / 5)
+                }
+                canvas.drawPath(path, paint)
             }
         }
         return bm
