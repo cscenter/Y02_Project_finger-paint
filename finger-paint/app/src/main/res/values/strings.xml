@@ -21,6 +21,6 @@
     <string name="arg_game_type">game_type</string>
     <string name="first_choose">First Choose</string>
     <string name="second_choose">Second Choose</string>
-    <string name="empty_name_warning">Name and surname should not be empty.</string>
+    <string name="empty_name_warning">Name should not be empty.</string>
     <string name="user_exists_warning">Such user already exists.</string>
 </resources>

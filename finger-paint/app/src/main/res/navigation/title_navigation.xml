@@ -9,12 +9,20 @@
         android:id="@+id/nav_choose_user"
         android:name="ru.cscenter.fingerpaint.ui.chooseuser.ChooseUserFragment"
         android:label="@string/choose_user"
-        tools:layout="@layout/fragment_choose_user"/>
+        tools:layout="@layout/fragment_choose_user" />
 
     <fragment
         android:id="@+id/nav_set_user"
         android:name="ru.cscenter.fingerpaint.ui.setuser.SetUserFragment"
         android:label="@string/set_user"
-        tools:layout="@layout/fragment_set_user" />
+        tools:layout="@layout/fragment_set_user">
+        <argument
+            android:name="setUserType"
+            app:argType="ru.cscenter.fingerpaint.ui.setuser.SetUserType" />
+        <argument
+            android:name="userId"
+            android:defaultValue="-1"
+            app:argType="integer" />
+    </fragment>
 
 </navigation>

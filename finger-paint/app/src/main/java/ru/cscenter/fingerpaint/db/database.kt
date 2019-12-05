@@ -11,13 +11,15 @@ data class User(
     override fun toString() = name
 }
 
-@Entity(foreignKeys = [ForeignKey(
-    entity = User::class,
-    parentColumns = arrayOf("id"),
-    childColumns = arrayOf("user_id"))],
+@Entity(
+    foreignKeys = [ForeignKey(
+        entity = User::class,
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("user_id")
+    )],
     indices = [Index("user_id")],
     primaryKeys = ["user_id", "date"]
-    )
+)
 data class Statistic(
     @ColumnInfo(name = "user_id") var userId: Int,
     @ColumnInfo var date: Long = currentDay(),
@@ -33,33 +35,32 @@ data class Statistic(
     @ColumnInfo var contouringSuccess: Int = 0
 )
 
-@Entity(foreignKeys = [ForeignKey(
-    entity = User::class,
-    parentColumns = arrayOf("id"),
-    childColumns = arrayOf("user_id"))],
-    indices = [Index("user_id")])
+@Entity(
+    foreignKeys = [ForeignKey(
+        entity = User::class,
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("user_id")
+    )],
+    indices = [Index("user_id")]
+)
 data class CurrentUser(
     @ColumnInfo(name = "user_id") var userId: Int,
-    @PrimaryKey  val id: Int = 0
+    @PrimaryKey val id: Int = 0
 )
-
-data class UserName(
-    @ColumnInfo val id: Int,
-    @ColumnInfo var name: String
-) {
-    override fun toString() = name
-}
 
 @Dao
 interface DbAccess {
     @Query("SELECT id, name FROM User")
-    fun getAllNames(): List<UserName>
+    fun getAllNames(): List<User>
 
     @Query("SELECT * FROM User WHERE id = :id")
     fun getUser(id: Int): User?
 
-    @Update
-    fun setUser(user: User)
+    @Query("SELECT id FROM User WHERE name = :name")
+    fun getUserId(name: String): Int
+
+    @Update(onConflict = OnConflictStrategy.IGNORE)
+    fun setUser(user: User): Int
 
     @Delete
     fun deleteUser(user: User)
@@ -86,8 +87,10 @@ interface DbAccess {
     fun getUserAllStatistics(id: Int): List<Statistic>
 }
 
-@Database(entities = [User::class, CurrentUser::class, Statistic::class],
-    exportSchema = false, version = 1)
+@Database(
+    entities = [User::class, CurrentUser::class, Statistic::class],
+    exportSchema = false, version = 1
+)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun dao(): DbAccess
 }
