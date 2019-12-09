@@ -1,11 +1,14 @@
 package ru.cscenter.fingerpaint.ui.games.images
 
+import android.content.res.Resources
 import android.graphics.*
 import android.graphics.Paint.Align
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.view.ViewTreeObserver
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
+import androidx.core.content.res.ResourcesCompat
 import kotlin.math.min
 
 enum class FigureType {
@@ -144,6 +147,26 @@ object Images {
             }
         }
         return bm
+    }
+
+    @Suppress("unused")
+    fun getBitmapFromResource(
+        width: Int,
+        height: Int,
+        resources: Resources,
+        resourceId: Int
+    ): Bitmap {
+        val drawable: Drawable = ResourcesCompat.getDrawable(resources, resourceId, null)!!
+        val canvas = Canvas()
+        val bitmap = Bitmap.createBitmap(
+            width,
+            height,
+            Bitmap.Config.ARGB_8888
+        )
+        canvas.setBitmap(bitmap)
+        drawable.setBounds(0, 0, width, height)
+        drawable.draw(canvas)
+        return bitmap
     }
 
     private const val CIRCLE_RADIUS_RATE = 1 / 2.5f // radius = screen_size * CIRCLE_RADIUS_RATE
