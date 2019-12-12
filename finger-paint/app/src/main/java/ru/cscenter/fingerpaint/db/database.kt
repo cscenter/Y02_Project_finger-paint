@@ -1,6 +1,7 @@
 package ru.cscenter.fingerpaint.db
 
 import androidx.room.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 @Entity(indices = [Index(value = ["name"], unique = true)])
@@ -111,3 +112,7 @@ fun currentDay(): Long {
     utcCalendar.set(Calendar.MILLISECOND, 0)
     return utcCalendar.timeInMillis
 }
+
+private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH)
+
+fun dateToString(date: Long): String = dateFormat.format(Date(date))

@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.ui.games.GameActivity
 import ru.cscenter.fingerpaint.ui.games.GameType
+import ru.cscenter.fingerpaint.ui.statistics.StatisticsFragmentArgs
 
 class HomeFragment : Fragment() {
 
@@ -32,9 +33,12 @@ class HomeFragment : Fragment() {
         currentNameTextView!!.text = homeViewModel.currentName()
 
         val statisticsButton: Button = root.findViewById(R.id.statistics_button)
-        statisticsButton.setOnClickListener{
+        statisticsButton.setOnClickListener {
             val navController = findNavController()
-            navController.navigate(R.id.nav_statistics)
+            navController.navigate(
+                R.id.nav_statistics,
+                StatisticsFragmentArgs(homeViewModel.currentId()).toBundle()
+            )
         }
 
         val figureButton: Button = root.findViewById(R.id.figure_game_button)
