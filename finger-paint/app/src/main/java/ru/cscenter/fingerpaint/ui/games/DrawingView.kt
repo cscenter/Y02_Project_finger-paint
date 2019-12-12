@@ -9,7 +9,6 @@ import android.view.MotionEvent
 import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatImageView
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.roundToInt
