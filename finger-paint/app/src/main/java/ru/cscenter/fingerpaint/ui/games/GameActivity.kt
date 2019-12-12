@@ -1,10 +1,20 @@
 package ru.cscenter.fingerpaint.ui.games
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.media.Image
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.Statistic
+import kotlin.math.min
 
 class GameActivity : AppCompatActivity() {
 
@@ -17,7 +27,7 @@ class GameActivity : AppCompatActivity() {
 
         when (type) {
             GameType.FIGURES_GAME -> runGame(getChooseFigureGame())
-            GameType.LETTERS_1_GAME -> finish()
+            GameType.LETTERS_1_GAME -> runGame(getDrawingGame())
             GameType.LETTERS_2_GAME -> finish()
         }
     }
@@ -37,19 +47,62 @@ class GameActivity : AppCompatActivity() {
     }
 
     private fun getChooseFigureGame(): Game =
-        ChooseGameFragment(
-            "CHOOSE QUESTION(correct answer is one)",
-            R.drawable.image_1,
-            R.drawable.image_2,
+        ChooseGame(
+            "Choose queue",
+            { width, height ->
+                Images.getTextImageBitmap(
+                    "Q",
+                    width,
+                    height
+                )
+            }, // correct choice
+            { width, height ->
+                Images.getFigureImageBitmap(
+                    FigureType.CIRCLE,
+                    width,
+                    height,
+                    min(width, height) / 50f, /* in px */
+                    true,
+                    Color.BLUE
+                )
+            }, // incorrect choice
             ChooseFigureGameCallback()
         )
+
+    private fun getDrawingGame(): Game =
+        DrawingGame(
+            "Replace Black to Yellow by your finger",
+            { width, height ->
+                Images.getFigureImageBitmap(
+                    FigureType.RECTANGLE,
+                    width / 8, // for speed up
+                    height / 8, // for speed up
+                    min(width, height) / 8 / 50f, /* in px */
+                    true,
+                    Color.BLACK
+                )
+            }, // black-white image with good-bad pixels
+            { width, height ->
+                Images.getFigureImageBitmap(
+                    FigureType.RECTANGLE,
+                    width / 8, // for speed up
+                    height / 8, // for speed up
+                    min(width, height) / 8 / 50f /* in px */,
+                    false,
+                    Color.MAGENTA
+                )
+            }, // background image. User draw onto it
+            Pair(0.8f, 0.1f),
+            DrawingGameCallback()
+        )
+
 
     abstract inner class GameCallback {
         private val db = MainApplication.dbController
 
         abstract fun updateStatistics(statistic: Statistic, result: GameResult): Statistic
         abstract fun nextGame(): Game?
-        fun onResult(result: GameResult) {
+        open fun onResult(result: GameResult) {
             supportFragmentManager.popBackStack()
             db.getCurrentUserStatistics()?.let {
                 val statistic = updateStatistics(it, result)
@@ -62,7 +115,7 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    inner class ChooseFigureGameCallback: GameCallback() {
+    inner class ChooseFigureGameCallback : GameCallback() {
         override fun nextGame(): Game? {
             return null
         }
@@ -71,6 +124,27 @@ class GameActivity : AppCompatActivity() {
             statistic.figureChooseTotal++
             statistic.figureChooseSuccess += if (result == GameResult.SUCCESS) 1 else 0
             return statistic
+        }
+    }
+
+    inner class DrawingGameCallback : GameCallback() {
+        override fun nextGame(): Game? {
+            return null
+        }
+
+        override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
+            statistic.drawingTotal++
+            statistic.drawingSuccess += if (result == GameResult.SUCCESS) 1 else 0
+            return statistic
+        }
+
+        override fun onResult(result: GameResult) {
+            Toast.makeText(
+                applicationContext,
+                if (result == GameResult.SUCCESS) "Your'e good" else "Your'e failed",
+                Toast.LENGTH_LONG
+            ).show()
+            super.onResult(result)
         }
     }
 }

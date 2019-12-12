@@ -29,8 +29,8 @@ data class Statistic(
     @ColumnInfo var letterChooseSuccess: Int = 0,
     @ColumnInfo var colorChooseTotal: Int = 0,
     @ColumnInfo var colorChooseSuccess: Int = 0,
-    @ColumnInfo var coloringTotal: Int = 0,
-    @ColumnInfo var coloringSuccess: Int = 0,
+    @ColumnInfo var drawingTotal: Int = 0,
+    @ColumnInfo var drawingSuccess: Int = 0,
     @ColumnInfo var contouringTotal: Int = 0,
     @ColumnInfo var contouringSuccess: Int = 0
 )
