@@ -9,3 +9,8 @@ enum class GameResult {
     SUCCESS,
     FAIL
 }
+
+fun GameResult.toInt() = when (this) {
+    GameResult.SUCCESS -> 1
+    GameResult.FAIL -> 0
+}

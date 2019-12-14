@@ -117,7 +117,7 @@ class GameActivity : AppCompatActivity() {
 
         override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
             statistic.figureChooseTotal++
-            statistic.figureChooseSuccess += if (result == GameResult.SUCCESS) 1 else 0
+            statistic.figureChooseSuccess += result.toInt()
             return statistic
         }
     }
@@ -127,7 +127,7 @@ class GameActivity : AppCompatActivity() {
 
         override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
             statistic.figureColorChooseTotal++
-            statistic.figureColorChooseSuccess += if (result == GameResult.SUCCESS) 1 else 0
+            statistic.figureColorChooseSuccess += result.toInt()
             return statistic
         }
     }
@@ -137,7 +137,7 @@ class GameActivity : AppCompatActivity() {
 
         override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
             statistic.drawingTotal++
-            statistic.drawingSuccess += if (result == GameResult.SUCCESS) 1 else 0
+            statistic.drawingSuccess += result.toInt()
             return statistic
         }
     }
@@ -147,7 +147,7 @@ class GameActivity : AppCompatActivity() {
 
         override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
             statistic.letterChooseTotal++
-            statistic.letterChooseSuccess += if (result == GameResult.SUCCESS) 1 else 0
+            statistic.letterChooseSuccess += result.toInt()
             return statistic
         }
     }
@@ -157,7 +157,7 @@ class GameActivity : AppCompatActivity() {
 
         override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
             statistic.letterColorChooseTotal++
-            statistic.letterColorChooseSuccess += if (result == GameResult.SUCCESS) 1 else 0
+            statistic.letterColorChooseSuccess += result.toInt()
             return statistic
         }
     }
@@ -167,7 +167,7 @@ class GameActivity : AppCompatActivity() {
 
         override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
             statistic.contouringTotal++
-            statistic.contouringSuccess += if (result == GameResult.SUCCESS) 1 else 0
+            statistic.contouringSuccess += result.toInt()
             return statistic
         }
     }
