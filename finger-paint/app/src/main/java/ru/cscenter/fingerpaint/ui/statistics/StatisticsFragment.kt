@@ -132,7 +132,7 @@ class StatisticsFragment : Fragment() {
         chart.apply {
             data = BarData(barDataSet).apply {
                 barWidth = BAR_WIDTH
-                setValueTextSize(TEXT_SIZE)
+                setValueTextSize(VALUES_TEXT_SIZE)
             }
 
             description.apply {
@@ -142,7 +142,7 @@ class StatisticsFragment : Fragment() {
             }
 
             axisLeft.apply {
-                textSize = TEXT_SIZE
+                textSize = AXIS_TEXT_SIZE
                 granularity = Y_GRANULARITY
                 axisMaximum = Y_MAX
                 axisMinimum = Y_MIN
@@ -150,7 +150,7 @@ class StatisticsFragment : Fragment() {
 
             xAxis.apply {
                 position = XAxis.XAxisPosition.BOTTOM
-                textSize = TEXT_SIZE
+                textSize = AXIS_TEXT_SIZE
                 granularity = X_GRANULARITY
                 setValueFormatter { value, _ ->
                     labels.getOrElse(value.toInt()) { "" }
@@ -172,7 +172,8 @@ class StatisticsFragment : Fragment() {
         private const val Y_GRANULARITY = 10f
         private const val Y_MAX = 100f
         private const val Y_MIN = 0f
-        private const val TEXT_SIZE = 10f
+        private const val VALUES_TEXT_SIZE = 15f
+        private const val AXIS_TEXT_SIZE = 10f
         private const val TITLE_TEXT_SIZE = 15f
         private const val X_GRANULARITY = 1f
         private const val BAR_WIDTH = 0.5f
