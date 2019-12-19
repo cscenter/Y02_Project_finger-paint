@@ -20,6 +20,7 @@ class DrawingView(
     private val imageSupplier: (width: Int, height: Int) -> Bitmap,
     private val backgroundImageSupplier: (width: Int, height: Int) -> Bitmap,
     private val thresholds: Pair<Float, Float>,
+    private val paintColor: Int,
     private val progressBars: Pair<ProgressBar, ProgressBar>,
     private val callback: GameActivity.GameCallback
 ) : AppCompatImageView(c) {
@@ -48,7 +49,7 @@ class DrawingView(
     private val mPaint: Paint = Paint().apply {
         isAntiAlias = true
         isDither = true
-        color = Color.YELLOW
+        color = paintColor
         style = Paint.Style.STROKE
         strokeJoin = Paint.Join.ROUND
         strokeCap = Paint.Cap.ROUND

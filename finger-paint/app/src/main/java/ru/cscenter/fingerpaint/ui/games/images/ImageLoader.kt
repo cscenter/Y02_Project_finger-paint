@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import kotlin.math.min
 
-private const val FIGURE_COMPRESSION_RATE = 8
+private const val FIGURE_COMPRESSION_RATE = 3
 private const val LETTER_COMPRESSION_RATE = 4
 private const val STROKE_WIDTH_RATE = 1 / 50f
 

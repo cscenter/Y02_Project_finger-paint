@@ -14,12 +14,12 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.utils.ColorTemplate
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.Statistic
 import ru.cscenter.fingerpaint.db.User
 import ru.cscenter.fingerpaint.db.dateToString
+import ru.cscenter.fingerpaint.ui.Colors
 
 class StatisticsFragment : Fragment() {
 
@@ -125,7 +125,7 @@ class StatisticsFragment : Fragment() {
     ) {
         val (dataPoints, labels) = getDataPointsAndLabels(allStatistics, getter)
         val barDataSet = BarDataSet(dataPoints, name).apply {
-            colors = ColorTemplate.MATERIAL_COLORS.toList()
+            colors = Colors.colors
             axisDependency = YAxis.AxisDependency.LEFT
         }
 
