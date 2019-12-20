@@ -1,4 +1,4 @@
-package ru.cscenter.fingerpaint.ui.games
+package ru.cscenter.fingerpaint.ui.games.images
 
 import android.graphics.Bitmap
 import android.graphics.Color

@@ -1,6 +1,7 @@
 package ru.cscenter.fingerpaint.db
 
 import androidx.room.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 @Entity(indices = [Index(value = ["name"], unique = true)])
@@ -27,8 +28,10 @@ data class Statistic(
     @ColumnInfo var figureChooseSuccess: Int = 0,
     @ColumnInfo var letterChooseTotal: Int = 0,
     @ColumnInfo var letterChooseSuccess: Int = 0,
-    @ColumnInfo var colorChooseTotal: Int = 0,
-    @ColumnInfo var colorChooseSuccess: Int = 0,
+    @ColumnInfo var figureColorChooseTotal: Int = 0,
+    @ColumnInfo var figureColorChooseSuccess: Int = 0,
+    @ColumnInfo var letterColorChooseTotal: Int = 0,
+    @ColumnInfo var letterColorChooseSuccess: Int = 0,
     @ColumnInfo var drawingTotal: Int = 0,
     @ColumnInfo var drawingSuccess: Int = 0,
     @ColumnInfo var contouringTotal: Int = 0,
@@ -111,3 +114,7 @@ fun currentDay(): Long {
     utcCalendar.set(Calendar.MILLISECOND, 0)
     return utcCalendar.timeInMillis
 }
+
+private val dateFormat = SimpleDateFormat("MMM-dd", Locale.ENGLISH)
+
+fun dateToString(date: Long): String = dateFormat.format(Date(date))

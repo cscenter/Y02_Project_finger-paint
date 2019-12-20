@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.Statistic
+import ru.cscenter.fingerpaint.ui.games.images.*
 
 class GameActivity : AppCompatActivity() {
 
@@ -60,7 +61,7 @@ class GameActivity : AppCompatActivity() {
             getFigureImageCompressed(FigureType.RECTANGLE),
             getFigureImageCompressed(FigureType.RECTANGLE, Color.MAGENTA, false),
             figureThresholds,
-            DrawingGameCallback()
+            DrawingFigureGameCallback()
         )
 
     private fun getChooseLetterGame(): Game =
@@ -85,7 +86,7 @@ class GameActivity : AppCompatActivity() {
             getLetterImageCompressed("Ы"),
             getLetterImageCompressed("Ы"),
             letterThresholds,
-            DrawingGameCallback()
+            DrawingLetterGameCallback()
         )
 
     abstract inner class GameCallback {
@@ -99,6 +100,11 @@ class GameActivity : AppCompatActivity() {
                 val statistic = updateStatistics(it, result)
                 db.setStatistics(statistic)
             }
+            Toast.makeText(
+                applicationContext,
+                if (result == GameResult.SUCCESS) "Well done!" else "Try again",
+                Toast.LENGTH_LONG
+            ).show()
             when (result) {
                 GameResult.SUCCESS -> nextGame()?.let { runGame(it) } ?: finish()
                 GameResult.FAIL -> finish()
@@ -107,70 +113,61 @@ class GameActivity : AppCompatActivity() {
     }
 
     inner class ChooseFigureGameCallback : GameCallback() {
-        override fun nextGame(): Game? {
-            return getChooseFigureColorGame()
-        }
+        override fun nextGame(): Game? = getChooseFigureColorGame()
 
         override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
             statistic.figureChooseTotal++
-            statistic.figureChooseSuccess += if (result == GameResult.SUCCESS) 1 else 0
+            statistic.figureChooseSuccess += result.toInt()
             return statistic
         }
     }
 
     inner class ChooseFigureColorGameCallback : GameCallback() {
-        override fun nextGame(): Game? {
-            return getDrawingFigureGame()
-        }
+        override fun nextGame(): Game? = getDrawingFigureGame()
 
         override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
-            statistic.colorChooseTotal++
-            statistic.colorChooseSuccess += if (result == GameResult.SUCCESS) 1 else 0
+            statistic.figureColorChooseTotal++
+            statistic.figureColorChooseSuccess += result.toInt()
             return statistic
         }
     }
 
-    inner class DrawingGameCallback : GameCallback() {
-        override fun nextGame(): Game? {
-            return null
-        }
+    inner class DrawingFigureGameCallback : GameCallback() {
+        override fun nextGame(): Game? = null
 
         override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
             statistic.drawingTotal++
-            statistic.drawingSuccess += if (result == GameResult.SUCCESS) 1 else 0
+            statistic.drawingSuccess += result.toInt()
             return statistic
-        }
-
-        override fun onResult(result: GameResult) {
-            Toast.makeText(
-                applicationContext,
-                if (result == GameResult.SUCCESS) "Your'e good" else "Your'e failed",
-                Toast.LENGTH_LONG
-            ).show()
-            super.onResult(result)
         }
     }
 
     inner class ChooseLetterGameCallback : GameCallback() {
-        override fun nextGame(): Game? {
-            return getChooseLetterColorGame()
-        }
+        override fun nextGame(): Game? = getChooseLetterColorGame()
 
         override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
             statistic.letterChooseTotal++
-            statistic.letterChooseSuccess += if (result == GameResult.SUCCESS) 1 else 0
+            statistic.letterChooseSuccess += result.toInt()
             return statistic
         }
     }
 
     inner class ChooseLetterColorGameCallback : GameCallback() {
-        override fun nextGame(): Game? {
-            return getDrawingLetterGame()
-        }
+        override fun nextGame(): Game? = getDrawingLetterGame()
 
         override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
-            statistic.colorChooseTotal++
-            statistic.colorChooseSuccess += if (result == GameResult.SUCCESS) 1 else 0
+            statistic.letterColorChooseTotal++
+            statistic.letterColorChooseSuccess += result.toInt()
+            return statistic
+        }
+    }
+
+    inner class DrawingLetterGameCallback : GameCallback() {
+        override fun nextGame(): Game? = null
+
+        override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
+            statistic.contouringTotal++
+            statistic.contouringSuccess += result.toInt()
             return statistic
         }
     }
