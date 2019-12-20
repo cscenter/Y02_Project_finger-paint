@@ -1,6 +1,5 @@
 package ru.cscenter.fingerpaint.ui.games
 
-import android.graphics.Color
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -39,55 +38,74 @@ class GameActivity : AppCompatActivity() {
         }
     }
 
-    private fun getChooseFigureGame(): Game =
-        ChooseGame(
-            "Choose rectangle",
-            correctImageSupplier = getFigureImage(FigureType.RECTANGLE, Color.BLUE, false),
-            incorrectImageSupplier = getFigureImage(FigureType.SQUARE, Color.BLUE, false),
+    private fun getChooseFigureGame(): Game {
+        val (correctColor, incorrectColor) = figuresRandom.getRandomPair()
+        val color = colorsRandom.getRandomValue()
+        return ChooseGame(
+            getChooseFigureTask(correctColor),
+            correctImageSupplier = getFigureImage(correctColor, color, false),
+            incorrectImageSupplier = getFigureImage(incorrectColor, color, false),
             callback = ChooseFigureGameCallback()
         )
+    }
 
-    private fun getChooseFigureColorGame(): Game =
-        ChooseGame(
-            "Choose red",
-            correctImageSupplier = getFigureImage(FigureType.TRIANGLE, Color.RED, true),
-            incorrectImageSupplier = getFigureImage(FigureType.CIRCLE, Color.BLUE, true),
+    private fun getChooseFigureColorGame(): Game {
+        val (figure1, figure2) = figuresRandom.getRandomPair()
+        val (correctColor, incorrectColor) = colorsRandom.getRandomPair()
+        return ChooseGame(
+            getChooseFigureColorTask(correctColor),
+            correctImageSupplier = getFigureImage(figure1, correctColor, true),
+            incorrectImageSupplier = getFigureImage(figure2, incorrectColor, true),
             callback = ChooseFigureColorGameCallback()
         )
+    }
 
-    private fun getDrawingFigureGame(): Game =
-        DrawingGame(
-            "Replace Black to Yellow by your finger",
-            getFigureImageCompressed(FigureType.RECTANGLE),
-            getFigureImageCompressed(FigureType.RECTANGLE, Color.MAGENTA, false),
+    private fun getDrawingFigureGame(): Game {
+        val figure = figuresRandom.getRandomValue()
+        val color = colorsRandom.getRandomValue()
+        return DrawingGame(
+            getDrawFigureTask(figure),
+            getFigureImageCompressed(figure),
+            getFigureImageCompressed(figure, color, false),
+            color,
             figureThresholds,
             DrawingFigureGameCallback()
         )
+    }
 
-    private fun getChooseLetterGame(): Game =
-        ChooseGame(
-            "Choose Ы",
-            correctImageSupplier = getLetterImage("Ы"),
-            incorrectImageSupplier = getLetterImage("И"),
+    private fun getChooseLetterGame(): Game {
+        val (correctLetter, incorrectLetter) = lettersRandom.getRandomPair()
+        return ChooseGame(
+            getChooseLetterTask(correctLetter),
+            correctImageSupplier = getLetterImage(correctLetter),
+            incorrectImageSupplier = getLetterImage(incorrectLetter),
             callback = ChooseLetterGameCallback()
         )
+    }
 
-    private fun getChooseLetterColorGame(): Game =
-        ChooseGame(
-            "Choose red",
-            correctImageSupplier = getLetterImage("Ы", color = Color.RED),
-            incorrectImageSupplier = getLetterImage("Ы", color = Color.GREEN),
+    private fun getChooseLetterColorGame(): Game {
+        val (letter1, letter2) = lettersRandom.getRandomPair()
+        val (correctColor, incorrectColor) = colorsRandom.getRandomPair()
+        return ChooseGame(
+            getChooseLetterColorTask(correctColor),
+            correctImageSupplier = getLetterImage(letter1, correctColor),
+            incorrectImageSupplier = getLetterImage(letter2, incorrectColor),
             callback = ChooseLetterColorGameCallback()
         )
+    }
 
-    private fun getDrawingLetterGame(): Game =
-        DrawingGame(
-            "Replace Black to Yellow by your finger",
-            getLetterImageCompressed("Ы"),
-            getLetterImageCompressed("Ы"),
+    private fun getDrawingLetterGame(): Game {
+        val letter = lettersRandom.getRandomValue()
+        val color = colorsRandom.getRandomValue()
+        return DrawingGame(
+            getDrawLetterTask(),
+            getLetterImageCompressed(letter),
+            getLetterImageCompressed(letter),
+            color,
             letterThresholds,
             DrawingLetterGameCallback()
         )
+    }
 
     abstract inner class GameCallback {
         private val db = MainApplication.dbController

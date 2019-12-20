@@ -14,6 +14,7 @@ class DrawingGame(
     private val question: String,
     private val imageSupplier: (width: Int, height: Int) -> Bitmap,
     private val backgroundImageSupplier: (width: Int, height: Int) -> Bitmap,
+    private val paintColor: Int,
     private val thresholds: Pair<Float, Float>,
     private val callback: GameActivity.GameCallback
 ) : Game() {
@@ -39,6 +40,7 @@ class DrawingGame(
             imageSupplier,
             backgroundImageSupplier,
             thresholds,
+            paintColor,
             Pair(goodProgress, badProgress),
             callback
         )
