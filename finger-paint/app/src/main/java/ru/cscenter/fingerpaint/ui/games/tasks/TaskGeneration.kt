@@ -18,6 +18,7 @@ private fun colorToString(color: Int) = when (color) {
     Colors.purple -> "фиолетовую"
     Colors.red -> "красную"
     Colors.yellow -> "желтую"
+    Colors.orange -> "оранжевую"
     else -> ""
 }
 
