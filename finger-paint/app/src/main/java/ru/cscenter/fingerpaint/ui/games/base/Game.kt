@@ -1,4 +1,4 @@
-package ru.cscenter.fingerpaint.ui.games
+package ru.cscenter.fingerpaint.ui.games.base
 
 import androidx.fragment.app.Fragment
 

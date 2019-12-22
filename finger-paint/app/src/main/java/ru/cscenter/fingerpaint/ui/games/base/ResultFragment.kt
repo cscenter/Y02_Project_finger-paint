@@ -1,4 +1,4 @@
-package ru.cscenter.fingerpaint.ui.games
+package ru.cscenter.fingerpaint.ui.games.base
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -23,7 +23,8 @@ class ResultFragment(private val message: String) : Fragment() {
 
         val restartButton: Button = root.findViewById(R.id.repeat_button)
         restartButton.setOnClickListener {
-            (activity as GameActivity).startGame()
+            fragmentManager!!.popBackStack()
+            (activity as BaseGameActivity).startGame()
         }
 
         val exitButton: Button = root.findViewById(R.id.exit_button)

@@ -1,4 +1,4 @@
-package ru.cscenter.fingerpaint.ui.games
+package ru.cscenter.fingerpaint.ui.games.tasks
 
 import ru.cscenter.fingerpaint.ui.Colors
 import ru.cscenter.fingerpaint.ui.games.images.FigureType
