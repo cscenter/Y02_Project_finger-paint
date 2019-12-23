@@ -1,5 +1,7 @@
 package ru.cscenter.fingerpaint.ui.games.base
 
+import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -10,7 +12,17 @@ abstract class BaseGameActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
+        lockOrientation()
         startGame()
+    }
+
+    private fun lockOrientation() {
+        val currentOrientation = resources.configuration.orientation
+        requestedOrientation = if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT
+        }
     }
 
     fun startGame() = runGame(firstGame().getGame())
