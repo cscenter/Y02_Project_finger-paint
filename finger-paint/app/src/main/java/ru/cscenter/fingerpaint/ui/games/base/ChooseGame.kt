@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
+import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
+import ru.cscenter.fingerpaint.service.MyVibrator
 import ru.cscenter.fingerpaint.ui.games.images.setImageAsSoonAsPossible
 import kotlin.random.Random
 
@@ -48,11 +50,13 @@ class ChooseGame(
         }
 
         incorrectChooseView.setOnClickListener {
+            if (MainApplication.settings.getVibrate()) {
+                MyVibrator.vibrate(context!!, MyVibrator.LENGTH_LONG)
+            }
             if (attempts >= MAX_ATTEMPTS) {
                 callback.onResult(GameResult.FAIL)
             } else {
                 attempts++
-                // TODO vibrate here
                 Snackbar.make(root, getString(R.string.fail_message), Snackbar.LENGTH_SHORT).show()
             }
         }

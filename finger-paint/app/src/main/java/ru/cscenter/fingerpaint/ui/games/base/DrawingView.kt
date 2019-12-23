@@ -8,6 +8,8 @@ import android.util.TypedValue
 import android.view.MotionEvent
 import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatImageView
+import ru.cscenter.fingerpaint.MainApplication
+import ru.cscenter.fingerpaint.service.MyVibrator
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.min
@@ -108,6 +110,9 @@ class DrawingView(
         val (thresholdSuccess, thresholdFail) = thresholds
 
         goodProgress.progress = countBlack
+        if (badProgress.progress < countWhite && MainApplication.settings.getVibrate()) {
+            MyVibrator.vibrate(context!!, MyVibrator.LENGTH_SHORT)
+        }
         badProgress.progress = countWhite
 
         Log.d("FingerPaint", "Black(good): $countBlack / ${blackPixels.size}")

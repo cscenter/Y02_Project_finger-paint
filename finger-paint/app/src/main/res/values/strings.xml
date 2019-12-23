@@ -26,4 +26,5 @@
     <string name="exit">Выйти</string>
     <string name="success_message">Молодец!</string>
     <string name="fail_message">Попробуй еще раз</string>
+    <string name="vibrate">Вибрация</string>
 </resources>
