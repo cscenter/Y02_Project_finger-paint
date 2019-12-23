@@ -1,16 +1,17 @@
-package ru.cscenter.fingerpaint.ui.chooseuser
+package ru.cscenter.fingerpaint.ui.chooseuser.base
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.ListView
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import ru.cscenter.fingerpaint.ActivitySetUserListenerContainer
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
@@ -18,12 +19,17 @@ import ru.cscenter.fingerpaint.db.User
 import ru.cscenter.fingerpaint.ui.setuser.SetUserFragmentArgs
 import ru.cscenter.fingerpaint.ui.setuser.SetUserListener
 import ru.cscenter.fingerpaint.ui.setuser.SetUserType
-import ru.cscenter.fingerpaint.ui.title.toMainActivity
 
-class ChooseUserFragment : Fragment(), SetUserListener {
+abstract class BaseChooseUserFragment : Fragment(), SetUserListener {
 
     private val usersList = MainApplication.dbController.getAllNames().toMutableList()
-    private lateinit var adapter: ArrayAdapter<User>
+    private lateinit var adapter: BaseChooseUserAdapter<out BaseUserViewHolder>
+
+    abstract fun getAdapter(
+        activity: Activity,
+        users: MutableList<User>,
+        navController: NavController
+    ): BaseChooseUserAdapter<out BaseUserViewHolder>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,30 +37,12 @@ class ChooseUserFragment : Fragment(), SetUserListener {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_choose_user, container, false)
-        val listView: ListView = root.findViewById(R.id.users_list)
-
-        val navController = findNavController(this)
-
-        listView.onItemClickListener = AdapterView.OnItemClickListener { _, _, index, _ ->
-            MainApplication.dbController.setCurrentUser(usersList[index].id)
-            if (MainApplication.isLoading) {
-                toMainActivity(activity!!)
-            } else {
-                navController.popBackStack()
-            }
-        }
-
-        listView.onItemLongClickListener = AdapterView.OnItemLongClickListener { _, _, i: Int, _ ->
-            navController.navigate(
-                R.id.nav_set_user,
-                SetUserFragmentArgs(SetUserType.UPDATE_USER, usersList[i].id).toBundle()
-            )
-            true
-        }
-
-        adapter = ArrayAdapter(context!!, android.R.layout.simple_list_item_1, usersList)
+        adapter = getAdapter(activity!!, usersList, findNavController())
+        val listView: RecyclerView = root.findViewById(R.id.users_list)
+        listView.layoutManager = LinearLayoutManager(activity)
         listView.adapter = adapter
 
+        val navController = findNavController()
         val addUserButton: Button = root.findViewById(R.id.add_user_button)
         addUserButton.setOnClickListener {
             navController.navigate(
