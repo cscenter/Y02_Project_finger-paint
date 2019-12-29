@@ -19,7 +19,6 @@ import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.Statistic
 import ru.cscenter.fingerpaint.db.User
 import ru.cscenter.fingerpaint.db.dateToString
-import ru.cscenter.fingerpaint.ui.Colors
 
 class StatisticsFragment : Fragment() {
 
@@ -125,7 +124,7 @@ class StatisticsFragment : Fragment() {
     ) {
         val (dataPoints, labels) = getDataPointsAndLabels(allStatistics, getter)
         val barDataSet = BarDataSet(dataPoints, name).apply {
-            colors = Colors.colors
+            colors = MainApplication.gameResources.colors.map { color -> color.color }
             axisDependency = YAxis.AxisDependency.LEFT
         }
 

@@ -1,11 +1,11 @@
 package ru.cscenter.fingerpaint.ui.games.singlegames
 
+import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.Statistic
 import ru.cscenter.fingerpaint.ui.games.base.*
 import ru.cscenter.fingerpaint.ui.games.images.colorsRandom
 import ru.cscenter.fingerpaint.ui.games.images.figuresRandom
-import ru.cscenter.fingerpaint.ui.games.images.getFigureImage
-import ru.cscenter.fingerpaint.ui.games.tasks.getChooseFigureTask
+import ru.cscenter.fingerpaint.ui.games.images.getImage
 
 class ChooseFigureGame(private val gameActivity: BaseGameActivity) : SingleGame,
     BaseGameCallback(gameActivity) {
@@ -18,12 +18,21 @@ class ChooseFigureGame(private val gameActivity: BaseGameActivity) : SingleGame,
     }
 
     override fun getGame(): Game {
-        val (correctColor, incorrectColor) = figuresRandom.getRandomPair()
+        val (correctFigure, incorrectFigure) = figuresRandom.getRandomPair()
         val color = colorsRandom.getRandomValue()
+        val task = gameActivity.resources.getString(R.string.choose_figure_task, correctFigure.name)
         return ChooseGame(
-            question = getChooseFigureTask(correctColor),
-            correctImageSupplier = getFigureImage(correctColor, color, false),
-            incorrectImageSupplier = getFigureImage(incorrectColor, color, false),
+            question = task,
+            correctImageSupplier = getImage(
+                correctFigure.resourceId,
+                gameActivity.resources,
+                color.color
+            ),
+            incorrectImageSupplier = getImage(
+                incorrectFigure.resourceId,
+                gameActivity.resources,
+                color.color
+            ),
             callback = this
         )
     }

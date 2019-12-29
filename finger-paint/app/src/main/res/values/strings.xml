@@ -32,4 +32,11 @@
     <string name="choose_letter_color">Выбор цвета буквы</string>
     <string name="drawing_figure">Раскраска фигуры</string>
     <string name="contouring">Раскраска буквы</string>
+
+    <string name="choose_figure_task">"Выбери %1$s"</string>
+    <string name="choose_figure_color_task">Выбери %1$s фигуру</string>
+    <string name="draw_figure_tack">Раскрась %1$s</string>
+    <string name="choose_letter_task">Выбери букву %1$s</string>
+    <string name="choose_letter_color_task">Выбери %1$s букву</string>
+    <string name="letter_contouring_task">Закрась букву</string>
 </resources>

@@ -1,19 +1,13 @@
 package ru.cscenter.fingerpaint.ui.games.images
 
-import ru.cscenter.fingerpaint.ui.Colors
+import ru.cscenter.fingerpaint.MainApplication
 import java.util.*
 
 private val random = Random()
 
-private val letters = ('А'..'Я')
-    .plusElement('Ё')
-    .map { char -> char.toString() }
-    .toList()
-
-
-val figuresRandom = ListRandom(FigureType.values().toList())
-val lettersRandom = ListRandom(letters)
-val colorsRandom = ListRandom(Colors.colors)
+val colorsRandom = ListRandom(MainApplication.gameResources.colors)
+val figuresRandom = ListRandom(MainApplication.gameResources.figures)
+val lettersRandom = ListRandom(MainApplication.gameResources.letters)
 
 
 class ListRandom<T>(private val values: List<T>) {
