@@ -1,8 +1,8 @@
 package ru.cscenter.fingerpaint.ui.games
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.Statistic
@@ -10,25 +10,30 @@ import ru.cscenter.fingerpaint.ui.games.images.*
 
 class GameActivity : AppCompatActivity() {
 
+    private lateinit var type: GameType
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game)
 
-        @Suppress("MoveVariableDeclarationIntoWhen")
-        val type = intent.getSerializableExtra(getString(R.string.arg_game_type)) as GameType
+        type = intent.getSerializableExtra(getString(R.string.arg_game_type)) as GameType
 
-        when (type) {
-            GameType.FIGURES_GAME -> runGame(getChooseFigureGame())
-            GameType.LETTERS_1_GAME -> runGame(getChooseLetterColorGame())
-            GameType.LETTERS_2_GAME -> runGame(getChooseLetterGame())
-        }
+        startGame()
     }
 
-    private fun runGame(game: Game) = supportFragmentManager
+    fun startGame() = when (type) {
+        GameType.FIGURES_GAME -> runGame(getChooseFigureGame())
+        GameType.LETTERS_1_GAME -> runGame(getChooseLetterColorGame())
+        GameType.LETTERS_2_GAME -> runGame(getChooseLetterGame())
+    }
+
+    private fun showFragment(fragment: Fragment) = supportFragmentManager
         .beginTransaction()
-        .replace(R.id.fragment_container, game)
+        .replace(R.id.fragment_container, fragment)
         .addToBackStack(null)
         .commit()
+
+    private fun runGame(game: Game) = showFragment(game)
 
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount == 1) {
@@ -107,6 +112,11 @@ class GameActivity : AppCompatActivity() {
         )
     }
 
+    private fun getResultMessage(result: GameResult) = when (result) {
+        GameResult.SUCCESS -> getString(R.string.success_message)
+        GameResult.FAIL -> getString(R.string.fail_message)
+    }
+
     abstract inner class GameCallback {
         private val db = MainApplication.dbController
 
@@ -118,14 +128,13 @@ class GameActivity : AppCompatActivity() {
                 val statistic = updateStatistics(it, result)
                 db.setStatistics(statistic)
             }
-            Toast.makeText(
-                applicationContext,
-                if (result == GameResult.SUCCESS) "Well done!" else "Try again",
-                Toast.LENGTH_LONG
-            ).show()
-            when (result) {
-                GameResult.SUCCESS -> nextGame()?.let { runGame(it) } ?: finish()
-                GameResult.FAIL -> finish()
+
+            val nextGame = nextGame()
+            if (result == GameResult.SUCCESS && nextGame != null) {
+                runGame(nextGame)
+            } else {
+                val message = getResultMessage(result)
+                showFragment(ResultFragment(message))
             }
         }
     }

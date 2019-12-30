@@ -53,7 +53,7 @@ class ChooseGame(
             } else {
                 attempts++
                 // TODO vibrate here
-                Snackbar.make(root, "Wrong. Try again.", Snackbar.LENGTH_LONG).show()
+                Snackbar.make(root, getString(R.string.fail_message), Snackbar.LENGTH_SHORT).show()
             }
         }
         return root

@@ -23,4 +23,8 @@
     <string name="second_choose">Second Choose</string>
     <string name="empty_name_warning">Name should not be empty.</string>
     <string name="user_exists_warning">Such user already exists.</string>
+    <string name="repeat">Повторить</string>
+    <string name="exit">Выйти</string>
+    <string name="success_message">Молодец!</string>
+    <string name="fail_message">Попробуй еще раз</string>
 </resources>
