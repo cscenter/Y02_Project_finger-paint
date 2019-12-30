@@ -4,6 +4,7 @@ import ru.cscenter.fingerpaint.db.Statistic
 import ru.cscenter.fingerpaint.ui.games.base.*
 import ru.cscenter.fingerpaint.ui.games.images.colorsRandom
 import ru.cscenter.fingerpaint.ui.games.images.figuresRandom
+import ru.cscenter.fingerpaint.ui.games.images.getFigureImage
 import ru.cscenter.fingerpaint.ui.games.images.getFigureImageCompressed
 import ru.cscenter.fingerpaint.ui.games.tasks.getDrawFigureTask
 
@@ -25,7 +26,7 @@ class DrawingFigureGame(gameActivity: BaseGameActivity) : SingleGame,
         return DrawingGame(
             question = getDrawFigureTask(figure),
             imageSupplier = getFigureImageCompressed(figure),
-            backgroundImageSupplier = getFigureImageCompressed(figure, color, false),
+            backgroundImageSupplier = getFigureImage(figure, isFilled = false),
             paintColor = color,
             thresholds = figureThresholds,
             callback = this

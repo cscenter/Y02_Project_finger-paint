@@ -223,7 +223,7 @@ class DrawingView(
     companion object {
         // !!! should be converted to px in constructor
         private const val TOUCH_TOLERANCE_DP = 4f // in dp
-        private const val PAINT_STROKE_WIDTH_DP = 20f // in dp
+        private const val PAINT_STROKE_WIDTH_DP = 25f // in dp
         private const val CIRCLE_PAINT_STROKE_WIDTH_DP = 5f // in dp
         private const val CIRCLE_PAINT_RADIUS_DP = 30f // in dp
         private const val RANDOM_BLACK_PIXELS_COUNT = 3000 // should be depended on cpu speed

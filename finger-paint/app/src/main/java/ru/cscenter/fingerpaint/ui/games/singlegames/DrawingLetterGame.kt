@@ -3,11 +3,12 @@ package ru.cscenter.fingerpaint.ui.games.singlegames
 import ru.cscenter.fingerpaint.db.Statistic
 import ru.cscenter.fingerpaint.ui.games.base.*
 import ru.cscenter.fingerpaint.ui.games.images.colorsRandom
+import ru.cscenter.fingerpaint.ui.games.images.getLetterImage
 import ru.cscenter.fingerpaint.ui.games.images.getLetterImageCompressed
 import ru.cscenter.fingerpaint.ui.games.images.lettersRandom
 import ru.cscenter.fingerpaint.ui.games.tasks.getDrawLetterTask
 
-private val letterThresholds = Pair(0.75f, 0.1f)
+private val letterThresholds = Pair(0.7f, 0.1f)
 
 class DrawingLetterGame(gameActivity: BaseGameActivity) : SingleGame,
     BaseGameCallback(gameActivity) {
@@ -25,7 +26,7 @@ class DrawingLetterGame(gameActivity: BaseGameActivity) : SingleGame,
         return DrawingGame(
             question = getDrawLetterTask(),
             imageSupplier = getLetterImageCompressed(letter),
-            backgroundImageSupplier = getLetterImageCompressed(letter),
+            backgroundImageSupplier = getLetterImage(letter),
             paintColor = color,
             thresholds = letterThresholds,
             callback = this
