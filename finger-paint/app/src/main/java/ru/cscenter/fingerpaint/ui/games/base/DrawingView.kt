@@ -1,4 +1,4 @@
-package ru.cscenter.fingerpaint.ui.games
+package ru.cscenter.fingerpaint.ui.games.base
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -22,7 +22,7 @@ class DrawingView(
     private val thresholds: Pair<Float, Float>,
     private val paintColor: Int,
     private val progressBars: Pair<ProgressBar, ProgressBar>,
-    private val callback: GameActivity.GameCallback
+    private val callback: BaseGameCallback
 ) : AppCompatImageView(c) {
     private lateinit var mBitmap: Bitmap // TRANSPARENT, user draw on it
     private var mCanvas: Canvas? = null
@@ -80,8 +80,10 @@ class DrawingView(
         Log.d("FingerPaint", "Found ${blackPixels.size} black pixels and ${whitePixels.size} other")
 
         val randomGenerator = Random(42)
-        blackPixels = blackPixels.shuffled(randomGenerator).take(RANDOM_BLACK_PIXELS_COUNT).toMutableList()
-        whitePixels = whitePixels.shuffled(randomGenerator).take(RANDOM_WHITE_PIXELS_COUNT).toMutableList()
+        blackPixels =
+            blackPixels.shuffled(randomGenerator).take(RANDOM_BLACK_PIXELS_COUNT).toMutableList()
+        whitePixels =
+            whitePixels.shuffled(randomGenerator).take(RANDOM_WHITE_PIXELS_COUNT).toMutableList()
 
         progressBars.first.max = (blackPixels.size * thresholds.first + 1).toInt()
         progressBars.second.max = (whitePixels.size * thresholds.second + 1).toInt()

@@ -11,8 +11,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import ru.cscenter.fingerpaint.R
-import ru.cscenter.fingerpaint.ui.games.GameActivity
-import ru.cscenter.fingerpaint.ui.games.GameType
+import ru.cscenter.fingerpaint.ui.games.FiguresGameActivity
+import ru.cscenter.fingerpaint.ui.games.Letters1GameActivity
+import ru.cscenter.fingerpaint.ui.games.Letters2GameActivity
+import ru.cscenter.fingerpaint.ui.games.base.BaseGameActivity
 import ru.cscenter.fingerpaint.ui.statistics.StatisticsFragmentArgs
 
 class HomeFragment : Fragment() {
@@ -43,25 +45,24 @@ class HomeFragment : Fragment() {
 
         val figureButton: Button = root.findViewById(R.id.figure_game_button)
         figureButton.setOnClickListener {
-            runGame(GameType.FIGURES_GAME)
+            runGame(FiguresGameActivity::class.java)
         }
 
         val letter1Button: Button = root.findViewById(R.id.letter1_game_button)
         letter1Button.setOnClickListener {
-            runGame(GameType.LETTERS_1_GAME)
+            runGame(Letters1GameActivity::class.java)
         }
 
         val letter2Button: Button = root.findViewById(R.id.letter2_game_button)
         letter2Button.setOnClickListener {
-            runGame(GameType.LETTERS_2_GAME)
+            runGame(Letters2GameActivity::class.java)
         }
 
         return root
     }
 
-    private fun runGame(type: GameType) {
-        val intent = Intent(activity, GameActivity::class.java)
-        intent.putExtra(getString(R.string.arg_game_type), type)
+    private fun runGame(gameType: Class<out BaseGameActivity>) {
+        val intent = Intent(activity, gameType)
         startActivity(intent)
     }
 

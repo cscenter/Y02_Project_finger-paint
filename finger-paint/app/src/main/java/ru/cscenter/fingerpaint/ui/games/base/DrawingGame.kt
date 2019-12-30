@@ -1,4 +1,4 @@
-package ru.cscenter.fingerpaint.ui.games
+package ru.cscenter.fingerpaint.ui.games.base
 
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -16,7 +16,7 @@ class DrawingGame(
     private val backgroundImageSupplier: (width: Int, height: Int) -> Bitmap,
     private val paintColor: Int,
     private val thresholds: Pair<Float, Float>,
-    private val callback: GameActivity.GameCallback
+    private val callback: BaseGameCallback
 ) : Game() {
 
     override fun onCreateView(

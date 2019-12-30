@@ -5,7 +5,7 @@ import java.util.*
 
 private val random = Random()
 
-private val letters = ('А' .. 'Я')
+private val letters = ('А'..'Я')
     .plusElement('Ё')
     .map { char -> char.toString() }
     .toList()

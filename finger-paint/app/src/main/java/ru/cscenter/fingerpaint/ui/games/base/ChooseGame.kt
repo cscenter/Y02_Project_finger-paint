@@ -1,4 +1,4 @@
-package ru.cscenter.fingerpaint.ui.games
+package ru.cscenter.fingerpaint.ui.games.base
 
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -19,7 +19,7 @@ class ChooseGame(
     private val question: String,
     private val correctImageSupplier: (width: Int, height: Int) -> Bitmap,
     private val incorrectImageSupplier: (width: Int, height: Int) -> Bitmap,
-    private val callback: GameActivity.GameCallback
+    private val callback: BaseGameCallback
 ) : Game() {
 
     private var attempts = 1

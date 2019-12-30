@@ -29,7 +29,13 @@
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".ui.games.GameActivity"
+            android:name=".ui.games.FiguresGameActivity"
+            android:theme="@style/AppBaseTheme" />
+        <activity
+            android:name=".ui.games.Letters1GameActivity"
+            android:theme="@style/AppBaseTheme" />
+        <activity
+            android:name=".ui.games.Letters2GameActivity"
             android:theme="@style/AppBaseTheme" />
 
     </application>
