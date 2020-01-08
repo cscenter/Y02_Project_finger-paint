@@ -9,6 +9,7 @@ import android.view.ViewTreeObserver
 import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.core.content.res.ResourcesCompat
+import kotlin.math.min
 
 fun setImageAsSoonAsPossible(view: ImageView, imageSupplier: (width: Int, height: Int) -> Bitmap) {
     val viewTreeObserver = view.viewTreeObserver
@@ -36,14 +37,16 @@ fun getBitmapFromResource(
     resourceId: Int
 ): Bitmap {
     val drawable: Drawable = ResourcesCompat.getDrawable(resources, resourceId, null)!!
-    val canvas = Canvas()
     val bitmap = Bitmap.createBitmap(
         width,
         height,
         Bitmap.Config.ARGB_8888
     )
-    canvas.setBitmap(bitmap)
-    drawable.setBounds(0, 0, width, height)
+    val canvas = Canvas(bitmap)
+    val side = min(width, height)
+    val startX = (width - side) / 2
+    val startY = (height - side) / 2
+    drawable.setBounds(startX, startY, startX + side, startY + side)
     drawable.draw(canvas)
     return bitmap
 }
