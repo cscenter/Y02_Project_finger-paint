@@ -59,42 +59,42 @@ class StatisticsFragment : Fragment() {
         initChart(
             allStatistics,
             { st -> Pair(st.figureChooseSuccess, st.figureChooseTotal) },
-            "Choose figure",
+            getString(R.string.choose_figure),
             figureChooseChart
         )
 
         initChart(
             allStatistics,
             { st -> Pair(st.letterChooseSuccess, st.letterChooseTotal) },
-            "Choose letter",
+            getString(R.string.choose_letter),
             letterChooseChart
         )
 
         initChart(
             allStatistics,
             { st -> Pair(st.figureColorChooseSuccess, st.figureColorChooseTotal) },
-            "Choose figure color",
+            getString(R.string.choose_figure_color),
             figureColorChooseChart
         )
 
         initChart(
             allStatistics,
             { st -> Pair(st.letterColorChooseSuccess, st.letterColorChooseTotal) },
-            "Choose letter color",
+            getString(R.string.choose_letter_color),
             letterColorChooseChart
         )
 
         initChart(
             allStatistics,
             { st -> Pair(st.drawingSuccess, st.drawingTotal) },
-            "Drawing figure",
+            getString(R.string.drawing_figure),
             drawingChart
         )
 
         initChart(
             allStatistics,
             { st -> Pair(st.contouringSuccess, st.contouringTotal) },
-            "Contouring",
+            getString(R.string.contouring),
             contouringChart
         )
 
