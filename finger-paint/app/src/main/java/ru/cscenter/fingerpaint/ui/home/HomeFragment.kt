@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -34,7 +35,7 @@ class HomeFragment : Fragment() {
         currentNameTextView = root.findViewById(R.id.current_name_text_view)
         currentNameTextView!!.text = homeViewModel.currentName()
 
-        val statisticsButton: Button = root.findViewById(R.id.statistics_button)
+        val statisticsButton: ImageView = root.findViewById(R.id.statistics_button)
         statisticsButton.setOnClickListener {
             val navController = findNavController()
             navController.navigate(
