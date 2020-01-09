@@ -4,6 +4,7 @@
     <dimen name="fab_margin" tools:keep="@dimen/fab_margin">16dp</dimen>
     <dimen name="horizontal_margin">12dp</dimen>
     <dimen name="vertical_margin">12dp</dimen>
+    <dimen name="padding">8dp</dimen>
     <dimen name="plot_height">200dp</dimen>
     <dimen name="min_list_item_height">60dp</dimen>
 </resources>
