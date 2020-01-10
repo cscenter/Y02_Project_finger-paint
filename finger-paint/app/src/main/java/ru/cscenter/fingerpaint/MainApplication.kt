@@ -18,7 +18,7 @@ class MainApplication : Application() {
         super.onCreate()
         dbController = DbController(applicationContext)
         settings = Settings(applicationContext)
-        gameResources = GameResourceParser(applicationContext).parseXML()
+        gameResources = GameResourceParser(applicationContext, R.xml.game_config).parseXML()
     }
 
 }

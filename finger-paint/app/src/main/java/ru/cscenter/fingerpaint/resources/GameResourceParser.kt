@@ -4,11 +4,10 @@ import android.content.Context
 import android.content.res.XmlResourceParser
 import android.graphics.Color
 import org.xmlpull.v1.XmlPullParser
-import ru.cscenter.fingerpaint.R
 
-class GameResourceParser(private val context: Context) {
+class GameResourceParser(private val context: Context, xmlResourceId: Int) {
 
-    private val parser: XmlResourceParser = context.resources.getXml(R.xml.game_config)
+    private val parser: XmlResourceParser = context.resources.getXml(xmlResourceId)
 
     companion object {
         private const val COLORS_TAG = "colors"
@@ -63,15 +62,25 @@ class GameResourceParser(private val context: Context) {
         return Letter(resourceId, name)
     }
 
-    private fun getColorId() = getTagData(ID_TAG) { x -> Color.parseColor(x) }
+    private fun getColorId() = getTagData(ID_TAG) { x ->
+        try {
+            return@getTagData Color.parseColor(x)
+        } catch (e: Throwable) {
+            throw IllegalStateException("Illegal color format.", e)
+        }
+    }
 
     private fun getDrawableId(): Int = getTagData(ID_TAG) { name -> getDrawableResourceId(name) }
 
-    private fun getDrawableResourceId(resourceName: String) = context.resources.getIdentifier(
-        resourceName,
-        DRAWABLE_RESOURCE,
-        context.packageName
-    )
+    private fun getDrawableResourceId(resourceName: String): Int {
+        val id = context.resources.getIdentifier(
+            resourceName,
+            DRAWABLE_RESOURCE,
+            context.packageName
+        )
+        check(id != 0)
+        return id
+    }
 
     private fun getName() = getTagData(NAME_TAG) { x -> x }
 
@@ -79,7 +88,7 @@ class GameResourceParser(private val context: Context) {
         tagName: String,
         itemParser: () -> T
     ): List<T> {
-        require(parser.isStart() && parser.name == tagName)
+        check(parser.isStart() && parser.name == tagName)
         parser.next()
 
         val result = mutableListOf<T>()
@@ -96,13 +105,13 @@ class GameResourceParser(private val context: Context) {
         idParser: () -> Int,
         nameParser: () -> String = { getName() }
     ): Pair<Int, String> {
-        require(parser.isStart() && parser.name == tagName)
+        check(parser.isStart() && parser.name == tagName)
         parser.next()
         var id: Int? = null
         var name: String? = null
 
         while (!(parser.isEnd() && parser.name == tagName)) {
-            require(parser.isStart())
+            check(parser.isStart())
             when (parser.name) {
                 ID_TAG -> {
                     check(id == null) { "$ID_TAG tag specified twice for $tagName." }
@@ -125,12 +134,12 @@ class GameResourceParser(private val context: Context) {
         tagName: String,
         mapper: (String) -> T
     ): T {
-        require(parser.isStart() && parser.name == tagName)
+        check(parser.isStart() && parser.name == tagName)
         parser.next()
-        require(parser.eventType == XmlPullParser.TEXT)
+        check(parser.eventType == XmlPullParser.TEXT)
         val result = mapper(parser.text)
         parser.next()
-        require(parser.isEnd() && parser.name == tagName)
+        check(parser.isEnd() && parser.name == tagName)
         parser.next()
         return result
     }

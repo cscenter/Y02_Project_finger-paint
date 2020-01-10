@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <letters>
+        <letter>
+            <id>test_a</id>
+            <name>А</name>
+        </letter>
+        <letter>
+            <name>Б</name>
+            <id>test_b</id>
+        </letter>
+    </letters>
+
+    <figures>
+        <figure>
+            <id>test_oval</id>
+            <name>овал</name>
+        </figure>
+        <figure>
+            <name>квадрат</name>
+            <id>test_square</id>
+        </figure>
+    </figures>
+
+    <colors>
+        <color>
+            <id>#1565C0</id>
+            <name>синюю</name>
+        </color>
+        <color>
+            <name>жёлтую</name>
+            <id>#FFEA00</id>
+        </color>
+        <color>
+            <name>красную</name>
+            <id>#F44336</id>
+        </color>
+        <color>
+            <id>#43A047</id>
+            <name>зеленую</name>
+        </color>
+        <color>
+            <id>#FF6D00</id>
+            <name>оранжевую</name>
+        </color>
+    </colors>
+
+</resources>
