@@ -1,7 +1,7 @@
 package ru.cscenter.fingerpaint.ui.chooseuser.main
 
 import android.view.View
-import android.widget.Button
+import android.widget.ImageView
 import androidx.navigation.NavController
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.User
@@ -12,7 +12,7 @@ class UserViewHolder(
     private val view: View,
     private val navController: NavController
 ) : BaseUserViewHolder(view, navController) {
-    private val statisticButton: Button = view.findViewById(R.id.choose_user_statistics_button)
+    private val statisticButton: ImageView = view.findViewById(R.id.choose_user_statistics_button)
 
     override fun bindUser(user: User) {
         super.bindUser(user)

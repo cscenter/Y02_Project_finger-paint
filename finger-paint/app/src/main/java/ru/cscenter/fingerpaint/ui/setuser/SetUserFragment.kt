@@ -89,6 +89,11 @@ class SetUserFragment : Fragment() {
         return root
     }
 
+    override fun onStop() {
+        super.onStop()
+        hideKeyboard(activity!!.window.decorView.rootView)
+    }
+
     private fun hideKeyboard(view: View) =
         getInputMethodManager().hideSoftInputFromWindow(view.windowToken, 0)
 

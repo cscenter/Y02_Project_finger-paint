@@ -11,40 +11,46 @@
 
         <TextView
             android:id="@+id/user_name"
+            style="@style/HugeTextStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/HugeTextStyle"
-            android:gravity="center"/>
+            android:gravity="center" />
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/chart1"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/plot_height" />
+            android:layout_height="@dimen/plot_height"
+            android:layout_marginBottom="@dimen/vertical_margin" />
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/chart2"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/plot_height" />
+            android:layout_height="@dimen/plot_height"
+            android:layout_marginBottom="@dimen/vertical_margin" />
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/chart3"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/plot_height" />
+            android:layout_height="@dimen/plot_height"
+            android:layout_marginBottom="@dimen/vertical_margin" />
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/chart4"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/plot_height" />
+            android:layout_height="@dimen/plot_height"
+            android:layout_marginBottom="@dimen/vertical_margin" />
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/chart5"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/plot_height" />
+            android:layout_height="@dimen/plot_height"
+            android:layout_marginBottom="@dimen/vertical_margin" />
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/chart6"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/plot_height" />
+            android:layout_height="@dimen/plot_height"
+            android:layout_marginBottom="@dimen/vertical_margin" />
 
     </LinearLayout>
 
