@@ -1,12 +1,8 @@
 package ru.cscenter.fingerpaint.ui.games.images
 
 import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.Color
-import android.util.Log
-import androidx.core.graphics.get
-import ru.cscenter.fingerpaint.ui.games.base.DrawingView
-import java.util.*
+import android.graphics.*
+
 
 private const val GET_IMAGE_DEFAULT_COMPRESSION_RATE = 1
 private const val GET_IMAGE_COMPRESSED_DEFAULT_COMPRESSION_RATE = 8
@@ -24,20 +20,30 @@ fun getImageCompressed(
     color: Int = Color.BLACK, // important for black/white(good/bad) pixels
     compressionRate: Int = GET_IMAGE_COMPRESSED_DEFAULT_COMPRESSION_RATE
 ): (Int, Int) -> Bitmap = { width, height ->
-    val bitmap = getBitmapFromResource(
+    val sourceImage = getBitmapFromResource(
         width / compressionRate,
         height / compressionRate,
         resources,
         resourceId
     )
+    val destinationImage =
+        Bitmap.createBitmap(sourceImage.width, sourceImage.height, Bitmap.Config.ARGB_8888)
+    destinationImage.eraseColor(color)
 
-    for (y in 0 until bitmap.height) {
-        for (x in 0 until bitmap.width) {
-            if (Color.alpha(bitmap.getPixel(x, y)) != 0) {
-                bitmap.setPixel(x, y, color)
-            }
-        }
-    }
+    val bitmap = Bitmap.createBitmap(
+        sourceImage.width,
+        sourceImage.height,
+        Bitmap.Config.ARGB_8888
+    )
+    val canvas = Canvas(bitmap)
+
+    val paint = Paint()
+    canvas.drawBitmap(destinationImage, 0f, 0f, paint)
+
+    val mode: PorterDuff.Mode = PorterDuff.Mode.DST_IN
+    paint.xfermode = PorterDuffXfermode(mode)
+
+    canvas.drawBitmap(sourceImage, 0f, 0f, paint)
 
     bitmap
 }
