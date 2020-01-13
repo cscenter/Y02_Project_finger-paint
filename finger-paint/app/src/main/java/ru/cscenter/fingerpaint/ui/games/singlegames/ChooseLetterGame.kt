@@ -1,39 +1,41 @@
 package ru.cscenter.fingerpaint.ui.games.singlegames
 
+import android.content.res.Resources
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.Statistic
+import ru.cscenter.fingerpaint.service.colorsRandom
+import ru.cscenter.fingerpaint.service.images.getImage
+import ru.cscenter.fingerpaint.service.lettersRandom
 import ru.cscenter.fingerpaint.ui.games.base.*
-import ru.cscenter.fingerpaint.ui.games.images.colorsRandom
-import ru.cscenter.fingerpaint.ui.games.images.getImage
-import ru.cscenter.fingerpaint.ui.games.images.lettersRandom
 
-class ChooseLetterGame(private val gameActivity: BaseGameActivity) : SingleGame,
-    BaseGameCallback(gameActivity) {
-    override fun nextGame(): Game? = ChooseLetterColorGame(gameActivity).getGame()
+class ChooseLetterGame(private val gameActivity: BaseGameActivity) :
+    ChooseGame(createConfig(gameActivity.resources), gameActivity) {
 
+    override fun nextGame(): Game? = ChooseLetterColorGame(gameActivity)
     override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
         statistic.letterChooseTotal++
         statistic.letterChooseSuccess += result.toInt()
         return statistic
     }
 
-    override fun getGame(): Game {
-        val (correctLetter, incorrectLetter) = lettersRandom.getRandomPair()
-        val color = colorsRandom.getRandomValue()
-        val task = gameActivity.resources.getString(R.string.choose_letter_task, correctLetter.name)
-        return ChooseGame(
-            question = task,
-            correctImageSupplier = getImage(
-                correctLetter.resourceId,
-                gameActivity.resources,
-                color.color
-            ),
-            incorrectImageSupplier = getImage(
-                incorrectLetter.resourceId,
-                gameActivity.resources,
-                color.color
-            ),
-            callback = this
-        )
+    companion object {
+        private fun createConfig(resources: Resources): Config {
+            val (correctLetter, incorrectLetter) = lettersRandom.getRandomPair()
+            val color = colorsRandom.getRandomValue()
+            val task = resources.getString(R.string.choose_letter_task, correctLetter.name)
+            return Config(
+                question = task,
+                correctImageSupplier = getImage(
+                    correctLetter.resourceId,
+                    resources,
+                    color.color
+                ),
+                incorrectImageSupplier = getImage(
+                    incorrectLetter.resourceId,
+                    resources,
+                    color.color
+                )
+            )
+        }
     }
 }

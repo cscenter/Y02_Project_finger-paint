@@ -24,7 +24,7 @@ class DrawingView(
     private val thresholds: Pair<Float, Float>,
     private val paintColor: Int,
     private val progressBars: Pair<ProgressBar, ProgressBar>,
-    private val callback: BaseGameCallback
+    private val callback: (GameResult) -> Unit
 ) : AppCompatImageView(c) {
     private lateinit var mBitmap: Bitmap // TRANSPARENT, user draw on it
     private var mCanvas: Canvas? = null
@@ -119,9 +119,9 @@ class DrawingView(
         Log.d("FingerPaint", "White(bad): $countWhite / ${whitePixels.size}")
 
         if (countWhite.toFloat() / whitePixels.size >= thresholdFail) {
-            callback.onResult(GameResult.FAIL)
+            callback(GameResult.FAIL)
         } else if (countBlack.toFloat() / blackPixels.size >= thresholdSuccess) {
-            callback.onResult(GameResult.SUCCESS)
+            callback(GameResult.SUCCESS)
         }
     }
 

@@ -10,14 +10,16 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import ru.cscenter.fingerpaint.R
 
-class DrawingGame(
-    private val question: String,
-    private val imageSupplier: (width: Int, height: Int) -> Bitmap,
-    private val backgroundImageSupplier: (width: Int, height: Int) -> Bitmap,
-    private val paintColor: Int,
-    private val thresholds: Pair<Float, Float>,
-    private val callback: BaseGameCallback
-) : Game() {
+abstract class DrawingGame(private val config: Config, gameActivity: BaseGameActivity) :
+    Game(gameActivity) {
+
+    data class Config(
+        val question: String,
+        val imageSupplier: (width: Int, height: Int) -> Bitmap,
+        val backgroundImageSupplier: (width: Int, height: Int) -> Bitmap,
+        val paintColor: Int,
+        val thresholds: Pair<Float, Float>
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,7 +30,7 @@ class DrawingGame(
 
         val questionView: TextView = root.findViewById(R.id.question)
 
-        questionView.text = question
+        questionView.text = config.question
 
         val goodProgress: ProgressBar = root.findViewById(R.id.good_progress)
         val badProgress: ProgressBar = root.findViewById(R.id.bad_progress)
@@ -37,13 +39,12 @@ class DrawingGame(
 
         val drawingView = DrawingView(
             context,
-            imageSupplier,
-            backgroundImageSupplier,
-            thresholds,
-            paintColor,
-            Pair(goodProgress, badProgress),
-            callback
-        )
+            config.imageSupplier,
+            config.backgroundImageSupplier,
+            config.thresholds,
+            config.paintColor,
+            Pair(goodProgress, badProgress)
+        ) { result -> onResult(result) }
         currentLayout.addView(drawingView)
 
         return root

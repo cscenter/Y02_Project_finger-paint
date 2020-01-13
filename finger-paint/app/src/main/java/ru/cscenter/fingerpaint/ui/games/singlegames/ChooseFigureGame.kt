@@ -1,39 +1,38 @@
 package ru.cscenter.fingerpaint.ui.games.singlegames
 
+import android.content.res.Resources
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.Statistic
+import ru.cscenter.fingerpaint.service.colorsRandom
+import ru.cscenter.fingerpaint.service.figuresRandom
+import ru.cscenter.fingerpaint.service.images.getImage
 import ru.cscenter.fingerpaint.ui.games.base.*
-import ru.cscenter.fingerpaint.ui.games.images.colorsRandom
-import ru.cscenter.fingerpaint.ui.games.images.figuresRandom
-import ru.cscenter.fingerpaint.ui.games.images.getImage
 
-class ChooseFigureGame(private val gameActivity: BaseGameActivity) : SingleGame,
-    BaseGameCallback(gameActivity) {
-    override fun nextGame(): Game? = ChooseFigureColorGame(gameActivity).getGame()
+class ChooseFigureGame(private val gameActivity: BaseGameActivity) :
+    ChooseGame(createConfig(gameActivity.resources), gameActivity) {
 
+    override fun nextGame(): Game? = ChooseFigureColorGame(gameActivity)
     override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
         statistic.figureChooseTotal++
         statistic.figureChooseSuccess += result.toInt()
         return statistic
     }
 
-    override fun getGame(): Game {
-        val (correctFigure, incorrectFigure) = figuresRandom.getRandomPair()
-        val color = colorsRandom.getRandomValue()
-        val task = gameActivity.resources.getString(R.string.choose_figure_task, correctFigure.name)
-        return ChooseGame(
-            question = task,
-            correctImageSupplier = getImage(
-                correctFigure.resourceId,
-                gameActivity.resources,
-                color.color
-            ),
-            incorrectImageSupplier = getImage(
-                incorrectFigure.resourceId,
-                gameActivity.resources,
-                color.color
-            ),
-            callback = this
-        )
+    companion object {
+        private fun createConfig(resources: Resources): Config {
+            val (correctFigure, incorrectFigure) = figuresRandom.getRandomPair()
+            val color = colorsRandom.getRandomValue()
+            val task = resources.getString(R.string.choose_figure_task, correctFigure.name)
+            return Config(
+                question = task,
+                correctImageSupplier = getImage(correctFigure.resourceId, resources, color.color),
+                incorrectImageSupplier = getImage(
+                    incorrectFigure.resourceId,
+                    resources,
+                    color.color
+                )
+            )
+        }
     }
+
 }

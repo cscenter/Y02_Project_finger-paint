@@ -25,9 +25,9 @@ abstract class BaseGameActivity : AppCompatActivity() {
         }
     }
 
-    fun startGame() = runGame(firstGame().getGame())
+    fun startGame() = runGame(firstGame())
 
-    abstract fun firstGame(): SingleGame
+    abstract fun firstGame(): Game
 
     fun showFragment(fragment: Fragment) = supportFragmentManager
         .beginTransaction()

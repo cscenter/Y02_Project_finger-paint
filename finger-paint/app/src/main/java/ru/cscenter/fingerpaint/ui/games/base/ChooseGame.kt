@@ -11,18 +11,20 @@ import com.google.android.material.snackbar.Snackbar
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.service.MyVibrator
-import ru.cscenter.fingerpaint.ui.games.images.setImageAsSoonAsPossible
+import ru.cscenter.fingerpaint.service.images.setImageAsSoonAsPossible
 import kotlin.random.Random
 
 
 private const val MAX_ATTEMPTS = 3
 
-class ChooseGame(
-    private val question: String,
-    private val correctImageSupplier: (width: Int, height: Int) -> Bitmap,
-    private val incorrectImageSupplier: (width: Int, height: Int) -> Bitmap,
-    private val callback: BaseGameCallback
-) : Game() {
+abstract class ChooseGame(private val config: Config, gameActivity: BaseGameActivity) :
+    Game(gameActivity) {
+
+    data class Config(
+        val question: String,
+        val correctImageSupplier: (width: Int, height: Int) -> Bitmap,
+        val incorrectImageSupplier: (width: Int, height: Int) -> Bitmap
+    )
 
     private var attempts = 1
 
@@ -34,7 +36,7 @@ class ChooseGame(
         val root = inflater.inflate(R.layout.fragment_choose_game, container, false)
 
         val questionView: TextView = root.findViewById(R.id.question)
-        questionView.text = question
+        questionView.text = config.question
 
         var correctChooseView: ImageView = root.findViewById(R.id.first_choose)
         var incorrectChooseView: ImageView = root.findViewById(R.id.second_choose)
@@ -42,11 +44,11 @@ class ChooseGame(
             correctChooseView = incorrectChooseView.also { incorrectChooseView = correctChooseView }
         }
 
-        setImageAsSoonAsPossible(correctChooseView, correctImageSupplier)
-        setImageAsSoonAsPossible(incorrectChooseView, incorrectImageSupplier)
+        setImageAsSoonAsPossible(correctChooseView, config.correctImageSupplier)
+        setImageAsSoonAsPossible(incorrectChooseView, config.incorrectImageSupplier)
 
         correctChooseView.setOnClickListener {
-            callback.onResult(GameResult.SUCCESS)
+            onResult(GameResult.SUCCESS)
         }
 
         incorrectChooseView.setOnClickListener {
@@ -54,7 +56,7 @@ class ChooseGame(
                 MyVibrator.vibrate(context!!, MyVibrator.LENGTH_LONG)
             }
             if (attempts >= MAX_ATTEMPTS) {
-                callback.onResult(GameResult.FAIL)
+                onResult(GameResult.FAIL)
             } else {
                 attempts++
                 Snackbar.make(root, getString(R.string.fail_message), Snackbar.LENGTH_SHORT).show()
