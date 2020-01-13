@@ -24,7 +24,7 @@ open class BaseUserViewHolder(
         }
     }
 
-    private fun navigateToSetUser(userId: Int) = navController.navigate(
+    protected fun navigateToSetUser(userId: Int) = navController.navigate(
         R.id.nav_set_user,
         SetUserFragmentArgs(SetUserType.UPDATE_USER, userId).toBundle()
     )

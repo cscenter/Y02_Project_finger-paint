@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -19,11 +20,13 @@ import ru.cscenter.fingerpaint.db.User
 import ru.cscenter.fingerpaint.ui.setuser.SetUserFragmentArgs
 import ru.cscenter.fingerpaint.ui.setuser.SetUserListener
 import ru.cscenter.fingerpaint.ui.setuser.SetUserType
+import ru.cscenter.fingerpaint.ui.title.toTitleChooseUserActivity
 
 abstract class BaseChooseUserFragment : Fragment(), SetUserListener {
 
     private val usersList = MainApplication.dbController.getAllNames().toMutableList()
     private lateinit var adapter: BaseChooseUserAdapter<out BaseUserViewHolder>
+    private lateinit var addNewUserMessage: TextView
 
     abstract fun getAdapter(
         activity: Activity,
@@ -42,6 +45,9 @@ abstract class BaseChooseUserFragment : Fragment(), SetUserListener {
         listView.layoutManager = LinearLayoutManager(activity)
         listView.adapter = adapter
 
+        addNewUserMessage = root.findViewById(R.id.add_new_user_message)
+        setAddNewUserMessageVisibility()
+
         val navController = findNavController()
         val addUserButton: Button = root.findViewById(R.id.add_user_button)
         addUserButton.setOnClickListener {
@@ -52,6 +58,19 @@ abstract class BaseChooseUserFragment : Fragment(), SetUserListener {
         }
 
         return root
+    }
+
+    protected fun onDeleteUser(user: User) {
+        usersList.remove(user)
+        adapter.notifyDataSetChanged()
+        MainApplication.dbController.deleteUser(user)
+        if (!MainApplication.dbController.hasCurrentUser()) {
+            toTitleChooseUserActivity(activity!!)
+        }
+    }
+
+    private fun setAddNewUserMessageVisibility() {
+        addNewUserMessage.visibility = if (usersList.isEmpty()) View.VISIBLE else View.INVISIBLE
     }
 
     private fun saveFragment(listener: SetUserListener?) {
@@ -72,6 +91,7 @@ abstract class BaseChooseUserFragment : Fragment(), SetUserListener {
                 }
             }
             adapter.notifyDataSetChanged()
+            setAddNewUserMessageVisibility()
         }
     }
 

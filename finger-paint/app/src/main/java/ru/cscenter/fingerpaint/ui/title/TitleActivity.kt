@@ -49,3 +49,10 @@ fun toMainActivity(activity: Activity) {
     activity.startActivity(intent)
     activity.finish()
 }
+
+fun toTitleChooseUserActivity(activity: Activity) {
+    MainApplication.isLoading = true
+    val intent = Intent(activity, TitleChooseUserActivity::class.java)
+    activity.startActivity(intent)
+    activity.finish()
+}

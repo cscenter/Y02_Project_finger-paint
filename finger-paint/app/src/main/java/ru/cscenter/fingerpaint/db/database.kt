@@ -16,7 +16,8 @@ data class User(
     foreignKeys = [ForeignKey(
         entity = User::class,
         parentColumns = arrayOf("id"),
-        childColumns = arrayOf("user_id")
+        childColumns = arrayOf("user_id"),
+        onDelete = ForeignKey.CASCADE
     )],
     indices = [Index("user_id")],
     primaryKeys = ["user_id", "date"]
@@ -42,7 +43,8 @@ data class Statistic(
     foreignKeys = [ForeignKey(
         entity = User::class,
         parentColumns = arrayOf("id"),
-        childColumns = arrayOf("user_id")
+        childColumns = arrayOf("user_id"),
+        onDelete = ForeignKey.CASCADE
     )],
     indices = [Index("user_id")]
 )

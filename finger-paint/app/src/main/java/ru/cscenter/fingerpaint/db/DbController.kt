@@ -19,7 +19,6 @@ class DbController(context: Context) {
     fun getUser(id: Int) = db.getUser(id)
     fun getUserId(name: String) = db.getUserId(name)
     fun setUser(user: User): Boolean = db.setUser(user) > 0
-    @Suppress("unused")
     fun deleteUser(user: User) = db.deleteUser(user)
 
     private fun getUserStatistics(id: Int): Statistic {

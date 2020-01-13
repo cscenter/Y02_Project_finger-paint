@@ -32,6 +32,8 @@
     <string name="choose_letter_color">Выбор цвета буквы</string>
     <string name="drawing_figure">Раскраска фигуры</string>
     <string name="contouring">Раскраска буквы</string>
+    <string name="delete_user">Удалить</string>
+    <string name="add_new_user_message">Добавьте новых пользователей</string>
 
     <string name="choose_figure_task">"Выбери %1$s"</string>
     <string name="choose_figure_color_task">Выбери %1$s фигуру</string>

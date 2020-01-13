@@ -37,5 +37,16 @@
         android:contentDescription="@string/statistics"
         android:src="@drawable/statistics" />
 
+    <ImageView
+        android:id="@+id/menuButton"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="@dimen/vertical_margin"
+        android:layout_marginEnd="@dimen/horizontal_margin"
+        android:layout_marginRight="@dimen/horizontal_margin"
+        android:layout_marginBottom="@dimen/vertical_margin"
+        android:layout_weight="0"
+        android:contentDescription="@string/statistics"
+        android:src="@drawable/ic_settings" />
 
 </LinearLayout>

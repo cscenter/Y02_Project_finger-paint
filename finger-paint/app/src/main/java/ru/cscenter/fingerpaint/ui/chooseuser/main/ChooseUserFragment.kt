@@ -13,5 +13,5 @@ class ChooseUserFragment : BaseChooseUserFragment() {
         users: MutableList<User>,
         navController: NavController
     ) = BaseChooseUserAdapter(activity, users, R.layout.choose_user_item)
-    { view -> UserViewHolder(view, navController) }
+    { view -> UserViewHolder(view, navController) { user -> onDeleteUser(user) } }
 }
