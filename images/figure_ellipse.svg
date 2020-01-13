@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<svg xmlns="http://www.w3.org/2000/svg"
+    version="1.1"
+    height="640"
+    width="640">
+    <ellipse
+        cx="320"
+        cy="320"
+        rx="240"
+        ry="160"
+        fill="#FFFFFF" />
+</svg>
