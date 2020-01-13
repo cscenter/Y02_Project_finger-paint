@@ -26,24 +26,164 @@
 
     <figures>
         <figure>
-            <id>oval</id>
+            <id>figure_circle</id>
+            <name>круг</name>
+        </figure>
+        <figure>
+            <id>figure_ellipse</id>
             <name>овал</name>
         </figure>
         <figure>
-            <id>square</id>
+            <id>figure_rectangle</id>
+            <name>прямоугольник</name>
+        </figure>
+        <figure>
+            <id>figure_romb</id>
+            <name>ромб</name>
+        </figure>
+        <figure>
+            <id>figure_square</id>
             <name>квадрат</name>
+        </figure>
+        <figure>
+            <id>figure_triangle</id>
+            <name>треугольник</name>
         </figure>
     </figures>
 
 
     <letters>
         <letter>
-            <id>a</id>
+            <id>letter_01</id>
             <name>А</name>
         </letter>
         <letter>
-            <id>b</id>
+            <id>letter_02</id>
             <name>Б</name>
+        </letter>
+        <letter>
+            <id>letter_03</id>
+            <name>В</name>
+        </letter>
+        <letter>
+            <id>letter_04</id>
+            <name>Г</name>
+        </letter>
+        <letter>
+            <id>letter_05</id>
+            <name>Д</name>
+        </letter>
+        <letter>
+            <id>letter_06</id>
+            <name>Е</name>
+        </letter>
+        <letter>
+            <id>letter_07</id>
+            <name>Ё</name>
+        </letter>
+        <letter>
+            <id>letter_08</id>
+            <name>Ж</name>
+        </letter>
+        <letter>
+            <id>letter_09</id>
+            <name>З</name>
+        </letter>
+        <letter>
+            <id>letter_10</id>
+            <name>И</name>
+        </letter>
+        <letter>
+            <id>letter_11</id>
+            <name>Й</name>
+        </letter>
+        <letter>
+            <id>letter_12</id>
+            <name>К</name>
+        </letter>
+        <letter>
+            <id>letter_13</id>
+            <name>Л</name>
+        </letter>
+        <letter>
+            <id>letter_14</id>
+            <name>М</name>
+        </letter>
+        <letter>
+            <id>letter_15</id>
+            <name>Н</name>
+        </letter>
+        <letter>
+            <id>letter_16</id>
+            <name>О</name>
+        </letter>
+        <letter>
+            <id>letter_17</id>
+            <name>П</name>
+        </letter>
+        <letter>
+            <id>letter_18</id>
+            <name>Р</name>
+        </letter>
+        <letter>
+            <id>letter_19</id>
+            <name>С</name>
+        </letter>
+        <letter>
+            <id>letter_20</id>
+            <name>Т</name>
+        </letter>
+        <letter>
+            <id>letter_21</id>
+            <name>У</name>
+        </letter>
+        <letter>
+            <id>letter_22</id>
+            <name>Ф</name>
+        </letter>
+        <letter>
+            <id>letter_23</id>
+            <name>Х</name>
+        </letter>
+        <letter>
+            <id>letter_24</id>
+            <name>Ц</name>
+        </letter>
+        <letter>
+            <id>letter_25</id>
+            <name>Ч</name>
+        </letter>
+        <letter>
+            <id>letter_26</id>
+            <name>Ш</name>
+        </letter>
+        <letter>
+            <id>letter_27</id>
+            <name>Щ</name>
+        </letter>
+        <letter>
+            <id>letter_28</id>
+            <name>Ъ</name>
+        </letter>
+        <letter>
+            <id>letter_29</id>
+            <name>Ы</name>
+        </letter>
+        <letter>
+            <id>letter_30</id>
+            <name>Ь</name>
+        </letter>
+        <letter>
+            <id>letter_31</id>
+            <name>Э</name>
+        </letter>
+        <letter>
+            <id>letter_32</id>
+            <name>Ю</name>
+        </letter>
+        <letter>
+            <id>letter_33</id>
+            <name>Я</name>
         </letter>
     </letters>
 
