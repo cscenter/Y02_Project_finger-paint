@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
     <issue id="UnusedResources">
-        <ignore path="src/main/res/drawable/a.png" />
-        <ignore path="src/main/res/drawable/b.png" />
+        <ignore regexp="src/main/res/drawable/figure_.*\.png" />
+        <ignore regexp="src/main/res/drawable/letter_.*\.png" />
     </issue>
     <issue id="AllowBackup" severity="ignore" />
     <issue id="GoogleAppIndexingWarning" severity="ignore" />
