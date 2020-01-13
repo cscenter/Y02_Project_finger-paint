@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <figures>
+        <figure>
+            <id>test_oval</id>
+            <name>овал</name>
+        </figure>
+    </figures>
+
+
+    <letters>
+        <letter>
+            <id>test_a</id>
+            <name>А</name>
+        </letter>
+    </letters>
+
+</resources>

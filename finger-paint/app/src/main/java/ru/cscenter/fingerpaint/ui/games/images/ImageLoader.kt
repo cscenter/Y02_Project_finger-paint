@@ -1,54 +1,49 @@
 package ru.cscenter.fingerpaint.ui.games.images
 
-import android.graphics.Bitmap
-import android.graphics.Color
-import kotlin.math.min
+import android.content.res.Resources
+import android.graphics.*
 
-private const val FIGURE_COMPRESSION_RATE = 8
-private const val LETTER_COMPRESSION_RATE = 8
-private const val STROKE_WIDTH_RATE = 1 / 50f
 
-private fun getStrokeWidth(
-    imageWidth: Int,
-    imageHeight: Int, compressionRate: Int
-) = (min(imageWidth, imageHeight) / compressionRate) * STROKE_WIDTH_RATE
+private const val GET_IMAGE_DEFAULT_COMPRESSION_RATE = 1
+private const val GET_IMAGE_COMPRESSED_DEFAULT_COMPRESSION_RATE = 8
 
-fun getFigureImage(
-    type: FigureType,
-    color: Int = Color.BLACK,
-    isFilled: Boolean = true
-) = getFigureImageCompressed(type, color, isFilled, 1)
-
-fun getFigureImageCompressed(
-    type: FigureType,
-    color: Int = Color.BLACK,
-    isFilled: Boolean = true,
-    compressionRate: Int = FIGURE_COMPRESSION_RATE
-): (Int, Int) -> Bitmap = { width, height ->
-    Images.getFigureImageBitmap(
-        type,
-        width / compressionRate,
-        height / compressionRate,
-        getStrokeWidth(width, height, compressionRate),
-        isFilled,
-        color
-    )
-}
-
-fun getLetterImage(
-    text: String,
+fun getImage(
+    resourceId: Int,
+    resources: Resources,
     color: Int = Color.BLACK
-) = getLetterImageCompressed(text, color, 1)
+): (Int, Int) -> Bitmap =
+    getImageCompressed(resourceId, resources, color, GET_IMAGE_DEFAULT_COMPRESSION_RATE)
 
-fun getLetterImageCompressed(
-    text: String,
-    color: Int = Color.BLACK,
-    compressionRate: Int = LETTER_COMPRESSION_RATE
+fun getImageCompressed(
+    resourceId: Int,
+    resources: Resources,
+    color: Int = Color.BLACK, // important for black/white(good/bad) pixels
+    compressionRate: Int = GET_IMAGE_COMPRESSED_DEFAULT_COMPRESSION_RATE
 ): (Int, Int) -> Bitmap = { width, height ->
-    Images.getTextImageBitmap(
-        text,
+    val sourceImage = getBitmapFromResource(
         width / compressionRate,
         height / compressionRate,
-        color
+        resources,
+        resourceId
     )
+    val destinationImage =
+        Bitmap.createBitmap(sourceImage.width, sourceImage.height, Bitmap.Config.ARGB_8888)
+    destinationImage.eraseColor(color)
+
+    val bitmap = Bitmap.createBitmap(
+        sourceImage.width,
+        sourceImage.height,
+        Bitmap.Config.ARGB_8888
+    )
+    val canvas = Canvas(bitmap)
+
+    val paint = Paint()
+    canvas.drawBitmap(destinationImage, 0f, 0f, paint)
+
+    val mode: PorterDuff.Mode = PorterDuff.Mode.DST_IN
+    paint.xfermode = PorterDuffXfermode(mode)
+
+    canvas.drawBitmap(sourceImage, 0f, 0f, paint)
+
+    bitmap
 }

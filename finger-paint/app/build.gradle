@@ -36,10 +36,6 @@ android {
         jvmTarget = '1.8'
     }
     lintOptions {
-        disable 'AllowBackup'
-        disable 'GoogleAppIndexingWarning'
-        disable 'IconLocation'
-        disable 'GradleDependency'
         abortOnError true
         warningsAsErrors true
     }

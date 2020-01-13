@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <colors>
+        <color>
+            <id>#1565C0</id>
+            <name>синюю</name>
+        </color>
+        <color>
+            <id>#FFEA00</id>
+            <name>жёлтую</name>
+        </color>
+    </colors>
+
+    <figures>
+        <figure>
+            <id>test_oval</id>
+            <name>овал</name>
+        </figure>
+        <figure>
+            <id>test_square</id>
+            <name>квадрат</name>
+        </figure>
+    </figures>
+
+
+    <letters>
+        <letter>
+            <id>test_a</id>
+        </letter>
+        <letter>
+            <id>test_b</id>
+            <name>Б</name>
+        </letter>
+    </letters>
+
+</resources>

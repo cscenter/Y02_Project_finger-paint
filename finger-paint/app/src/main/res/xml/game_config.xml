@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <colors>
+        <color>
+            <id>#1565C0</id>
+            <name>синюю</name>
+        </color>
+        <color>
+            <id>#FFEA00</id>
+            <name>жёлтую</name>
+        </color>
+        <color>
+            <id>#F44336</id>
+            <name>красную</name>
+        </color>
+        <color>
+            <id>#43A047</id>
+            <name>зеленую</name>
+        </color>
+        <color>
+            <id>#FF6D00</id>
+            <name>оранжевую</name>
+        </color>
+    </colors>
+
+    <figures>
+        <figure>
+            <id>oval</id>
+            <name>овал</name>
+        </figure>
+        <figure>
+            <id>square</id>
+            <name>квадрат</name>
+        </figure>
+    </figures>
+
+
+    <letters>
+        <letter>
+            <id>a</id>
+            <name>А</name>
+        </letter>
+        <letter>
+            <id>b</id>
+            <name>Б</name>
+        </letter>
+    </letters>
+
+</resources>

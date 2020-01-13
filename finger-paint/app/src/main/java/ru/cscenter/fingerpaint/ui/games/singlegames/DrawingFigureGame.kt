@@ -1,16 +1,16 @@
 package ru.cscenter.fingerpaint.ui.games.singlegames
 
+import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.Statistic
 import ru.cscenter.fingerpaint.ui.games.base.*
 import ru.cscenter.fingerpaint.ui.games.images.colorsRandom
 import ru.cscenter.fingerpaint.ui.games.images.figuresRandom
-import ru.cscenter.fingerpaint.ui.games.images.getFigureImage
-import ru.cscenter.fingerpaint.ui.games.images.getFigureImageCompressed
-import ru.cscenter.fingerpaint.ui.games.tasks.getDrawFigureTask
+import ru.cscenter.fingerpaint.ui.games.images.getImage
+import ru.cscenter.fingerpaint.ui.games.images.getImageCompressed
 
 private val figureThresholds = Pair(0.8f, 0.1f)
 
-class DrawingFigureGame(gameActivity: BaseGameActivity) : SingleGame,
+class DrawingFigureGame(private val gameActivity: BaseGameActivity) : SingleGame,
     BaseGameCallback(gameActivity) {
     override fun nextGame(): Game? = null
 
@@ -23,11 +23,12 @@ class DrawingFigureGame(gameActivity: BaseGameActivity) : SingleGame,
     override fun getGame(): Game {
         val figure = figuresRandom.getRandomValue()
         val color = colorsRandom.getRandomValue()
+        val task = gameActivity.resources.getString(R.string.draw_figure_tack, figure.name)
         return DrawingGame(
-            question = getDrawFigureTask(figure),
-            imageSupplier = getFigureImageCompressed(figure),
-            backgroundImageSupplier = getFigureImage(figure, isFilled = false),
-            paintColor = color,
+            question = task,
+            imageSupplier = getImageCompressed(figure.resourceId, gameActivity.resources),
+            backgroundImageSupplier = getImage(figure.resourceId, gameActivity.resources),
+            paintColor = color.color,
             thresholds = figureThresholds,
             callback = this
         )
