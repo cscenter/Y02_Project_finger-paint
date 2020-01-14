@@ -1,4 +1,4 @@
-package ru.cscenter.fingerpaint.ui.games.images
+package ru.cscenter.fingerpaint.service.images
 
 import android.content.res.Resources
 import android.graphics.*

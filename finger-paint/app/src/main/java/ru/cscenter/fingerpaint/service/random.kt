@@ -1,4 +1,4 @@
-package ru.cscenter.fingerpaint.ui.games.images
+package ru.cscenter.fingerpaint.service
 
 import ru.cscenter.fingerpaint.MainApplication
 import java.util.*
@@ -6,8 +6,10 @@ import java.util.*
 private val random = Random()
 
 val colorsRandom = ListRandom(MainApplication.gameResources.colors)
-val figuresRandom = ListRandom(MainApplication.gameResources.figures)
-val lettersRandom = ListRandom(MainApplication.gameResources.letters)
+val figuresRandom =
+    ListRandom(MainApplication.gameResources.figures)
+val lettersRandom =
+    ListRandom(MainApplication.gameResources.letters)
 
 
 class ListRandom<T>(private val values: List<T>) {
