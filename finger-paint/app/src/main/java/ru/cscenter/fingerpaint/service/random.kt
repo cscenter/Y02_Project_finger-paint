@@ -18,6 +18,14 @@ class ListRandom<T>(private val values: List<T>) {
     private fun getRandomValue(index: Int): T = values[index]
     private fun getRandomIndex() = random.nextInt(count)
     fun getRandomValue() = getRandomValue(getRandomIndex())
+    fun getRandomNonEqualValue(value: T): T {
+        var newValue = getRandomValue()
+        while (newValue == value) {
+            newValue = getRandomValue()
+        }
+        return newValue
+    }
+
     fun getRandomPair(): Pair<T, T> {
         val index1 = getRandomIndex()
         var index2 = getRandomIndex()

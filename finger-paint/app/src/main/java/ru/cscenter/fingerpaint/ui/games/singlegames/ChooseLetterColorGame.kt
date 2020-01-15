@@ -3,15 +3,19 @@ package ru.cscenter.fingerpaint.ui.games.singlegames
 import android.content.res.Resources
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.Statistic
+import ru.cscenter.fingerpaint.resources.Letter
+import ru.cscenter.fingerpaint.resources.MyColor
 import ru.cscenter.fingerpaint.service.colorsRandom
 import ru.cscenter.fingerpaint.service.images.getImage
 import ru.cscenter.fingerpaint.service.lettersRandom
-import ru.cscenter.fingerpaint.ui.games.base.*
+import ru.cscenter.fingerpaint.ui.games.base.BaseGameActivity
+import ru.cscenter.fingerpaint.ui.games.base.ChooseGame
+import ru.cscenter.fingerpaint.ui.games.base.GameResult
+import ru.cscenter.fingerpaint.ui.games.base.toInt
 
-class ChooseLetterColorGame(private val gameActivity: BaseGameActivity) :
-    ChooseGame(createConfig(gameActivity.resources), gameActivity) {
+class ChooseLetterColorGame(config: Config, gameActivity: BaseGameActivity) :
+    ChooseGame(config, gameActivity) {
 
-    override fun nextGame(): Game? = DrawingLetterGame(gameActivity)
     override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
         statistic.letterColorChooseTotal++
         statistic.letterColorChooseSuccess += result.toInt()
@@ -19,19 +23,23 @@ class ChooseLetterColorGame(private val gameActivity: BaseGameActivity) :
     }
 
     companion object {
-        private fun createConfig(resources: Resources): Config {
-            val (letter1, letter2) = lettersRandom.getRandomPair()
-            val (correctColor, incorrectColor) = colorsRandom.getRandomPair()
+        fun createConfig(
+            resources: Resources,
+            correctColor: MyColor,
+            correctLetter: Letter
+        ): Config {
+            val incorrectLetter = lettersRandom.getRandomNonEqualValue(correctLetter)
+            val incorrectColor = colorsRandom.getRandomNonEqualValue(correctColor)
             val task = resources.getString(R.string.choose_letter_color_task, correctColor.text)
             return Config(
                 question = task,
                 correctImageSupplier = getImage(
-                    letter1.resourceId,
+                    correctLetter.resourceId,
                     resources,
                     correctColor.color
                 ),
                 incorrectImageSupplier = getImage(
-                    letter2.resourceId,
+                    incorrectLetter.resourceId,
                     resources,
                     incorrectColor.color
                 )
