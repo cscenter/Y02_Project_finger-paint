@@ -11,29 +11,54 @@
         android:layout_gravity="top"
         android:orientation="horizontal">
 
-        <ProgressBar
-            android:id="@+id/bad_progress"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_weight="0.35" />
-
         <TextView
             android:id="@+id/question"
+            style="@style/NormalTextStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="0.3"
             android:textAlignment="center" />
 
+        <ImageView
+            android:id="@+id/audio_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="0"
+            android:contentDescription="@string/sound"
+            android:src="@drawable/ic_audio" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:orientation="horizontal">
+
+        <ProgressBar
+            android:id="@+id/bad_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:layout_marginEnd="@dimen/horizontal_margin"
+            android:layout_marginRight="@dimen/horizontal_margin"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:theme="@style/RedProgressBar" />
+
         <ProgressBar
             android:id="@+id/good_progress"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:layout_weight="0.35" />
+            android:layout_marginStart="@dimen/horizontal_margin"
+            android:layout_marginLeft="@dimen/horizontal_margin"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:theme="@style/GreenProgressBar" />
 
     </LinearLayout>
 

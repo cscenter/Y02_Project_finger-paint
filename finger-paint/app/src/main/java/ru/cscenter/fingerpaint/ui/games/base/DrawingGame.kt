@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import ru.cscenter.fingerpaint.R
+import ru.cscenter.fingerpaint.service.AudioController
 
 abstract class DrawingGame(private val config: Config, gameActivity: BaseGameActivity) :
     Game(gameActivity) {
@@ -21,6 +23,8 @@ abstract class DrawingGame(private val config: Config, gameActivity: BaseGameAct
         val thresholds: Pair<Float, Float>
     )
 
+    private lateinit var audioController: AudioController
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -28,9 +32,21 @@ abstract class DrawingGame(private val config: Config, gameActivity: BaseGameAct
     ): View? {
         val root = inflater.inflate(R.layout.fragment_drawing_game, container, false)
 
+        audioController = AudioController(context!!)
+
         val questionView: TextView = root.findViewById(R.id.question)
 
         questionView.text = config.question
+
+        val audioButton: ImageView = root.findViewById(R.id.audio_button)
+        audioButton.apply {
+            if (!audioController.isAvailable) {
+                visibility = View.GONE
+            }
+            setOnClickListener {
+                audioController.speak(config.question)
+            }
+        }
 
         val goodProgress: ProgressBar = root.findViewById(R.id.good_progress)
         val badProgress: ProgressBar = root.findViewById(R.id.bad_progress)
@@ -48,5 +64,10 @@ abstract class DrawingGame(private val config: Config, gameActivity: BaseGameAct
         currentLayout.addView(drawingView)
 
         return root
+    }
+
+    override fun onPause() {
+        super.onPause()
+        audioController.shutdown()
     }
 }

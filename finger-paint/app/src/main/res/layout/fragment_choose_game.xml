@@ -1,32 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center">
+    android:gravity="center"
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/question"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.1"
-        style="@style/NormalTextStyle"
-        android:gravity="center" />
+        android:layout_margin="@dimen/horizontal_margin"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
+
+        <TextView
+            android:id="@+id/question"
+            style="@style/NormalTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="start" />
+
+        <ImageView
+            android:id="@+id/audio_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/horizontal_margin"
+            android:layout_marginLeft="@dimen/horizontal_margin"
+            android:contentDescription="@string/sound"
+            android:src="@drawable/ic_audio" />
+    </LinearLayout>
+
 
     <ImageView
         android:id="@+id/first_choose"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.45"
-        android:scaleType="fitCenter"
-        android:contentDescription="@string/first_choose" />
+        android:layout_weight="1"
+        android:contentDescription="@string/first_choose"
+        android:scaleType="fitCenter" />
 
 
     <ImageView
         android:id="@+id/second_choose"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.45"
-        android:scaleType="fitCenter"
-        android:contentDescription="@string/second_choose" />
+        android:layout_weight="1"
+        android:contentDescription="@string/second_choose"
+        android:scaleType="fitCenter" />
 </LinearLayout>
