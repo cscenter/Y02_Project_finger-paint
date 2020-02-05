@@ -1,2 +1,2 @@
-include ':app', ':server'
+include ':app', ':Api', ':server'
 rootProject.name = 'FingerPaint'
