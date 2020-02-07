@@ -1,5 +1,6 @@
 package ru.cscenter.fingerpaint.db.entities
 
+import ru.cscenter.fingerpaint.api.ApiPatient
 import javax.persistence.*
 
 @Entity
@@ -19,4 +20,6 @@ class Patient(
 
     override fun equals(other: Any?) = other is Patient && name == other.name && userId == other.userId
     override fun hashCode() = 31 * name.hashCode() + userId.hashCode()
+
+    fun toApiPatient() = ApiPatient(id, name)
 }
