@@ -10,6 +10,7 @@ import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
+import ru.cscenter.fingerpaint.service.AudioController
 import ru.cscenter.fingerpaint.service.MyVibrator
 import ru.cscenter.fingerpaint.service.images.setImageAsSoonAsPossible
 import kotlin.random.Random
@@ -28,6 +29,8 @@ abstract class ChooseGame(private val config: Config, gameActivity: BaseGameActi
 
     private var attempts = 1
 
+    private lateinit var audioController: AudioController
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,8 +38,20 @@ abstract class ChooseGame(private val config: Config, gameActivity: BaseGameActi
     ): View? {
         val root = inflater.inflate(R.layout.fragment_choose_game, container, false)
 
+        audioController = AudioController(context!!)
+
         val questionView: TextView = root.findViewById(R.id.question)
         questionView.text = config.question
+
+        val audioButton: ImageView = root.findViewById(R.id.audio_button)
+        audioButton.apply {
+            if (!audioController.isAvailable) {
+                visibility = View.GONE
+            }
+            setOnClickListener {
+                audioController.speak(config.question)
+            }
+        }
 
         var correctChooseView: ImageView = root.findViewById(R.id.first_choose)
         var incorrectChooseView: ImageView = root.findViewById(R.id.second_choose)
@@ -63,5 +78,10 @@ abstract class ChooseGame(private val config: Config, gameActivity: BaseGameActi
             }
         }
         return root
+    }
+
+    override fun onPause() {
+        super.onPause()
+        audioController.shutdown()
     }
 }

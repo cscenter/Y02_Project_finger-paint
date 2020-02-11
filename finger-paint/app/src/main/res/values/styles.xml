@@ -54,4 +54,13 @@
         <item name="android:textAppearance">@style/NormalTextStyle</item>
     </style>
 
+    <style name="GreenProgressBar" parent="@style/Theme.AppCompat">
+        <item name="colorAccent">#43A047</item>
+    </style>
+
+    <style name="RedProgressBar" parent="@style/Theme.AppCompat">
+        <item name="colorAccent">#F44336</item>
+    </style>
+
+
 </resources>
