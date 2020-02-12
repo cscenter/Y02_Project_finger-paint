@@ -23,17 +23,9 @@ internal class ApiTypesTest {
     }
 
     @Test
-    fun testPatientId() {
-        val patientId = ApiPatientId(42)
-        val string = "{\"id\" : 42}"
-        assertEquals(string, toJson(patientId))
-        assertEquals(patientId, fromJson<ApiPatientId>(string))
-    }
-
-    @Test
     fun testStatistic() {
         val statistic = ApiStatistic(42, "01.01.2020", 3, 23, 3)
-        val string = "{\"date\" : \"01.01.2020\", \"patient_id\" : 42," +
+        val string = "{\"date\" : \"01.01.2020\", \"patientId\" : 42," +
                 " \"success\" : 3, \"total\" : 23, \"type\" : 3}"
         assertEquals(string, toJson(statistic))
         assertEquals(statistic, fromJson<ApiStatistic>(string))
@@ -42,20 +34,20 @@ internal class ApiTypesTest {
     @Test
     fun testInvalidInput() {
         val string = "{\"idid\" : 45}"
-        assertThrows<KlaxonException> { fromJson<ApiPatientId>(string) }
+        assertThrows<KlaxonException> { fromJson<ApiPatientName>(string) }
     }
 
     @Test
     fun testOddProperties() {
-        val string = "{\"id\" : 45, \"name\" : \"Ken\"}"
-        assertEquals(ApiPatientId(45), fromJson<ApiPatientId>(string)) // TODO Should fail
+        val string = "{\"name\" : \"45\", \"unknown\" : \"Ken\"}"
+        assertEquals(ApiPatientName("45"), fromJson<ApiPatientName>(string)) // TODO Should fail
     }
 
     @Test
     fun testArray() {
-        val patientIds = listOf(ApiPatientId(42), ApiPatientId(43))
-        val string = "[{\"id\" : 42}, {\"id\" : 43}]"
+        val patientIds = listOf(ApiPatientName("42"), ApiPatientName("43"))
+        val string = "[{\"name\" : \"42\"}, {\"name\" : \"43\"}]"
         assertEquals(string, toJsonArray(patientIds))
-        assertEquals(patientIds, fromJsonArray<ApiPatientId>(string))
+        assertEquals(patientIds, fromJsonArray<ApiPatientName>(string))
     }
 }

@@ -1,5 +1,6 @@
 package ru.cscenter.fingerpaint.db.entities
 
+import ru.cscenter.fingerpaint.api.ApiStatistic
 import java.io.Serializable
 import java.sql.Date
 import javax.persistence.*
@@ -22,13 +23,15 @@ class Statistic(
         result = 31 * result + success
         return result
     }
+
+    fun toApiStatistic() = ApiStatistic(id.patientId, id.date.toString(), id.type, total, success)
 }
 
 @Embeddable
 class StatisticId(
     @Column(name = "patient_id") var patientId: Long,
     @Column(name = "date") var date: Date,
-    @Column(name = "type") var type: Long
+    @Column(name = "type") var type: Int
 ) : Serializable {
     override fun equals(other: Any?) = other is StatisticId
             && patientId == other.patientId

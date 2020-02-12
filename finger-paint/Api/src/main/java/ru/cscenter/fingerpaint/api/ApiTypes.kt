@@ -1,6 +1,5 @@
 package ru.cscenter.fingerpaint.api
 
-import com.beust.klaxon.Json
 import com.beust.klaxon.Klaxon
 
 interface ApiBase
@@ -15,11 +14,17 @@ inline fun <reified T : ApiBase> toJsonArray(list: List<T>): String = Klaxon().t
 
 data class ApiPatient(val id: Long, val name: String) : ApiBase
 data class ApiPatientName(val name: String) : ApiBase
-data class ApiPatientId(val id: Long) : ApiBase
 data class ApiStatistic(
-    @Json(name = "patient_id") val patientId: Long,
+    val patientId: Long,
     val date: String,
     val type: Int,
     val total: Int,
     val success: Int
+) : ApiBase
+
+data class ApiGameResult(
+    val patientId: Long,
+    val date: String,
+    val type: Int,
+    val success: Boolean
 ) : ApiBase

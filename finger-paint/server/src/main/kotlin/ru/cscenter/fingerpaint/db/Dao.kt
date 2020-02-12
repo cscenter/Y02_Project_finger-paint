@@ -6,7 +6,8 @@ import javax.persistence.EntityManagerFactory
 import javax.persistence.Persistence
 
 object Dao {
-    private val factory: EntityManagerFactory = Persistence.createEntityManagerFactory("FingerPaint")
+    private val factory: EntityManagerFactory =
+        Persistence.createEntityManagerFactory("FingerPaint")
 
     private fun <T> run(query: (EntityManager) -> T): T {
         val entityManager = factory.createEntityManager()
@@ -23,6 +24,8 @@ object Dao {
             entityManager.close()
         }
     }
+
+    fun init() {}
 
     fun insertUser(user: User): User = run { em ->
         em.persist(user)
@@ -54,12 +57,19 @@ object Dao {
         }
     }
 
-    fun selectStatistics(statisticIds: List<StatisticId>): List<Statistic> = run { em ->
-        statisticIds.map { em.find(Statistic::class.java, it) }
+    fun selectStatistics(patientIds: List<Long>): List<Statistic> = run { em ->
+        em.createQuery(
+            "SELECT m FROM Statistic m WHERE m.id.patientId IN (:patientIds)",
+            Statistic::class.java
+        ).setParameter("patientIds", patientIds)
+            .resultList
     }
 
-    fun insertOrUpdateStatistics(statistics: List<Statistic>) = run { em ->
-        statistics.forEach { em.merge(it) }
+    fun updateStatistic(statisticId: StatisticId, success: Boolean) = run { em ->
+        val statistic = em.find(Statistic::class.java, statisticId) ?: Statistic(statisticId, 0, 0)
+        statistic.total++
+        statistic.success += if (success) 1 else 0
+        em.persist(statistic)
     }
 
     fun selectChooseTasks(): List<ChooseTask> = run { em ->
