@@ -1,11 +1,15 @@
 package ru.cscenter.fingerpaint.ui.games.base
 
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
-import ru.cscenter.fingerpaint.MainApplication
-import ru.cscenter.fingerpaint.db.Statistic
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import ru.cscenter.fingerpaint.db.GameType
+import ru.cscenter.fingerpaint.models.StatisticsModel
 
 abstract class Game(private val gameActivity: BaseGameActivity) : Fragment() {
-    abstract fun updateStatistics(statistic: Statistic, result: GameResult): Statistic
+    abstract val gameType: GameType
 
     open fun onResult(result: GameResult) {
         gameActivity.supportFragmentManager.popBackStack()
@@ -14,10 +18,13 @@ abstract class Game(private val gameActivity: BaseGameActivity) : Fragment() {
     }
 
     private fun setStatistics(result: GameResult) {
-        val db = MainApplication.dbController
-        db.getCurrentUserStatistics()?.let {
-            val statistic = updateStatistics(it, result)
-            db.setStatistics(statistic)
+        val statisticsModel: StatisticsModel by gameActivity.viewModels()
+        GlobalScope.launch(Dispatchers.Main) {
+            statisticsModel.getCurrentUserStatistic(gameType)?.let { statistic ->
+                statistic.total++
+                statistic.success += result.toInt()
+                statisticsModel.setStatistic(statistic)
+            }
         }
     }
 }

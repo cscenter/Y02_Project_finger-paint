@@ -4,21 +4,27 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import ru.cscenter.fingerpaint.MainActivity
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
+import ru.cscenter.fingerpaint.models.CurrentUserModel
 
 class TitleActivity : AppCompatActivity() {
 
     private val onLoaded = {
-        if (MainApplication.dbController.hasCurrentUser()) {
-            toMainActivity(this)
-        } else {
-            val intent = Intent(this, TitleChooseUserActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
+        val currentUserModel: CurrentUserModel by viewModels()
+        currentUserModel.currentUser.observe(this, Observer { currentUser ->
+            if (currentUser == null) {
+                val intent = Intent(this, TitleChooseUserActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                toMainActivity(this)
+            }
+        })
     }
 
     private val handler = Handler()

@@ -19,6 +19,7 @@ object MyVibrator {
                 )
             )
         } else {
+            @Suppress("DEPRECATION")
             vibrator.vibrate(duration)
         }
     }

@@ -1,5 +1,6 @@
 package ru.cscenter.fingerpaint.db
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -20,23 +21,14 @@ data class User(
         onDelete = ForeignKey.CASCADE
     )],
     indices = [Index("user_id")],
-    primaryKeys = ["user_id", "date"]
+    primaryKeys = ["user_id", "date", "type"]
 )
 data class Statistic(
-    @ColumnInfo(name = "user_id") var userId: Int,
-    @ColumnInfo var date: Long = currentDay(),
-    @ColumnInfo var figureChooseTotal: Int = 0,
-    @ColumnInfo var figureChooseSuccess: Int = 0,
-    @ColumnInfo var letterChooseTotal: Int = 0,
-    @ColumnInfo var letterChooseSuccess: Int = 0,
-    @ColumnInfo var figureColorChooseTotal: Int = 0,
-    @ColumnInfo var figureColorChooseSuccess: Int = 0,
-    @ColumnInfo var letterColorChooseTotal: Int = 0,
-    @ColumnInfo var letterColorChooseSuccess: Int = 0,
-    @ColumnInfo var drawingTotal: Int = 0,
-    @ColumnInfo var drawingSuccess: Int = 0,
-    @ColumnInfo var contouringTotal: Int = 0,
-    @ColumnInfo var contouringSuccess: Int = 0
+    @ColumnInfo(name = "user_id") val userId: Int,
+    @ColumnInfo val date: Long = currentDay(),
+    @ColumnInfo val type: GameType,
+    @ColumnInfo var total: Int = 0,
+    @ColumnInfo var success: Int = 0
 )
 
 @Entity(
@@ -49,53 +41,52 @@ data class Statistic(
     indices = [Index("user_id")]
 )
 data class CurrentUser(
-    @ColumnInfo(name = "user_id") var userId: Int,
+    @ColumnInfo(name = "user_id") val userId: Int,
     @PrimaryKey val id: Int = 0
 )
 
 @Dao
 interface DbAccess {
-    @Query("SELECT id, name FROM User")
-    fun getAllNames(): List<User>
+
+    @Query("SELECT * FROM User")
+    fun getUsers(): LiveData<List<User>>
 
     @Query("SELECT * FROM User WHERE id = :id")
-    fun getUser(id: Int): User?
-
-    @Query("SELECT id FROM User WHERE name = :name")
-    fun getUserId(name: String): Int
+    suspend fun getUser(id: Int): User?
 
     @Update(onConflict = OnConflictStrategy.IGNORE)
-    fun setUser(user: User): Int
+    suspend fun setUser(user: User): Int
 
     @Delete
-    fun deleteUser(user: User)
+    suspend fun deleteUser(user: User)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertUser(user: User): Long
+    suspend fun insertUser(user: User): Long
 
     @Query("SELECT * FROM User WHERE id IN (SELECT user_id FROM CurrentUser)")
-    fun getCurrentUser(): User?
-
-    @Update
-    fun setCurrentUser(currentUser: CurrentUser)
-
-    @Insert
-    fun addCurrentUser(currentUser: CurrentUser)
-
-    @Query("SELECT * FROM Statistic WHERE user_id = :userId AND date = :day")
-    fun getUserStatistics(userId: Int?, day: Long = currentDay()): Statistic?
+    fun getCurrentUser(): LiveData<User?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertStatistics(statistic: Statistic)
+    suspend fun setCurrentUser(currentUser: CurrentUser)
+
+    @Query("SELECT * FROM CurrentUser")
+    suspend fun hasCurrentUser(): CurrentUser?
+
+    @Query("SELECT * FROM Statistic WHERE (user_id IN (SELECT user_id FROM CurrentUser)) AND date = :day AND type = :type")
+    suspend fun getCurrentUserStatistics(type: GameType, day: Long = currentDay()): Statistic?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertStatistics(statistic: Statistic)
 
     @Query("SELECT * FROM Statistic WHERE user_id = :id ORDER BY date")
-    fun getUserAllStatistics(id: Int): List<Statistic>
+    fun getUserAllStatistics(id: Int): LiveData<List<Statistic>>
 }
 
 @Database(
     entities = [User::class, CurrentUser::class, Statistic::class],
     exportSchema = false, version = 1
 )
+@TypeConverters(TypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun dao(): DbAccess
 }

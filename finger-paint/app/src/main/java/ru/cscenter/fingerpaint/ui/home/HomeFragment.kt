@@ -2,6 +2,7 @@ package ru.cscenter.fingerpaint.ui.home
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,37 +10,39 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import ru.cscenter.fingerpaint.R
-import ru.cscenter.fingerpaint.ui.games.*
+import ru.cscenter.fingerpaint.models.CurrentUserModel
+import ru.cscenter.fingerpaint.ui.games.FiguresGameActivity
+import ru.cscenter.fingerpaint.ui.games.Letters1GameActivity
+import ru.cscenter.fingerpaint.ui.games.Letters2GameActivity
 import ru.cscenter.fingerpaint.ui.games.base.BaseGameActivity
-import ru.cscenter.fingerpaint.ui.statistics.StatisticsFragmentArgs
+import ru.cscenter.fingerpaint.ui.statistics.navigateToStatistics
 
 class HomeFragment : Fragment() {
-
-    private lateinit var homeViewModel: HomeViewModel
-    private var currentNameTextView: TextView? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        homeViewModel =
-            ViewModelProviders.of(this).get(HomeViewModel::class.java)
+        val currentUserModel: CurrentUserModel by activityViewModels()
         val root = inflater.inflate(R.layout.fragment_home, container, false)
 
-        currentNameTextView = root.findViewById(R.id.current_name_text_view)
-        currentNameTextView!!.text = homeViewModel.currentName()
+        val currentNameTextView: TextView = root.findViewById(R.id.current_name_text_view)
+        currentUserModel.currentUser.observe(this, Observer { user ->
+            currentNameTextView.text = user?.toString() ?: ""
+        })
 
         val statisticsButton: ImageView = root.findViewById(R.id.statistics_button)
         statisticsButton.setOnClickListener {
-            val navController = findNavController()
-            navController.navigate(
-                R.id.nav_statistics,
-                StatisticsFragmentArgs(homeViewModel.currentId()).toBundle()
-            )
+            val user = currentUserModel.currentUser.value
+            if (user == null) {
+                Log.e(getString(R.string.app_name), "Current user id is null!")
+                return@setOnClickListener
+            }
+            navigateToStatistics(this, user)
         }
 
         root.findViewById<Button>(R.id.only_choose_figure_button).setOnClickListener {
@@ -85,10 +88,5 @@ class HomeFragment : Fragment() {
     private fun runGame(gameType: Class<out BaseGameActivity>) {
         val intent = Intent(activity, gameType)
         startActivity(intent)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        currentNameTextView?.text = homeViewModel.currentName()
     }
 }

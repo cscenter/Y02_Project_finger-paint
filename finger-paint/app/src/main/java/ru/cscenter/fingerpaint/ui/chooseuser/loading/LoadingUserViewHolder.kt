@@ -10,13 +10,14 @@ import ru.cscenter.fingerpaint.ui.title.toMainActivity
 class LoadingUserViewHolder(
     private val view: View,
     private val activity: Activity,
-    navController: NavController
+    navController: NavController,
+    private val onChooseUser: (User) -> Unit
 ) : BaseUserViewHolder(view, navController) {
 
     override fun bindUser(user: User) {
         super.bindUser(user)
         view.setOnClickListener {
-            setUserAsCurrent(user.id)
+            onChooseUser(user)
             toMainActivity(activity)
         }
     }

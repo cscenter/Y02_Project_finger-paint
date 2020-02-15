@@ -8,12 +8,17 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.cscenter.fingerpaint.db.User
 
 
-open class BaseChooseUserAdapter<T : BaseUserViewHolder>(
+open class ChooseUserAdapter<T : BaseUserViewHolder>(
     context: Context,
-    private val users: MutableList<User>,
     private val resourceId: Int,
     private val createHolder: (View) -> T
 ) : RecyclerView.Adapter<T>() {
+
+    var users = emptyList<User>()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     private val layoutInflater =
         context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
