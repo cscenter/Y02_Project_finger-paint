@@ -7,6 +7,8 @@ import ru.cscenter.fingerpaint.db.entities.StatisticId
 import spark.Request
 import spark.Spark.*
 import java.sql.Date
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 class Server {
     private val loginServer = AuthServer()
@@ -16,16 +18,23 @@ class Server {
         private const val okResponse = "ok"
         private const val patients = "/patients"
         private const val statistics = "/statistics"
+        private val timeZone = ZoneId.of("Europe/Moscow")
+
+        private fun date() = ZonedDateTime.now(timeZone)
     }
 
     fun run() {
         Dao.init()
 
-        port(8080)
         loginServer.run()
 
         exception(Exception::class.java) { e, _, _ ->
             e.printStackTrace()
+        }
+
+        get("$patients/exists/:id") { request, _ ->
+            val patientId = request.params("id").toLong()
+            Dao.containsPatient(patientId)
         }
 
         get(patients) { request, _ ->
@@ -41,7 +50,7 @@ class Server {
             toJsonArray(patients)
         }
 
-        delete("/patients/:id") { request, _ ->
+        delete("$patients/:id") { request, _ ->
             val patientId = request.params("id").toLong()
             Dao.deletePatients(listOf(patientId))
             okResponse
@@ -54,7 +63,7 @@ class Server {
         }
 
 
-        get("/statistics/:id") { request, _ ->
+        get("$statistics/:id") { request, _ ->
             val patientId = request.params("id").toLong()
             val statistics = Dao.selectStatistics(listOf(patientId)).map { it.toApiStatistic() }
             toJsonArray(statistics)
@@ -70,12 +79,12 @@ class Server {
 
 
         before("/*") { request, _ ->
-            logger.info("Request ${request.requestMethod()} ${request.url()}\nbody: ${request.body()}")
+            logger.info("${date()}\n\t>>>> ${request.requestMethod()} ${request.url()}\n\tbody: ${request.body()}")
         }
 
         after("/*") { request, response ->
             response.type("application/json")
-            logger.info("Response ${request.requestMethod()} ${request.url()}\nbody: ${response.body()}")
+            logger.info("${date()}\n\t<<<< ${request.requestMethod()} ${request.url()}\n\tbody: ${response.body()}")
         }
     }
 

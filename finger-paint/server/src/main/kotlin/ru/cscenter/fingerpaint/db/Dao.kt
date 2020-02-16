@@ -38,6 +38,10 @@ object Dao {
             .resultList
     }
 
+    fun containsPatient(patientId: Long): Boolean = run { em ->
+        em.find(Patient::class.java, patientId) != null
+    }
+
     fun insertPatients(userId: Long, names: List<String>): List<Patient> = run { em ->
         names
             .map { Patient(it, userId) }
