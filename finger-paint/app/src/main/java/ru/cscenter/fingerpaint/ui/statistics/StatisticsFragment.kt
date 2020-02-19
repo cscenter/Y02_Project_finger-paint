@@ -25,6 +25,7 @@ import ru.cscenter.fingerpaint.db.dateToString
 import ru.cscenter.fingerpaint.models.StatisticsModel
 
 fun navigateToStatistics(fromFragment: Fragment, user: User) {
+    MainApplication.synchronizeController.syncStatistics(user.id)
     val navController = fromFragment.findNavController()
     val statisticsModel: StatisticsModel by fromFragment.activityViewModels()
     statisticsModel.setUser(user)
@@ -114,6 +115,15 @@ class StatisticsFragment : Fragment() {
         return Pair(data, labels)
     }
 
+    private fun resetChart(chart: BarChart) = chart.apply {
+        fitScreen()
+        data?.clearValues()
+        xAxis.valueFormatter = null
+        notifyDataSetChanged()
+        clear()
+        invalidate()
+    }
+
     private fun initChart(
         allStatistics: List<Statistic>,
         name: String,
@@ -124,6 +134,8 @@ class StatisticsFragment : Fragment() {
             colors = MainApplication.gameResources.colors.map { color -> color.color }
             axisDependency = YAxis.AxisDependency.LEFT
         }
+
+        resetChart(chart)
 
         chart.apply {
             data = BarData(barDataSet).apply {

@@ -16,13 +16,15 @@ class DbController(context: Context) {
 
     suspend fun setCurrentUser(userId: Int) = db.setCurrentUser(CurrentUser(userId))
     suspend fun hasCurrentUser() = db.hasCurrentUser() != null
+    suspend fun getCurrentUser() = db.selectCurrentUser()
 
     suspend fun getUser(id: Int) = db.getUser(id)
     suspend fun setUser(user: User): Boolean = db.setUser(user) > 0
-    suspend fun insertUser(name: String): Boolean = db.insertUser(User(name = name)) != -1L
+    suspend fun insertUsers(users: List<User>) = db.insertUsers(users)
     suspend fun deleteUser(user: User) = db.deleteUser(user)
+    suspend fun syncUsers(users: List<User>) = db.syncUsers(users)
 
-    suspend fun setStatistics(statistic: Statistic) = db.insertStatistics(statistic)
+    suspend fun setStatistics(vararg statistic: Statistic) = db.insertStatistics(*statistic)
     fun getUserAllStatistics(id: Int) = db.getUserAllStatistics(id)
 
     suspend fun getCurrentUserStatistics(type: GameType): Statistic? = currentUser.value?.let {

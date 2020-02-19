@@ -1,7 +1,9 @@
 package ru.cscenter.fingerpaint.ui.setuser
 
-import ru.cscenter.fingerpaint.models.UsersModel
+import ru.cscenter.fingerpaint.MainApplication
 
 class AddUserFragment : BaseUpdateUserFragment() {
-    override suspend fun updateUser(name: String, model: UsersModel) = model.insertUser(name)
+    override fun updateUser(name: String, onResult: (Boolean) -> Unit) {
+        MainApplication.synchronizeController.addUser(name, onResult)
+    }
 }

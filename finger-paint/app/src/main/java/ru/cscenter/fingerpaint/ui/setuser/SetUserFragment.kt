@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.User
 import ru.cscenter.fingerpaint.models.UsersModel
@@ -19,9 +20,9 @@ class SetUserFragment : BaseUpdateUserFragment() {
 
     private lateinit var user: User
 
-    override suspend fun updateUser(name: String, model: UsersModel): Boolean {
+    override fun updateUser(name: String, onResult: (Boolean) -> Unit) {
         user.name = name
-        return model.updateUser(user)
+        MainApplication.synchronizeController.updateUser(user, onResult)
     }
 
     override fun onCreateView(

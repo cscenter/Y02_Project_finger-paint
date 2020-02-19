@@ -11,4 +11,7 @@ class CurrentUserModel : ViewModel() {
 
     suspend fun setCurrentUser(user: User) =
         withContext(Dispatchers.IO) { MainApplication.dbController.setCurrentUser(user.id) }
+
+    suspend fun hasCurrentUser() =
+        withContext(Dispatchers.IO) { MainApplication.dbController.hasCurrentUser() }
 }

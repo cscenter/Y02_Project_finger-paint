@@ -7,7 +7,7 @@ import java.util.*
 
 @Entity(indices = [Index(value = ["name"], unique = true)])
 data class User(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey val id: Int,
     @ColumnInfo var name: String
 ) {
     override fun toString() = name
@@ -51,11 +51,31 @@ interface DbAccess {
     @Query("SELECT * FROM User")
     fun getUsers(): LiveData<List<User>>
 
+    @Query("SELECT * FROM User")
+    suspend fun selectUsers(): List<User>
+
     @Query("SELECT * FROM User WHERE id = :id")
     suspend fun getUser(id: Int): User?
 
     @Update(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun setUser(user: User): Int
+    suspend fun setUser(vararg user: User): Int
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUsers(users: List<User>)
+
+    @Delete
+    suspend fun deleteUsers(users: List<User>)
+
+    @Transaction
+    suspend fun syncUsers(users: List<User>) {
+        val localUsers = selectUsers()
+        val unknownUsers = localUsers.toSet().minus(users).toList()
+        val newUsers = users.toSet().minus(localUsers).toList()
+        val updateUsers = users.toSet().minus(newUsers).toTypedArray()
+        deleteUsers(unknownUsers)
+        insertUsers(newUsers)
+        setUser(*updateUsers)
+    }
 
     @Delete
     suspend fun deleteUser(user: User)
@@ -65,6 +85,9 @@ interface DbAccess {
 
     @Query("SELECT * FROM User WHERE id IN (SELECT user_id FROM CurrentUser)")
     fun getCurrentUser(): LiveData<User?>
+
+    @Query("SELECT * FROM User WHERE id IN (SELECT user_id FROM CurrentUser)")
+    suspend fun selectCurrentUser(): User?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun setCurrentUser(currentUser: CurrentUser)
@@ -76,7 +99,7 @@ interface DbAccess {
     suspend fun getCurrentUserStatistics(type: GameType, day: Long = currentDay()): Statistic?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertStatistics(statistic: Statistic)
+    suspend fun insertStatistics(vararg statistic: Statistic)
 
     @Query("SELECT * FROM Statistic WHERE user_id = :id ORDER BY date")
     fun getUserAllStatistics(id: Int): LiveData<List<Statistic>>
@@ -96,7 +119,10 @@ fun currentDay(): Long {
     val year = localCalendar.get(Calendar.YEAR)
     val month = localCalendar.get(Calendar.MONTH)
     val day = localCalendar.get(Calendar.DAY_OF_MONTH)
+    return dateToLong(year, month, day)
+}
 
+fun dateToLong(year: Int, month: Int, day: Int): Long {
     val utcCalendar = GregorianCalendar(TimeZone.getTimeZone("UTC"))
     utcCalendar.set(Calendar.YEAR, year)
     utcCalendar.set(Calendar.MONTH, month)

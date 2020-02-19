@@ -12,6 +12,10 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.models.CurrentUserModel
 import ru.cscenter.fingerpaint.ui.games.FiguresGameActivity
@@ -22,6 +26,14 @@ import ru.cscenter.fingerpaint.ui.statistics.navigateToStatistics
 
 class HomeFragment : Fragment() {
 
+    override fun onResume() {
+        super.onResume()
+        GlobalScope.launch(Dispatchers.IO) {
+            val user = MainApplication.dbController.getCurrentUser()
+            MainApplication.synchronizeController.checkUserExists(user?.id, activity!!)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -31,7 +43,7 @@ class HomeFragment : Fragment() {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
 
         val currentNameTextView: TextView = root.findViewById(R.id.current_name_text_view)
-        currentUserModel.currentUser.observe(this, Observer { user ->
+        currentUserModel.currentUser.observe(viewLifecycleOwner, Observer { user ->
             currentNameTextView.text = user?.toString() ?: ""
         })
 

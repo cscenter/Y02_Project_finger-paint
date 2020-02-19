@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.db.GameType
 import ru.cscenter.fingerpaint.models.StatisticsModel
 
@@ -21,9 +22,7 @@ abstract class Game(private val gameActivity: BaseGameActivity) : Fragment() {
         val statisticsModel: StatisticsModel by gameActivity.viewModels()
         GlobalScope.launch(Dispatchers.Main) {
             statisticsModel.getCurrentUserStatistic(gameType)?.let { statistic ->
-                statistic.total++
-                statistic.success += result.toInt()
-                statisticsModel.setStatistic(statistic)
+                MainApplication.synchronizeController.updateStatistic(statistic, result)
             }
         }
     }

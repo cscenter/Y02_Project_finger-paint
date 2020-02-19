@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.navigation.NavController
+import kotlinx.coroutines.Job
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.User
 import ru.cscenter.fingerpaint.ui.chooseuser.base.BaseUserViewHolder
@@ -13,7 +14,7 @@ class UserViewHolder(
     private val navController: NavController,
     private val onDeleteUser: (User) -> Unit,
     private val onUserStatistics: (User) -> Unit,
-    private val onChooseUser: (User) -> Unit
+    private val onChooseUser: (User) -> Job
 ) : BaseUserViewHolder(view, navController) {
     private val statisticButton: ImageView = view.findViewById(R.id.choose_user_statistics_button)
     private val menuButton: ImageView = view.findViewById(R.id.menuButton)

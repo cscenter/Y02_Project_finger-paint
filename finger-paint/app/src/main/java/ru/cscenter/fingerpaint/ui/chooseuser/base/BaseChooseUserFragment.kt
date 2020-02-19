@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.User
 import ru.cscenter.fingerpaint.models.CurrentUserModel
@@ -54,10 +55,15 @@ abstract class BaseChooseUserFragment : Fragment() {
         return root
     }
 
-    protected val onChooseUser: (User) -> Unit = { user: User ->
-        GlobalScope.launch(Dispatchers.Main) {
+    protected val onChooseUser = { user: User ->
+        GlobalScope.launch(Dispatchers.IO) {
             val currentUserModel: CurrentUserModel by activityViewModels()
             currentUserModel.setCurrentUser(user)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        MainApplication.synchronizeController.syncUsers()
     }
 }

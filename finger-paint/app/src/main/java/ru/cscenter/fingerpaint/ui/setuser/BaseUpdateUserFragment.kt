@@ -10,24 +10,22 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.cscenter.fingerpaint.R
-import ru.cscenter.fingerpaint.models.UsersModel
 
 abstract class BaseUpdateUserFragment : Fragment() {
 
-    abstract suspend fun updateUser(name: String, model: UsersModel): Boolean
+    abstract fun updateUser(name: String, onResult: (Boolean) -> Unit)
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val usersModel: UsersModel by activityViewModels()
         val root = inflater.inflate(R.layout.fragment_set_user, container, false)
         val okButton: Button = root.findViewById(R.id.ok_button)
 
@@ -44,15 +42,17 @@ abstract class BaseUpdateUserFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            GlobalScope.launch(Dispatchers.Main) {
-                val success = updateUser(name, usersModel)
+            updateUser(name) { success ->
                 if (!success) {
                     nameTextView.error = getString(R.string.user_exists_warning)
-                    return@launch
+                    Snackbar.make(requireView(), "Operation failed", Snackbar.LENGTH_LONG)
+                    return@updateUser
                 }
 
-                hideKeyboard(it)
-                findNavController().popBackStack()
+                GlobalScope.launch(Dispatchers.Main) {
+                    hideKeyboard(it)
+                    findNavController().popBackStack()
+                }
             }
         }
 

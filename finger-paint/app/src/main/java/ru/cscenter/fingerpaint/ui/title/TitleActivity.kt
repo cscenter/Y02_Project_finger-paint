@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import ru.cscenter.fingerpaint.MainActivity
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
@@ -14,17 +16,18 @@ import ru.cscenter.fingerpaint.models.CurrentUserModel
 
 class TitleActivity : AppCompatActivity() {
 
-    private val onLoaded = {
-        val currentUserModel: CurrentUserModel by viewModels()
-        currentUserModel.currentUser.observe(this, Observer { currentUser ->
-            if (currentUser == null) {
-                val intent = Intent(this, TitleChooseUserActivity::class.java)
+    private val onLoaded: () -> Unit = {
+        GlobalScope.launch(Dispatchers.Main) {
+            val currentUserModel: CurrentUserModel by viewModels()
+            if (currentUserModel.hasCurrentUser()) {
+                toMainActivity(this@TitleActivity)
+            } else {
+                MainApplication.isLoading = false
+                val intent = Intent(this@TitleActivity, TitleChooseUserActivity::class.java)
                 startActivity(intent)
                 finish()
-            } else {
-                toMainActivity(this)
             }
-        })
+        }
     }
 
     private val handler = Handler()
@@ -37,6 +40,7 @@ class TitleActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if (MainApplication.isLoading) {
+            MainApplication.synchronizeController.syncAll()
             handler.postDelayed(onLoaded, resources.getInteger(R.integer.loading_time).toLong())
         } else {
             toMainActivity(this)
