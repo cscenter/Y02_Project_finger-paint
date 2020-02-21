@@ -27,12 +27,13 @@ object Dao {
 
     fun init() {}
 
-    fun insertUser(user: User): User = run { em ->
-        em.persist(user)
-        user
+    fun insertUser(userId: String) = run { em ->
+        em.createNativeQuery("INSERT INTO Users(id) VALUES(:userId) ON CONFLICT DO NOTHING;")
+            .setParameter("userId", userId)
+            .executeUpdate()
     }
 
-    fun selectPatients(userId: Long): List<Patient> = run { em ->
+    fun selectPatients(userId: String): List<Patient> = run { em ->
         em.createQuery("SELECT m FROM Patient m WHERE m.userId = :userId", Patient::class.java)
             .setParameter("userId", userId)
             .resultList
@@ -42,7 +43,7 @@ object Dao {
         em.find(Patient::class.java, patientId) != null
     }
 
-    fun insertPatients(userId: Long, names: List<String>): List<Patient> = run { em ->
+    fun insertPatients(userId: String, names: List<String>): List<Patient> = run { em ->
         names
             .map { Patient(it, userId) }
             .onEach { em.persist(it) }

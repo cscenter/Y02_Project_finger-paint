@@ -41,6 +41,9 @@ dependencies {
     implementation project(':Api')
     implementation "com.sparkjava:spark-kotlin:1.0.0-alpha"
     implementation 'org.slf4j:slf4j-simple:1.7.21'
+
+    // google sign in
+    implementation 'com.google.apis:google-api-services-oauth2:v1-rev20190313-1.30.8'
 }
 
 sourceCompatibility = "8"

@@ -9,15 +9,13 @@ DROP TABLE IF EXISTS Users;
 
 CREATE TABLE Users
 (
-    id       SERIAL PRIMARY KEY,
-    login    TEXT UNIQUE NOT NULL,
-    password TEXT        NOT NULL
+    id TEXT PRIMARY KEY
 );
 
 CREATE TABLE Patients
 (
     id      SERIAL PRIMARY KEY,
-    user_id INT  NOT NULL REFERENCES Users ON DELETE CASCADE,
+    user_id TEXT NOT NULL REFERENCES Users ON DELETE CASCADE,
     name    TEXT NOT NULL,
     UNIQUE (user_id, name)
 );

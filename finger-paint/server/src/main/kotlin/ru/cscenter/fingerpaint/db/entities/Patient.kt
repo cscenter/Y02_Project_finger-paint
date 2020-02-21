@@ -10,7 +10,7 @@ import javax.persistence.*
 )
 class Patient(
     @Column(name = "name") var name: String,
-    @Column(name = "user_id") var userId: Long
+    @Column(name = "user_id") var userId: String
 ) {
 
     @Id

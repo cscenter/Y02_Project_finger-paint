@@ -1,19 +1,15 @@
 package ru.cscenter.fingerpaint.db.entities
 
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.Table
 
 @Entity
 @Table(name = "Users")
 class User(
-    @Column(name = "login", unique = true) var login: String,
-    @Column(name = "password") var password: String
+    @Id @Column(name = "id") var id: String
 ) {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    var id: Long = 0
-
-    override fun equals(other: Any?) = other is User && login == other.login
-    override fun hashCode() = login.hashCode()
+    override fun equals(other: Any?) = other is User && id == other.id
+    override fun hashCode() = id.hashCode()
 }

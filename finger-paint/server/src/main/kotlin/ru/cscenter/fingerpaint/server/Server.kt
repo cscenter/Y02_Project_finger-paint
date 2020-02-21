@@ -18,6 +18,7 @@ class Server {
         private const val okResponse = "ok"
         private const val patients = "/patients"
         private const val statistics = "/statistics"
+        private const val login = "/login"
         private val timeZone = ZoneId.of("Europe/Moscow")
 
         private fun date() = ZonedDateTime.now(timeZone)
@@ -30,6 +31,12 @@ class Server {
 
         exception(Exception::class.java) { e, _, _ ->
             e.printStackTrace()
+        }
+
+        post(login) { request, _ ->
+            val id = getId(request)
+            Dao.insertUser(id)
+            okResponse
         }
 
         get("$patients/exists/:id") { request, _ ->
@@ -88,7 +95,7 @@ class Server {
         }
     }
 
-    private fun getId(request: Request) = request.attribute<Long>("id")
+    private fun getId(request: Request) = request.attribute<String>("id")
     private fun getPatientNames(request: Request) =
         fromJsonArray<ApiPatientName>(request.body())!!.map { it.name }
 
