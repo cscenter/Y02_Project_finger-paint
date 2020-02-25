@@ -7,22 +7,40 @@ import kotlinx.coroutines.launch
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.api.ApiPatient
 import ru.cscenter.fingerpaint.api.ApiPatientName
+import ru.cscenter.fingerpaint.authentication.AuthenticateController
 import ru.cscenter.fingerpaint.db.Statistic
 import ru.cscenter.fingerpaint.db.User
 import ru.cscenter.fingerpaint.network.*
 import ru.cscenter.fingerpaint.ui.games.base.GameResult
 import ru.cscenter.fingerpaint.ui.games.base.toInt
-import ru.cscenter.fingerpaint.ui.title.toTitleChooseUserActivity
+import ru.cscenter.fingerpaint.ui.title.TitleActivity
+import ru.cscenter.fingerpaint.ui.title.TitleChooseUserActivity
+import ru.cscenter.fingerpaint.ui.title.toActivity
 
 typealias ResultHandler = (success: Boolean) -> Unit
 
 class SynchronizeController {
-    private val api = NetworkController().api
+    private val networkController = NetworkController()
+    private val api = networkController.api
     private val db = MainApplication.dbController
+    private lateinit var auth: AuthenticateController
 
-    private fun <T> onSyncFailed(onResult: ResultHandler = { }): FailHandler<T> = { _, t ->
-        t.printStackTrace()
-        onResult(false)
+    private fun <T> onSyncFailed(onResult: ResultHandler = { }): FailHandler<T> =
+        { call, onSuccess, code ->
+            onResult(false)
+        }
+
+    private fun login() = api.login().executeAsync({}, onSyncFailed())
+
+    fun logout(activity: Activity) {
+        auth.logout { success ->
+            if (success) {
+                GlobalScope.launch(Dispatchers.IO) {
+                    db.clear()
+                }
+                toActivity(activity, TitleActivity::class.java)
+            }
+        }
     }
 
     fun syncAll() = syncUsers { users -> users.forEach { syncStatistics(it.id) } }
@@ -45,7 +63,7 @@ class SynchronizeController {
     }, onSyncFailed())
 
     fun checkUserExists(id: Int?, activity: Activity) {
-        fun onUserNotExists() = toTitleChooseUserActivity(activity)
+        fun onUserNotExists() = toActivity(activity, TitleChooseUserActivity::class.java)
 
         if (id == null) {
             onUserNotExists()
@@ -72,7 +90,7 @@ class SynchronizeController {
             GlobalScope.launch(Dispatchers.IO) {
                 db.deleteUser(user)
                 if (!db.hasCurrentUser()) {
-                    toTitleChooseUserActivity(activity)
+                    toActivity(activity, TitleChooseUserActivity::class.java)
                 }
                 onResult(true)
             }
@@ -94,6 +112,15 @@ class SynchronizeController {
         GlobalScope.launch(Dispatchers.IO) {
             db.setStatistics(statistic)
         }
+    }
+
+    fun setIdToken(idToken: String?) {
+        networkController.idToken = idToken
+        login()
+    }
+
+    fun setActivity(activity: Activity) {
+        auth = AuthenticateController(activity)
     }
 
 }

@@ -9,8 +9,12 @@ import ru.cscenter.fingerpaint.api.ApiStatistic
 
 private const val patients = "/patients"
 private const val statistics = "/statistics"
+private const val login = "/login"
 
 interface FingerPaintApi {
+    @POST(login)
+    fun login(): Call<String>
+
     @GET(patients)
     fun getPatients(): Call<List<ApiPatient>>
 

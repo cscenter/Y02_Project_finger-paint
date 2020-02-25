@@ -47,4 +47,6 @@
     <string name="choose_letter_color_task">Выбери %1$s букву</string>
     <string name="letter_contouring_task">Закрась букву</string>
     <string name="sound">sound</string>
+    <string name="server_client_id">SERVER_CLIENT_ID_HERE</string>
+    <string name="logout">Logout</string>
 </resources>

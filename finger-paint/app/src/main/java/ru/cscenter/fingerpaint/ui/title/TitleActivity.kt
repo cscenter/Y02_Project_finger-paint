@@ -3,7 +3,6 @@ package ru.cscenter.fingerpaint.ui.title
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.Dispatchers
@@ -12,57 +11,63 @@ import kotlinx.coroutines.launch
 import ru.cscenter.fingerpaint.MainActivity
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
+import ru.cscenter.fingerpaint.authentication.AuthenticateController
+import ru.cscenter.fingerpaint.authentication.LoginActivity
 import ru.cscenter.fingerpaint.models.CurrentUserModel
 
 class TitleActivity : AppCompatActivity() {
 
-    private val onLoaded: () -> Unit = {
+    private fun onLoaded() {
+        MainApplication.synchronizeController.syncAll()
         GlobalScope.launch(Dispatchers.Main) {
             val currentUserModel: CurrentUserModel by viewModels()
             if (currentUserModel.hasCurrentUser()) {
-                toMainActivity(this@TitleActivity)
+                toActivity(this@TitleActivity, MainActivity::class.java)
             } else {
-                MainApplication.isLoading = false
-                val intent = Intent(this@TitleActivity, TitleChooseUserActivity::class.java)
-                startActivity(intent)
-                finish()
+                toActivity(this@TitleActivity, TitleChooseUserActivity::class.java)
             }
         }
     }
 
-    private val handler = Handler()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == LOGIN_CODE) {
+            if (resultCode == RESULT_OK) {
+                onLoaded()
+            } else {
+                login()
+            }
+        }
+    }
+
+    private fun login() {
+        val intent = Intent(this, LoginActivity::class.java)
+        startActivityForResult(intent, LOGIN_CODE)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_title)
-    }
+        MainApplication.synchronizeController.setActivity(this)
 
-    override fun onResume() {
-        super.onResume()
-        if (MainApplication.isLoading) {
-            MainApplication.synchronizeController.syncAll()
-            handler.postDelayed(onLoaded, resources.getInteger(R.integer.loading_time).toLong())
-        } else {
-            toMainActivity(this)
+        val authController = AuthenticateController(this)
+
+        authController.silentLogin { success ->
+            if (success) {
+                onLoaded()
+            } else {
+                login()
+            }
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        handler.removeCallbacksAndMessages(null)
+    companion object {
+        private const val LOGIN_CODE = 43
     }
 }
 
-fun toMainActivity(activity: Activity) {
-    MainApplication.isLoading = false
-    val intent = Intent(activity, MainActivity::class.java)
-    activity.startActivity(intent)
-    activity.finish()
-}
-
-fun toTitleChooseUserActivity(activity: Activity) {
-    MainApplication.isLoading = true
-    val intent = Intent(activity, TitleChooseUserActivity::class.java)
-    activity.startActivity(intent)
-    activity.finish()
+fun <T : Activity> toActivity(fromActivity: Activity, toActivityClass: Class<T>) {
+    val intent = Intent(fromActivity, toActivityClass)
+    fromActivity.startActivity(intent)
+    fromActivity.finish()
 }

@@ -7,9 +7,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import ru.cscenter.fingerpaint.MainActivity
 import ru.cscenter.fingerpaint.db.User
 import ru.cscenter.fingerpaint.ui.chooseuser.base.BaseUserViewHolder
-import ru.cscenter.fingerpaint.ui.title.toMainActivity
+import ru.cscenter.fingerpaint.ui.title.toActivity
 
 class LoadingUserViewHolder(
     private val view: View,
@@ -23,7 +24,7 @@ class LoadingUserViewHolder(
         view.setOnClickListener {
             GlobalScope.launch(Dispatchers.Main) {
                 onChooseUser(user).join()
-                toMainActivity(activity)
+                toActivity(activity, MainActivity::class.java)
             }
         }
     }

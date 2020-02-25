@@ -1,5 +1,6 @@
 package ru.cscenter.fingerpaint.network
 
+import android.util.Log
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -20,17 +21,22 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 typealias SuccessHandler<T> = (result: T) -> Unit
-typealias FailHandler<T> = (call: Call<T>, t: Throwable) -> Unit
+typealias FailHandler<T> = (call: Call<T>, onSuccess: SuccessHandler<T>, code: Int) -> Unit
 
 fun <T> Call<T>.executeAsync(
     onSuccess: SuccessHandler<T>,
     onFail: FailHandler<T>
 ) = enqueue(object : Callback<T> {
-    override fun onFailure(call: Call<T>, t: Throwable) = onFail(call, t)
+    override fun onFailure(call: Call<T>, t: Throwable) {
+        t.printStackTrace()
+        onFail(call, onSuccess, 600)
+    }
+
     override fun onResponse(call: Call<T>, response: Response<T>) {
         val body = response.body()
         if (!response.isSuccessful || body == null) {
-            onFail(call, IllegalStateException(response.message()))
+            Log.e("FingerPaint", "Response error ${response.message()}")
+            onFail(call, onSuccess, response.code())
             return
         }
         onSuccess(body)
@@ -67,8 +73,7 @@ fun statisticToApi(statistic: Statistic, gameResult: GameResult) = ApiGameResult
 
 class NetworkController {
     val api: FingerPaintApi
-    private var accessKey = "123"
-
+    var idToken: String? = null
 
     init {
 
@@ -78,7 +83,7 @@ class NetworkController {
         val client = OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val request =
-                    chain.request().newBuilder().addHeader("access_key", accessKey).build()
+                    chain.request().newBuilder().addHeader("access_key", idToken).build()
                 chain.proceed(request)
             }
             .addInterceptor(logger)

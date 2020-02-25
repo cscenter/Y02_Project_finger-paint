@@ -6,10 +6,10 @@ import androidx.room.Room
 private const val DATABASE_NAME: String = "users.db"
 
 class DbController(context: Context) {
-    private val db = Room
+    private val database = Room
         .databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
         .build()
-        .dao()
+    private val db = database.dao()
 
     val currentUser = db.getCurrentUser()
     val users = db.getUsers()
@@ -31,4 +31,6 @@ class DbController(context: Context) {
         db.getCurrentUserStatistics(type)
             ?: Statistic(userId = it.id, type = type, date = currentDay())
     }
+
+    fun clear() = database.clearAllTables()
 }
