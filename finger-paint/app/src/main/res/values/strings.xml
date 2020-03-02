@@ -5,9 +5,14 @@
     <string name="nav_header_desc">Navigation header</string>
 
     <string name="menu_home">Меню</string>
-    <string name="figure_game">Фигуры</string>
-    <string name="letter1_game">Буквы 1</string>
-    <string name="letter2_game">Буквы 2</string>
+    <string name="only_choose_figure_game">Выбор фигуры</string>
+    <string name="only_choose_color_game">Выбор цвета</string>
+    <string name="only_choose_letter_game">Выбор буквы</string>
+    <string name="only_draw_figure_game">Рисование фигуры</string>
+    <string name="only_draw_letter_game">Рисование буквы</string>
+    <string name="figure_game">Игра: Фигуры</string>
+    <string name="letter1_game">Игра: Буквы 1</string>
+    <string name="letter2_game">Игра: Буквы 2</string>
     <string name="statistics">Статистика </string>
     <string name="choose_user">Выбор игрока</string>
     <string name="add_user">Добавить</string>

@@ -12,9 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import ru.cscenter.fingerpaint.R
-import ru.cscenter.fingerpaint.ui.games.FiguresGameActivity
-import ru.cscenter.fingerpaint.ui.games.Letters1GameActivity
-import ru.cscenter.fingerpaint.ui.games.Letters2GameActivity
+import ru.cscenter.fingerpaint.ui.games.*
 import ru.cscenter.fingerpaint.ui.games.base.BaseGameActivity
 import ru.cscenter.fingerpaint.ui.statistics.StatisticsFragmentArgs
 
@@ -44,6 +42,22 @@ class HomeFragment : Fragment() {
             )
         }
 
+        root.findViewById<Button>(R.id.only_choose_figure_button).setOnClickListener {
+            runOnlyOneGame(OnlyOneGameType.CHOOSE_FIGURE_GAME)
+        }
+        root.findViewById<Button>(R.id.only_choose_color_button).setOnClickListener {
+            runOnlyOneGame(OnlyOneGameType.CHOOSE_COLOR_GAME)
+        }
+        root.findViewById<Button>(R.id.only_choose_letter_button).setOnClickListener {
+            runOnlyOneGame(OnlyOneGameType.CHOOSE_LETTER_GAME)
+        }
+        root.findViewById<Button>(R.id.only_draw_figure_button).setOnClickListener {
+            runOnlyOneGame(OnlyOneGameType.DRAW_FIGURE_GAME)
+        }
+        root.findViewById<Button>(R.id.only_draw_letter_button).setOnClickListener {
+            runOnlyOneGame(OnlyOneGameType.DRAW_LETTER_GAME)
+        }
+
         val figureButton: Button = root.findViewById(R.id.figure_game_button)
         figureButton.setOnClickListener {
             runGame(FiguresGameActivity::class.java)
@@ -60,6 +74,12 @@ class HomeFragment : Fragment() {
         }
 
         return root
+    }
+
+    private fun runOnlyOneGame(type: OnlyOneGameType) {
+        val intent = Intent(activity, OnlyOneGameActivity::class.java)
+        intent.putExtra(ARG_ONLY_ONE_GAME_TYPE, type)
+        startActivity(intent)
     }
 
     private fun runGame(gameType: Class<out BaseGameActivity>) {
