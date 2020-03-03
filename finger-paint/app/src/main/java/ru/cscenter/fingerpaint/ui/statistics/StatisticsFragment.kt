@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -23,6 +25,7 @@ import ru.cscenter.fingerpaint.db.Statistic
 import ru.cscenter.fingerpaint.db.User
 import ru.cscenter.fingerpaint.db.dateToString
 import ru.cscenter.fingerpaint.models.StatisticsModel
+import ru.cscenter.fingerpaint.service.exportViewToFile
 
 fun navigateToStatistics(fromFragment: Fragment, user: User) {
     MainApplication.synchronizeController.syncStatistics(user.id)
@@ -48,6 +51,14 @@ class StatisticsFragment : Fragment() {
         val letterColorChooseChart: BarChart = root.findViewById(R.id.chart4)
         val drawingChart: BarChart = root.findViewById(R.id.chart5)
         val contouringChart: BarChart = root.findViewById(R.id.chart6)
+
+        val exportButton: ImageView = root.findViewById(R.id.export_button)
+        val statisticsLayout: LinearLayout = root.findViewById(R.id.statistics_layout)
+        exportButton.setOnClickListener {
+            val date = dateToString(System.currentTimeMillis())
+            val title = "Statistics_${userNameView.text}_$date"
+            exportViewToFile(activity!!, statisticsLayout, title)
+        }
 
         statisticsModel.getUser().observe(viewLifecycleOwner, Observer { user ->
             userNameView.text = user.name

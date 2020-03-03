@@ -49,5 +49,6 @@
     <string name="sound">sound</string>
     <string name="server_client_id">SERVER_CLIENT_ID_HERE</string>
     <string name="logout">Logout</string>
+    <string name="export">Export</string>
     <string name="network_state_icon">network_state_icon</string>
 </resources>
