@@ -15,7 +15,6 @@ inline fun <reified T : ApiBase> toJsonArray(list: List<T>): String = Klaxon().t
 data class ApiPatient(val id: Long, val name: String) : ApiBase
 data class ApiPatientName(val name: String) : ApiBase
 data class ApiStatistic(
-    val patientId: Long,
     val date: String,
     val type: Int,
     val total: Int,
@@ -27,4 +26,14 @@ data class ApiGameResult(
     val date: String,
     val type: Int,
     val success: Boolean
+) : ApiBase
+
+data class ApiUserStatistics(
+    val patientId: Long,
+    val statistics: List<ApiStatistic>
+) : ApiBase
+
+data class ApiNewPatientStatistics(
+    val name: String,
+    val statistics: List<ApiStatistic>
 ) : ApiBase

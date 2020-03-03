@@ -2,10 +2,7 @@ package ru.cscenter.fingerpaint.network
 
 import retrofit2.Call
 import retrofit2.http.*
-import ru.cscenter.fingerpaint.api.ApiGameResult
-import ru.cscenter.fingerpaint.api.ApiPatient
-import ru.cscenter.fingerpaint.api.ApiPatientName
-import ru.cscenter.fingerpaint.api.ApiStatistic
+import ru.cscenter.fingerpaint.api.*
 
 private const val patients = "/patients"
 private const val statistics = "/statistics"
@@ -25,7 +22,7 @@ interface FingerPaintApi {
     fun addPatients(@Body names: List<ApiPatientName>): Call<List<ApiPatient>>
 
     @PUT(patients)
-    fun updatePatient(@Body patient: ApiPatient): Call<String>
+    fun updatePatients(@Body patients: List<ApiPatient>): Call<String>
 
     @DELETE("$patients/{id}")
     fun deletePatient(@Path("id") patientId: Long): Call<String>
@@ -34,5 +31,8 @@ interface FingerPaintApi {
     fun getStatistics(@Path("id") patientId: Long): Call<List<ApiStatistic>>
 
     @PUT(statistics)
-    fun putStatistics(@Body result: ApiGameResult): Call<String>
+    fun putStatistics(@Body results: List<ApiGameResult>): Call<String>
+
+    @POST("$patients/new")
+    fun addOfflinePatients(@Body patients: List<ApiNewPatientStatistics>): Call<String>
 }

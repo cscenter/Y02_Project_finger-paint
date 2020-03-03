@@ -14,6 +14,12 @@ enum class GameType(val id: Int) {
     DRAW_SPECIAL(8)
 }
 
+enum class UserStatus {
+    SYNCHRONIZED,
+    NEW,
+    UPDATED,
+}
+
 @Suppress("unused")
 class TypeConverter {
     @TypeConverter
@@ -21,4 +27,10 @@ class TypeConverter {
 
     @TypeConverter
     fun fromGameType(type: GameType) = type.id
+
+    @TypeConverter
+    fun toUserStatus(id: Int): UserStatus? = UserStatus.values().find { it.ordinal == id }
+
+    @TypeConverter
+    fun fromUserStatus(status: UserStatus): Int = status.ordinal
 }

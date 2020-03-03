@@ -67,7 +67,10 @@ class AuthenticateController(private val activity: Activity) {
     }
 
     private fun onAccountUpdated(account: GoogleSignInAccount?) {
-        MainApplication.synchronizeController.setIdToken(account?.idToken)
+        val idToken = account?.idToken
+        if (idToken != null) {
+            MainApplication.synchronizeController.setIdToken(idToken)
+        }
     }
 
     companion object {

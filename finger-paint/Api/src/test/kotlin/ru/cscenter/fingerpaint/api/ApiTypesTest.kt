@@ -24,8 +24,8 @@ internal class ApiTypesTest {
 
     @Test
     fun testStatistic() {
-        val statistic = ApiStatistic(42, "01.01.2020", 3, 23, 3)
-        val string = "{\"date\" : \"01.01.2020\", \"patientId\" : 42," +
+        val statistic = ApiStatistic("01.01.2020", 3, 23, 3)
+        val string = "{\"date\" : \"01.01.2020\"," +
                 " \"success\" : 3, \"total\" : 23, \"type\" : 3}"
         assertEquals(string, toJson(statistic))
         assertEquals(statistic, fromJson<ApiStatistic>(string))

@@ -5,17 +5,22 @@
 
     <include layout="@layout/background" />
 
+    <ImageView
+        android:id="@+id/network_state_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="@dimen/small_margin"
+        android:contentDescription="@string/network_state_icon" />
+
     <LinearLayout
         android:id="@+id/home_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginStart="@dimen/horizontal_margin"
-        android:layout_marginLeft="@dimen/horizontal_margin"
-        android:layout_marginTop="@dimen/vertical_margin"
-        android:layout_marginEnd="@dimen/horizontal_margin"
-        android:layout_marginRight="@dimen/horizontal_margin"
-        android:layout_marginBottom="@dimen/vertical_margin"
+        android:layout_margin="@dimen/normal_margin"
         android:orientation="horizontal">
 
         <TextView
@@ -31,10 +36,7 @@
             android:id="@+id/statistics_button"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginLeft="@dimen/horizontal_margin"
-            android:layout_marginTop="@dimen/vertical_margin"
-            android:layout_marginRight="@dimen/horizontal_margin"
-            android:layout_marginBottom="@dimen/vertical_margin"
+            android:layout_margin="@dimen/normal_margin"
             android:layout_weight="0"
             android:background="@drawable/button_selector"
             android:contentDescription="@string/statistics"
@@ -46,8 +48,8 @@
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_below="@id/home_header">
+        android:layout_below="@id/home_header"
+        android:layout_centerInParent="true">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -59,10 +61,7 @@
                 android:id="@+id/only_choose_figure_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/horizontal_margin"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:layout_marginRight="@dimen/horizontal_margin"
-                android:layout_marginBottom="@dimen/vertical_margin"
+                android:layout_margin="@dimen/normal_margin"
                 android:drawableStart="@drawable/figures"
                 android:drawableLeft="@drawable/figures"
                 android:text="@string/only_choose_figure_game" />
@@ -71,10 +70,7 @@
                 android:id="@+id/only_choose_color_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/horizontal_margin"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:layout_marginRight="@dimen/horizontal_margin"
-                android:layout_marginBottom="@dimen/vertical_margin"
+                android:layout_margin="@dimen/normal_margin"
                 android:drawableStart="@drawable/figures"
                 android:drawableLeft="@drawable/figures"
                 android:text="@string/only_choose_color_game" />
@@ -83,10 +79,7 @@
                 android:id="@+id/only_choose_letter_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/horizontal_margin"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:layout_marginRight="@dimen/horizontal_margin"
-                android:layout_marginBottom="@dimen/vertical_margin"
+                android:layout_margin="@dimen/normal_margin"
                 android:drawableStart="@drawable/letters"
                 android:drawableLeft="@drawable/letters"
                 android:text="@string/only_choose_letter_game" />
@@ -95,10 +88,7 @@
                 android:id="@+id/only_draw_figure_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/horizontal_margin"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:layout_marginRight="@dimen/horizontal_margin"
-                android:layout_marginBottom="@dimen/vertical_margin"
+                android:layout_margin="@dimen/normal_margin"
                 android:drawableStart="@drawable/figures"
                 android:drawableLeft="@drawable/figures"
                 android:text="@string/only_draw_figure_game" />
@@ -107,10 +97,7 @@
                 android:id="@+id/only_draw_letter_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/horizontal_margin"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:layout_marginRight="@dimen/horizontal_margin"
-                android:layout_marginBottom="@dimen/vertical_margin"
+                android:layout_margin="@dimen/normal_margin"
                 android:drawableStart="@drawable/letters"
                 android:drawableLeft="@drawable/letters"
                 android:text="@string/only_draw_letter_game" />
@@ -119,10 +106,7 @@
                 android:id="@+id/figure_game_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/horizontal_margin"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:layout_marginRight="@dimen/horizontal_margin"
-                android:layout_marginBottom="@dimen/vertical_margin"
+                android:layout_margin="@dimen/normal_margin"
                 android:drawableStart="@drawable/figures"
                 android:drawableLeft="@drawable/figures"
                 android:text="@string/figure_game" />
@@ -131,10 +115,7 @@
                 android:id="@+id/letter1_game_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/horizontal_margin"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:layout_marginRight="@dimen/horizontal_margin"
-                android:layout_marginBottom="@dimen/vertical_margin"
+                android:layout_margin="@dimen/normal_margin"
                 android:drawableStart="@drawable/letters"
                 android:drawableLeft="@drawable/letters"
                 android:text="@string/letter1_game" />
@@ -143,10 +124,7 @@
                 android:id="@+id/letter2_game_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/horizontal_margin"
-                android:layout_marginTop="@dimen/vertical_margin"
-                android:layout_marginRight="@dimen/horizontal_margin"
-                android:layout_marginBottom="@dimen/vertical_margin"
+                android:layout_margin="@dimen/normal_margin"
                 android:drawableStart="@drawable/letters"
                 android:drawableLeft="@drawable/letters"
                 android:text="@string/letter2_game" />

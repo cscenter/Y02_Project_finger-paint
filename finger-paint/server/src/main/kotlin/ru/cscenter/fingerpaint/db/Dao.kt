@@ -49,14 +49,39 @@ object Dao {
             .onEach { em.persist(it) }
     }
 
+    private fun patientExists(em: EntityManager, userId: String, name: String) = em.createQuery(
+        "SELECT m FROM Patient m WHERE name = :name AND userId = :userId",
+        Patient::class.java
+    )
+        .setParameter("name", name)
+        .setParameter("userId", userId).resultList.isNotEmpty()
+
+    fun insertPatientsWithStatistics(userId: String, data: Map<String, List<Statistic>>) =
+        run { em ->
+            for ((name, statistics) in data) {
+                val patient = Patient(name, userId)
+                var i = 2
+                while (patientExists(em, userId, patient.name)) {
+                    patient.name = "$name($i)"
+                    i++
+                }
+                em.persist(patient)
+                statistics.map { statistic ->
+                    statistic.id.patientId = patient.id
+                    statistic
+                }.forEach { em.persist(it) }
+            }
+        }
+
+
     fun deletePatients(ids: List<Long>) = run { em ->
         ids
             .map { em.find(Patient::class.java, it) }
             .forEach { em.remove(it) }
     }
 
-    fun renamePatient(id: Long, newName: String): Patient = run { em ->
-        em.find(Patient::class.java, id).also {
+    fun renamePatient(id: Long, newName: String): Patient? = run { em ->
+        em.find(Patient::class.java, id)?.also {
             it.name = newName
             em.persist(it)
         }
@@ -71,6 +96,7 @@ object Dao {
     }
 
     fun updateStatistic(statisticId: StatisticId, success: Boolean) = run { em ->
+        if (!containsPatient(statisticId.patientId)) return@run
         val statistic = em.find(Statistic::class.java, statisticId) ?: Statistic(statisticId, 0, 0)
         statistic.total++
         statistic.success += if (success) 1 else 0

@@ -42,6 +42,12 @@ class HomeFragment : Fragment() {
         val currentUserModel: CurrentUserModel by activityViewModels()
         val root = inflater.inflate(R.layout.fragment_home, container, false)
 
+        val networkStateIcon: ImageView = root.findViewById(R.id.network_state_icon)
+        MainApplication.settings.isOnline().observe(viewLifecycleOwner, Observer { isOnline ->
+            val resource = if (isOnline) R.drawable.ic_online_icon else R.drawable.ic_offline_icon
+            networkStateIcon.setImageResource(resource)
+        })
+
         val currentNameTextView: TextView = root.findViewById(R.id.current_name_text_view)
         currentUserModel.currentUser.observe(viewLifecycleOwner, Observer { user ->
             currentNameTextView.text = user?.toString() ?: ""

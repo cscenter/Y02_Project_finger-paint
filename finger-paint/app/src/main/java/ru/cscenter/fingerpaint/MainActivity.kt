@@ -11,6 +11,8 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,6 +23,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         MainApplication.synchronizeController.setActivity(this)
+        MainApplication.synchronizeController.info = { info ->
+            Snackbar.make(nav_view.rootView, info, Snackbar.LENGTH_LONG).show()
+        }
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)

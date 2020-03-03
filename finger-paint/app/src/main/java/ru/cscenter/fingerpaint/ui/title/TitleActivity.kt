@@ -14,10 +14,12 @@ import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.authentication.AuthenticateController
 import ru.cscenter.fingerpaint.authentication.LoginActivity
 import ru.cscenter.fingerpaint.models.CurrentUserModel
+import ru.cscenter.fingerpaint.synchronization.SynchronizeController
 
 class TitleActivity : AppCompatActivity() {
 
     private fun onLoaded() {
+        MainApplication.synchronizeController.state.login()
         MainApplication.synchronizeController.syncAll()
         GlobalScope.launch(Dispatchers.Main) {
             val currentUserModel: CurrentUserModel by viewModels()
@@ -48,9 +50,9 @@ class TitleActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_title)
-        MainApplication.synchronizeController.setActivity(this)
 
         val authController = AuthenticateController(this)
+        MainApplication.synchronizeController = SynchronizeController(authController)
 
         authController.silentLogin { success ->
             if (success) {

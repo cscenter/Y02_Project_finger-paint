@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/horizontal_margin"
+        android:layout_margin="@dimen/normal_margin"
         android:orientation="horizontal"
         tools:ignore="UseCompoundDrawables">
 
@@ -27,8 +27,8 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/horizontal_margin"
-            android:layout_marginLeft="@dimen/horizontal_margin"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:layout_marginLeft="@dimen/normal_margin"
             android:contentDescription="@string/sound"
             android:src="@drawable/ic_audio" />
     </LinearLayout>

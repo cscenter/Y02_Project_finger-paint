@@ -5,6 +5,7 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.navigation.NavController
 import kotlinx.coroutines.Job
+import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.User
 import ru.cscenter.fingerpaint.ui.chooseuser.base.BaseUserViewHolder
@@ -30,7 +31,9 @@ class UserViewHolder(
 
         menuButton.setOnClickListener {
             val menu = PopupMenu(view.context, it)
-            menu.inflate(R.menu.user_menu)
+            val resource = if (MainApplication.settings.isOnlineState())
+                R.menu.user_menu_online else R.menu.user_menu_offline
+            menu.inflate(resource)
             menu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.item_set -> navigateToSetUser(user.id)

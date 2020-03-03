@@ -3,6 +3,7 @@ package ru.cscenter.fingerpaint.server
 import org.slf4j.LoggerFactory
 import ru.cscenter.fingerpaint.api.*
 import ru.cscenter.fingerpaint.db.Dao
+import ru.cscenter.fingerpaint.db.entities.Statistic
 import ru.cscenter.fingerpaint.db.entities.StatisticId
 import spark.Request
 import spark.Spark.*
@@ -57,6 +58,22 @@ class Server {
             toJsonArray(patients)
         }
 
+        post("$patients/new") { request, _ ->
+            val id = getId(request)
+            val newUserStatistics = getNewUsersStatistics(request).associate {
+                Pair(it.name, it.statistics.map { statistic ->
+                    Statistic(
+                        StatisticId(0, Date.valueOf(statistic.date), statistic.type),
+                        statistic.total,
+                        statistic.success
+                    )
+                })
+            }
+
+            Dao.insertPatientsWithStatistics(id, newUserStatistics)
+            okResponse
+        }
+
         delete("$patients/:id") { request, _ ->
             val patientId = request.params("id").toLong()
             Dao.deletePatients(listOf(patientId))
@@ -64,23 +81,30 @@ class Server {
         }
 
         put(patients) { request, _ ->
-            val patient = getPatient(request)
-            Dao.renamePatient(patient.id, patient.name)
+            val patients = getPatients(request)
+            for (patient in patients) {
+                Dao.renamePatient(patient.id, patient.name)
+            }
             okResponse
         }
 
-
+        // TODO use ApiUserStatistics
         get("$statistics/:id") { request, _ ->
             val patientId = request.params("id").toLong()
             val statistics = Dao.selectStatistics(listOf(patientId)).map { it.toApiStatistic() }
             toJsonArray(statistics)
         }
 
+        // TODO create request for all patients, use ApiUserStatistics
+        // get(statistics)
+
         put(statistics) { request, _ ->
-            val gameResult = getGameResult(request)
-            val statisticId =
-                StatisticId(gameResult.patientId, Date.valueOf(gameResult.date), gameResult.type)
-            Dao.updateStatistic(statisticId, gameResult.success)
+            val gameResults = getGameResults(request)
+            for (gameResult in gameResults) {
+                val statisticId =
+                    StatisticId(gameResult.patientId, Date.valueOf(gameResult.date), gameResult.type)
+                Dao.updateStatistic(statisticId, gameResult.success)
+            }
             okResponse
         }
 
@@ -99,6 +123,8 @@ class Server {
     private fun getPatientNames(request: Request) =
         fromJsonArray<ApiPatientName>(request.body())!!.map { it.name }
 
-    private fun getPatient(request: Request) = fromJson<ApiPatient>(request.body())!!
-    private fun getGameResult(request: Request) = fromJson<ApiGameResult>(request.body())!!
+    private fun getPatients(request: Request) = fromJsonArray<ApiPatient>(request.body())!!
+    private fun getGameResults(request: Request) = fromJsonArray<ApiGameResult>(request.body())!!
+    private fun getNewUsersStatistics(request: Request) =
+        fromJsonArray<ApiNewPatientStatistics>(request.body())!!
 }

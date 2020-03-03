@@ -24,7 +24,7 @@ class Statistic(
         return result
     }
 
-    fun toApiStatistic() = ApiStatistic(id.patientId, id.date.toString(), id.type, total, success)
+    fun toApiStatistic() = ApiStatistic(id.date.toString(), id.type, total, success)
 }
 
 @Embeddable

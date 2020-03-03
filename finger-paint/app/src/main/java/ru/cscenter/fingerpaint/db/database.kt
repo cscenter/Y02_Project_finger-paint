@@ -4,11 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.min
 
 @Entity(indices = [Index(value = ["name"], unique = true)])
 data class User(
     @PrimaryKey val id: Int,
-    @ColumnInfo var name: String
+    @ColumnInfo var name: String,
+    @ColumnInfo var status: UserStatus = UserStatus.SYNCHRONIZED
 ) {
     override fun toString() = name
 }
@@ -44,6 +46,25 @@ data class CurrentUser(
     @ColumnInfo(name = "user_id") val userId: Int,
     @PrimaryKey val id: Int = 0
 )
+
+@Entity(
+    foreignKeys = [ForeignKey(
+        entity = User::class,
+        parentColumns = arrayOf("id"),
+        childColumns = arrayOf("user_id"),
+        onDelete = ForeignKey.CASCADE
+    )],
+    indices = [Index("user_id")]
+)
+data class CachedGameResult(
+    @ColumnInfo(name = "user_id") val userId: Int,
+    @ColumnInfo val date: Long,
+    @ColumnInfo val type: GameType,
+    @ColumnInfo var success: Boolean
+) {
+    @PrimaryKey(autoGenerate = true)
+    var id: Int = 0
+}
 
 @Dao
 interface DbAccess {
@@ -83,6 +104,12 @@ interface DbAccess {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertUser(user: User): Long
 
+    @Transaction
+    suspend fun insertUser(name: String, status: UserStatus): Int {
+        val id = min(getMinUserId() - 1, -2)
+        return insertUser(User(id, name, status)).toInt()
+    }
+
     @Query("SELECT * FROM User WHERE id IN (SELECT user_id FROM CurrentUser)")
     fun getCurrentUser(): LiveData<User?>
 
@@ -103,10 +130,25 @@ interface DbAccess {
 
     @Query("SELECT * FROM Statistic WHERE user_id = :id ORDER BY date")
     fun getUserAllStatistics(id: Int): LiveData<List<Statistic>>
+
+    @Query("SELECT * FROM Statistic WHERE user_id = :id ")
+    suspend fun selectUserAllStatistics(id: Int): List<Statistic>
+
+    @Query("SELECT MIN(id) FROM User")
+    fun getMinUserId(): Int
+
+    @Query("SELECT * FROM CachedGameResult")
+    suspend fun selectCachedResults(): List<CachedGameResult>
+
+    @Insert
+    suspend fun addGameResult(result: CachedGameResult)
+
+    @Query("DELETE FROM CachedGameResult")
+    suspend fun removeCachedResults()
 }
 
 @Database(
-    entities = [User::class, CurrentUser::class, Statistic::class],
+    entities = [User::class, CurrentUser::class, Statistic::class, CachedGameResult::class],
     exportSchema = false, version = 1
 )
 @TypeConverters(TypeConverter::class)

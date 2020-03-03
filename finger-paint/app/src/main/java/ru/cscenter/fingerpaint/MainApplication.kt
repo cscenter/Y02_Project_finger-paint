@@ -20,7 +20,6 @@ class MainApplication : MultiDexApplication() {
         dbController = DbController(applicationContext)
         settings = Settings(applicationContext)
         gameResources = GameResourceParser(applicationContext, R.xml.game_config).parseXML()
-        synchronizeController = SynchronizeController()
     }
 
 }

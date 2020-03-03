@@ -18,14 +18,20 @@ class AuthServer {
 
     fun run() {
         before("/*") { request, _ ->
-            val key = request.headers("access_key")
-            val token = verifier.verify(key)
-            if (token != null) {
-                val userId = token.payload.subject
-                request.attribute("id", userId)
-            } else {
+            try {
+                val key = request.headers("access_key")
+                val token = verifier.verify(key)
+                if (token != null) {
+                    val userId = token.payload.subject
+                    request.attribute("id", userId)
+                } else {
+                    halt(401)
+                }
+            } catch (e: Exception) {
+                println(e)
                 halt(401)
             }
+
         }
     }
 }
