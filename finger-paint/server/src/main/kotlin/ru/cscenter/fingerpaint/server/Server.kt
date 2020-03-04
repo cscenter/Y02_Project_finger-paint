@@ -3,29 +3,43 @@ package ru.cscenter.fingerpaint.server
 import org.slf4j.LoggerFactory
 import ru.cscenter.fingerpaint.api.*
 import ru.cscenter.fingerpaint.db.Dao
+import ru.cscenter.fingerpaint.db.entities.ChooseTask
+import ru.cscenter.fingerpaint.db.entities.Image
 import ru.cscenter.fingerpaint.db.entities.Statistic
 import ru.cscenter.fingerpaint.db.entities.StatisticId
 import spark.Request
 import spark.Spark.*
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.sql.Date
 import java.time.ZoneId
 import java.time.ZonedDateTime
+
 
 class Server {
     private val loginServer = AuthServer()
     private val logger = LoggerFactory.getLogger(Server::class.java)
 
     companion object {
+        internal const val public = "/public"
+        internal const val private = "/private"
+        internal const val all = "/all"
         private const val okResponse = "ok"
-        private const val patients = "/patients"
-        private const val statistics = "/statistics"
-        private const val login = "/login"
+        private const val patients = "$public/patients"
+        private const val statistics = "$public/statistics"
+        private const val login = "$public/login"
+        private const val chooseTasks = "/choose"
+        private const val images = "/images"
         private val timeZone = ZoneId.of("Europe/Moscow")
 
         private fun date() = ZonedDateTime.now(timeZone)
     }
 
     fun run() {
+        val uploadDir = File("images")
+        uploadDir.mkdir()
+
         Dao.init()
 
         loginServer.run()
@@ -108,14 +122,61 @@ class Server {
             okResponse
         }
 
+        post("$private$images/:name") { request, _ ->
+            val fileName = request.params("name")
+            val image = Dao.insertImage(Image(fileName))
+            val file = File(uploadDir, fileName)
+
+            request.raw().inputStream.use { input ->
+                Files.copy(input, file.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            }
+
+            image.id
+        }
+
+        get("$all$images/:id") { request, response ->
+            val id = request.params("id").toLong()
+            val image = Dao.selectImage(id)
+            val file = File(uploadDir, image.path)
+            response.type("image/jpeg")
+            response.raw().contentType = "image/jpeg"
+            response.header("Content-Disposition", "attachment; filename=${image.path}")
+            val bytes = Files.readAllBytes(file.toPath())
+            response.raw().outputStream.apply {
+                write(bytes)
+                flush()
+                close()
+            }
+            response
+        }
+
+        get("$public$chooseTasks") { _, _ ->
+            val tasks = Dao.selectChooseTasks()
+                .map { ApiChooseTask(it.text, it.correctImageId, it.incorrectImageId) }
+            toJsonArray(tasks)
+        }
+
+        post("$private$chooseTasks") { request, _ ->
+            val task = getChooseTask(request)
+            Dao.insertChooseTask(ChooseTask(task.text, task.correctImageId, task.incorrectImageId))
+            okResponse
+        }
+
 
         before("/*") { request, _ ->
-            logger.info("${date()}\n\t>>>> ${request.requestMethod()} ${request.url()}\n\tbody: ${request.body()}")
+            println(request.contentType())
+            if (request.contentType() != "image/jpeg") {
+                logger.info("${date()}\n\t>>>> ${request.requestMethod()} ${request.url()}\n\tbody: ${request.body()}")
+            } else {
+                logger.info("${date()}\n\t>>>> ${request.requestMethod()} ${request.url()}")
+            }
         }
 
         after("/*") { request, response ->
-            response.type("application/json")
-            logger.info("${date()}\n\t<<<< ${request.requestMethod()} ${request.url()}\n\tbody: ${response.body()}")
+            if (response.type() == null) {
+                response.type("application/json")
+            }
+            logger.info("${date()}\n\t<<<< ${request.requestMethod()} ${request.url()} ${response.type()}\n\tbody: ${response.body()}")
         }
     }
 
@@ -123,6 +184,7 @@ class Server {
     private fun getPatientNames(request: Request) =
         fromJsonArray<ApiPatientName>(request.body())!!.map { it.name }
 
+    private fun getChooseTask(request: Request) = fromJson<ApiChooseTask>(request.body())!!
     private fun getPatients(request: Request) = fromJsonArray<ApiPatient>(request.body())!!
     private fun getGameResults(request: Request) = fromJsonArray<ApiGameResult>(request.body())!!
     private fun getNewUsersStatistics(request: Request) =

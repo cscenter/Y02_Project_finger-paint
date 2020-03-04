@@ -37,3 +37,10 @@ data class ApiNewPatientStatistics(
     val name: String,
     val statistics: List<ApiStatistic>
 ) : ApiBase
+
+data class ApiChooseTask(
+    val text: String,
+    val correctImageId: Long,
+    val incorrectImageId: Long,
+    val id: Long = 0
+) : ApiBase
