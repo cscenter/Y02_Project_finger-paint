@@ -6,7 +6,7 @@ import ru.cscenter.fingerpaint.db.GameType
 import ru.cscenter.fingerpaint.resources.Letter
 import ru.cscenter.fingerpaint.resources.MyColor
 import ru.cscenter.fingerpaint.service.colorsRandom
-import ru.cscenter.fingerpaint.service.images.getImage
+import ru.cscenter.fingerpaint.service.images.setImage
 import ru.cscenter.fingerpaint.service.lettersRandom
 import ru.cscenter.fingerpaint.ui.games.base.BaseGameActivity
 import ru.cscenter.fingerpaint.ui.games.base.ChooseGame
@@ -27,12 +27,12 @@ class ChooseLetterColorGame(config: Config, gameActivity: BaseGameActivity) :
             val task = resources.getString(R.string.choose_letter_color_task, correctColor.text)
             return Config(
                 question = task,
-                correctImageSupplier = getImage(
+                correctImageViewSetter = setImage(
                     correctLetter.resourceId,
                     resources,
                     correctColor.color
                 ),
-                incorrectImageSupplier = getImage(
+                incorrectImageViewSetter = setImage(
                     incorrectLetter.resourceId,
                     resources,
                     incorrectColor.color

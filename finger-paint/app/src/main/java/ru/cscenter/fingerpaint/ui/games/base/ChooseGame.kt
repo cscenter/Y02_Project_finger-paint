@@ -1,6 +1,5 @@
 package ru.cscenter.fingerpaint.ui.games.base
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +11,6 @@ import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.service.AudioController
 import ru.cscenter.fingerpaint.service.MyVibrator
-import ru.cscenter.fingerpaint.service.images.setImageAsSoonAsPossible
 import kotlin.random.Random
 
 
@@ -23,8 +21,8 @@ abstract class ChooseGame(private val config: Config, gameActivity: BaseGameActi
 
     data class Config(
         val question: String,
-        val correctImageSupplier: (width: Int, height: Int) -> Bitmap,
-        val incorrectImageSupplier: (width: Int, height: Int) -> Bitmap
+        val correctImageViewSetter: (ImageView) -> Unit,
+        val incorrectImageViewSetter: (ImageView) -> Unit
     )
 
     private var attempts = 1
@@ -59,8 +57,8 @@ abstract class ChooseGame(private val config: Config, gameActivity: BaseGameActi
             correctChooseView = incorrectChooseView.also { incorrectChooseView = correctChooseView }
         }
 
-        setImageAsSoonAsPossible(correctChooseView, config.correctImageSupplier)
-        setImageAsSoonAsPossible(incorrectChooseView, config.incorrectImageSupplier)
+        config.correctImageViewSetter(correctChooseView)
+        config.incorrectImageViewSetter(incorrectChooseView)
 
         correctChooseView.setOnClickListener {
             onResult(GameResult.SUCCESS)

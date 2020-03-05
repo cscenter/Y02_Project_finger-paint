@@ -48,6 +48,9 @@
         <activity
             android:name=".ui.games.Letters2GameActivity"
             android:theme="@style/AppBaseTheme" />
+        <activity
+            android:name=".ui.games.ExtraChooseActivity"
+            android:theme="@style/AppBaseTheme" />
     </application>
 
 </manifest>

@@ -2,10 +2,19 @@ package ru.cscenter.fingerpaint.service.images
 
 import android.content.res.Resources
 import android.graphics.*
+import android.widget.ImageView
 
 
 private const val GET_IMAGE_DEFAULT_COMPRESSION_RATE = 1
 private const val GET_IMAGE_COMPRESSED_DEFAULT_COMPRESSION_RATE = 8
+
+fun setImage(
+    resourceId: Int,
+    resources: Resources,
+    color: Int = Color.BLACK
+): (ImageView) -> Unit = { view ->
+    setImageAsSoonAsPossible(view, getImage(resourceId, resources, color))
+}
 
 fun getImage(
     resourceId: Int,

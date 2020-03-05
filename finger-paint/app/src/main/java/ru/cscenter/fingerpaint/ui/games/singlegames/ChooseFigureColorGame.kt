@@ -7,7 +7,7 @@ import ru.cscenter.fingerpaint.resources.Figure
 import ru.cscenter.fingerpaint.resources.MyColor
 import ru.cscenter.fingerpaint.service.colorsRandom
 import ru.cscenter.fingerpaint.service.figuresRandom
-import ru.cscenter.fingerpaint.service.images.getImage
+import ru.cscenter.fingerpaint.service.images.setImage
 import ru.cscenter.fingerpaint.ui.games.base.BaseGameActivity
 import ru.cscenter.fingerpaint.ui.games.base.ChooseGame
 
@@ -27,12 +27,12 @@ class ChooseFigureColorGame(config: Config, gameActivity: BaseGameActivity) :
             val task = resources.getString(R.string.choose_figure_color_task, correctColor.text)
             return Config(
                 question = task,
-                correctImageSupplier = getImage(
+                correctImageViewSetter = setImage(
                     correctFigure.resourceId,
                     resources,
                     correctColor.color
                 ),
-                incorrectImageSupplier = getImage(
+                incorrectImageViewSetter = setImage(
                     incorrectFigure.resourceId,
                     resources,
                     incorrectColor.color

@@ -1,6 +1,7 @@
 package ru.cscenter.fingerpaint.api
 
 import com.beust.klaxon.Klaxon
+import java.io.Serializable
 
 interface ApiBase
 
@@ -43,4 +44,4 @@ data class ApiChooseTask(
     val correctImageId: Long,
     val incorrectImageId: Long,
     val id: Long = 0
-) : ApiBase
+) : ApiBase, Serializable

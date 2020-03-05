@@ -20,9 +20,6 @@ class AuthServer {
 
     fun run() {
         before("${Server.public}/*") { request, _ ->
-            if (checkAdminAccess(request)) {
-                return@before
-            }
             try {
                 val key = request.headers("access_key")
                 val token = verifier.verify(key)

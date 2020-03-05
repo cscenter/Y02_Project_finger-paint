@@ -53,4 +53,6 @@
     <string name="network_state_icon">network_state_icon</string>
     <string name="tasks_request_failed">Не удалось загрузить задания</string>
     <string name="extra_tasks">Доп.игры</string>
+    <string name="start">Старт</string>
+    <string name="choose_task_message">Выберите задания</string>
 </resources>
