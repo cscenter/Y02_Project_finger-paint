@@ -2,9 +2,12 @@ package ru.cscenter.fingerpaint.synchronization
 
 import android.app.Activity
 import ru.cscenter.fingerpaint.MainApplication
+import ru.cscenter.fingerpaint.api.ApiChooseTask
 import ru.cscenter.fingerpaint.authentication.AuthenticateController
 import ru.cscenter.fingerpaint.db.Statistic
 import ru.cscenter.fingerpaint.db.User
+import ru.cscenter.fingerpaint.network.FailHandler
+import ru.cscenter.fingerpaint.network.SuccessHandler
 import ru.cscenter.fingerpaint.ui.games.base.GameResult
 
 typealias ResultHandler = (success: Boolean) -> Unit
@@ -33,4 +36,5 @@ class SynchronizeController(auth: AuthenticateController) {
 
     fun setIdToken(idToken: String) = state.setIdToken(idToken)
     fun setActivity(activity: Activity) = state.setActivity(activity)
+    fun loadChooseTasks(onSuccess: SuccessHandler<List<ApiChooseTask>>, onFail: FailHandler) = state.loadChooseTasks(onSuccess, onFail)
 }

@@ -5,10 +5,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.cscenter.fingerpaint.MainApplication
+import ru.cscenter.fingerpaint.api.ApiChooseTask
 import ru.cscenter.fingerpaint.authentication.AuthenticateController
 import ru.cscenter.fingerpaint.db.Statistic
 import ru.cscenter.fingerpaint.db.User
+import ru.cscenter.fingerpaint.network.FailHandler
 import ru.cscenter.fingerpaint.network.NetworkController
+import ru.cscenter.fingerpaint.network.SuccessHandler
 import ru.cscenter.fingerpaint.ui.games.base.GameResult
 import ru.cscenter.fingerpaint.ui.title.TitleActivity
 import ru.cscenter.fingerpaint.ui.title.toActivity
@@ -29,6 +32,7 @@ abstract class SynchronizationState(
     abstract fun deleteUser(user: User, activity: Activity, onResult: ResultHandler)
     abstract fun updateUser(user: User, onResult: ResultHandler)
     abstract fun updateStatistic(statistic: Statistic, gameResult: GameResult)
+    abstract fun loadChooseTasks(onSuccess: SuccessHandler<List<ApiChooseTask>>, onFail: FailHandler)
 
     fun setActivity(activity: Activity) {
         auth = AuthenticateController(activity)

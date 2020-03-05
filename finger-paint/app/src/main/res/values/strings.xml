@@ -51,4 +51,6 @@
     <string name="logout">Logout</string>
     <string name="export">Export</string>
     <string name="network_state_icon">network_state_icon</string>
+    <string name="tasks_request_failed">Не удалось загрузить задания</string>
+    <string name="extra_tasks">Доп.игры</string>
 </resources>

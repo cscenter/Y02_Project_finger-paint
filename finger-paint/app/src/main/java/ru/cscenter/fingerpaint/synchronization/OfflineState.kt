@@ -8,12 +8,15 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.cscenter.fingerpaint.MainApplication
+import ru.cscenter.fingerpaint.api.ApiChooseTask
 import ru.cscenter.fingerpaint.authentication.AuthenticateController
 import ru.cscenter.fingerpaint.db.CachedGameResult
 import ru.cscenter.fingerpaint.db.Statistic
 import ru.cscenter.fingerpaint.db.User
 import ru.cscenter.fingerpaint.db.UserStatus
+import ru.cscenter.fingerpaint.network.FailHandler
 import ru.cscenter.fingerpaint.network.NetworkController
+import ru.cscenter.fingerpaint.network.SuccessHandler
 import ru.cscenter.fingerpaint.network.executeAsync
 import ru.cscenter.fingerpaint.ui.games.base.GameResult
 import ru.cscenter.fingerpaint.ui.games.base.toInt
@@ -35,10 +38,13 @@ class OfflineState(
 
     private fun tryLoginLater() = handler.postDelayed({ tryLogin() }, TRY_LOGIN_FREQUENCY_MS)
 
-    private fun tryLogin() = api.login().executeAsync({
+    private fun tryLogin(): Unit = api.login().executeAsync({
         onLoginSuccess()
     }, { code ->
-        if (code != 401) return@executeAsync
+        if (code != 401) {
+            tryLoginLater()
+            return@executeAsync
+        }
         Log.d("fingerpaint", "Auth error!")
         silentSignIn()
     })
@@ -53,17 +59,17 @@ class OfflineState(
         }
     }
 
-    private fun loginOnce(onResult: ResultHandler) =
-        api.login().executeAsync({ onResult(true) }, { onResult(false) })
+    private fun loginOnce(onResult: (Int) -> Unit) =
+        api.login().executeAsync({ onResult(200) }, { code -> onResult(code) })
 
-    private fun onSignInSuccess() = loginOnce { success ->
-        Log.d("fingerpaint", "Retry login succeed: $success")
-        if (success) {
+    private fun onSignInSuccess() = loginOnce { code ->
+        Log.d("fingerpaint", "Retry login succeed: $code")
+        if (code == 200) {
             onLoginSuccess()
             return@loginOnce
         }
         tryLoginLater()
-        if (System.currentTimeMillis() - lastInfo > INFO_CHANGE_TIME_FREQUENCY_MS) {
+        if (code == 401 && System.currentTimeMillis() - lastInfo > INFO_CHANGE_TIME_FREQUENCY_MS) {
             lastInfo = System.currentTimeMillis()
             MainApplication.synchronizeController.info(
                 "Проверьте правильность даты на устройстве. Из-за неправильной даты невозможно синхронизовать данные с сервером."
@@ -97,6 +103,7 @@ class OfflineState(
     override fun syncUsers(onSync: (List<User>) -> Unit) {}
     override fun syncStatistics(id: Int) {}
     override fun checkUserExists(id: Int?, activity: Activity) {}
+    override fun loadChooseTasks(onSuccess: SuccessHandler<List<ApiChooseTask>>, onFail: FailHandler) {}
 
     override fun addUser(name: String, onResult: ResultHandler) {
         GlobalScope.launch(Dispatchers.IO) {

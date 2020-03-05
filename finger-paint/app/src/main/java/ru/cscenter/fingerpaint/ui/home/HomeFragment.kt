@@ -12,15 +12,14 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.models.CurrentUserModel
-import ru.cscenter.fingerpaint.ui.games.FiguresGameActivity
-import ru.cscenter.fingerpaint.ui.games.Letters1GameActivity
-import ru.cscenter.fingerpaint.ui.games.Letters2GameActivity
+import ru.cscenter.fingerpaint.ui.games.*
 import ru.cscenter.fingerpaint.ui.games.base.BaseGameActivity
 import ru.cscenter.fingerpaint.ui.statistics.navigateToStatistics
 
@@ -42,10 +41,13 @@ class HomeFragment : Fragment() {
         val currentUserModel: CurrentUserModel by activityViewModels()
         val root = inflater.inflate(R.layout.fragment_home, container, false)
 
+        val extraGamesButton: Button = root.findViewById(R.id.extra_game_button)
+
         val networkStateIcon: ImageView = root.findViewById(R.id.network_state_icon)
         MainApplication.settings.isOnline().observe(viewLifecycleOwner, Observer { isOnline ->
             val resource = if (isOnline) R.drawable.ic_online_icon else R.drawable.ic_offline_icon
             networkStateIcon.setImageResource(resource)
+            extraGamesButton.visibility = if (isOnline) View.VISIBLE else View.GONE
         })
 
         val currentNameTextView: TextView = root.findViewById(R.id.current_name_text_view)
@@ -61,6 +63,10 @@ class HomeFragment : Fragment() {
                 return@setOnClickListener
             }
             navigateToStatistics(this, user)
+        }
+
+        extraGamesButton.setOnClickListener {
+            findNavController().navigate(R.id.nav_tasks)
         }
 
         root.findViewById<Button>(R.id.only_choose_figure_button).setOnClickListener {

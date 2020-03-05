@@ -116,7 +116,8 @@ class NetworkController {
     }
 
     companion object {
-        private const val baseUrl =
+        internal const val baseUrl =
+            // "http://192.168.137.105:4567"
             "http://ec2-54-213-235-214.us-west-2.compute.amazonaws.com:4567/"
     }
 }

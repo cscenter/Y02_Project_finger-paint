@@ -4,9 +4,12 @@ import retrofit2.Call
 import retrofit2.http.*
 import ru.cscenter.fingerpaint.api.*
 
-private const val patients = "/patients"
-private const val statistics = "/statistics"
-private const val login = "/login"
+private const val public = "/public"
+private const val patients = "$public/patients"
+private const val statistics = "$public/statistics"
+private const val login = "$public/login"
+private const val chooseTasks = "$public/choose"
+private const val images = "/all/images/"
 
 interface FingerPaintApi {
     @POST(login)
@@ -35,4 +38,11 @@ interface FingerPaintApi {
 
     @POST("$patients/new")
     fun addOfflinePatients(@Body patients: List<ApiNewPatientStatistics>): Call<String>
+
+    @GET(chooseTasks)
+    fun getChooseTasks(): Call<List<ApiChooseTask>>
+
+    companion object {
+        fun pictureUrl(pictureId: Long) = "${NetworkController.baseUrl}$images$pictureId"
+    }
 }

@@ -5,6 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import ru.cscenter.fingerpaint.MainApplication
+import ru.cscenter.fingerpaint.api.ApiChooseTask
 import ru.cscenter.fingerpaint.api.ApiPatient
 import ru.cscenter.fingerpaint.api.ApiPatientName
 import ru.cscenter.fingerpaint.authentication.AuthenticateController
@@ -120,5 +121,8 @@ class OnlineState(
             state.updateStatistic(statistic, gameResult)
         })
     }
+
+    override fun loadChooseTasks(onSuccess: SuccessHandler<List<ApiChooseTask>>, onFail: FailHandler) =
+        api.getChooseTasks().executeAsync(onSuccess, onFail)
 
 }
