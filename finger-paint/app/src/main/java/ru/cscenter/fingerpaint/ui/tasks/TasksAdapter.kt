@@ -35,8 +35,8 @@ class TasksAdapter(
         fun bind(position: Int) {
             val task = data[position]
             question.text = task.text
-            Glide.with(view).load(FingerPaintApi.pictureUrl(task.correctImageId)).into(image1)
-            Glide.with(view).load(FingerPaintApi.pictureUrl(task.incorrectImageId)).into(image2)
+            Glide.with(view).load(FingerPaintApi.pictureUrl(task.correctImageId)).placeholder(R.drawable.ic_loading_icon).into(image1)
+            Glide.with(view).load(FingerPaintApi.pictureUrl(task.incorrectImageId)).placeholder(R.drawable.ic_loading_icon).into(image2)
             updateBackGround(position)
             view.setOnClickListener {
                 isChosen[position] = !isChosen[position]
