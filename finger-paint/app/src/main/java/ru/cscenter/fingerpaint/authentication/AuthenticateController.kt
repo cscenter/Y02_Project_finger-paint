@@ -3,11 +3,13 @@ package ru.cscenter.fingerpaint.authentication
 import android.app.Activity
 import android.content.Intent
 import android.util.Log
+import android.widget.Toast
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.CommonStatusCodes
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.synchronization.ResultHandler
@@ -61,6 +63,9 @@ class AuthenticateController(private val activity: Activity) {
                 onResult(true)
             } catch (e: ApiException) {
                 Log.e("FingerPaint", "signInResult:failed code=" + e.statusCode)
+                if (e.statusCode in setOf(CommonStatusCodes.NETWORK_ERROR, CommonStatusCodes.TIMEOUT)) {
+                    Toast.makeText(activity, activity.getString(R.string.no_internet_message), Toast.LENGTH_LONG).show()
+                }
                 onResult(false)
             }
         }
