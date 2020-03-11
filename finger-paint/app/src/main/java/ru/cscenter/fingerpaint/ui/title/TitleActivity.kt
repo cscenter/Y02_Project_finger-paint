@@ -51,6 +51,10 @@ class TitleActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_title)
 
+        check(getString(R.string.server_client_id) != "SERVER_CLIENT_ID_HERE") {
+            "Server client id is not specified! Please refer to https://developers.google.com/identity/sign-in/android/start-integrating"
+        }
+
         val authController = AuthenticateController(this)
         MainApplication.synchronizeController = SynchronizeController(authController)
 

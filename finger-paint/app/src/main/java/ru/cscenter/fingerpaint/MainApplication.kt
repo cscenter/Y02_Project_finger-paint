@@ -13,6 +13,7 @@ class MainApplication : MultiDexApplication() {
         lateinit var settings: Settings
         lateinit var gameResources: GameResources
         lateinit var synchronizeController: SynchronizeController
+        lateinit var baseUrl: String
     }
 
     override fun onCreate() {
@@ -20,6 +21,7 @@ class MainApplication : MultiDexApplication() {
         dbController = DbController(applicationContext)
         settings = Settings(applicationContext)
         gameResources = GameResourceParser(applicationContext, R.xml.game_config).parseXML()
+        baseUrl = getString(R.string.base_url)
     }
 
 }

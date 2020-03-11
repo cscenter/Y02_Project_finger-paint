@@ -9,6 +9,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.api.ApiGameResult
 import ru.cscenter.fingerpaint.api.ApiPatient
 import ru.cscenter.fingerpaint.api.ApiStatistic
@@ -107,17 +108,11 @@ class NetworkController {
             .connectTimeout(3, TimeUnit.SECONDS)
             .build()
         val retrofit = Retrofit.Builder()
-            .baseUrl(baseUrl)
+            .baseUrl(MainApplication.baseUrl)
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
         api = retrofit.create(FingerPaintApi::class.java)
-    }
-
-    companion object {
-        internal const val baseUrl =
-            // "http://192.168.137.105:4567"
-            "http://ec2-54-213-235-214.us-west-2.compute.amazonaws.com:4567/"
     }
 }

@@ -2,6 +2,7 @@ package ru.cscenter.fingerpaint.network
 
 import retrofit2.Call
 import retrofit2.http.*
+import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.api.*
 
 private const val public = "/public"
@@ -43,6 +44,6 @@ interface FingerPaintApi {
     fun getChooseTasks(): Call<List<ApiChooseTask>>
 
     companion object {
-        fun pictureUrl(pictureId: Long) = "${NetworkController.baseUrl}$images$pictureId"
+        fun pictureUrl(pictureId: Long) = "${MainApplication.baseUrl}$images$pictureId"
     }
 }

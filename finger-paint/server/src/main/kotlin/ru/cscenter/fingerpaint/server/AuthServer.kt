@@ -14,6 +14,15 @@ class AuthServer {
         const val PASSWORD = ""
     }
 
+    init {
+        check(CLIENT_ID.isNotEmpty()) {
+            "Server client id is not specified! Please refer to https://developers.google.com/identity/sign-in/android/start-integrating"
+        }
+        check(PASSWORD.isNotEmpty()) {
+            "Password is not specified! Please add password for admin access"
+        }
+    }
+
     private val verifier = GoogleIdTokenVerifier.Builder(NetHttpTransport(), JacksonFactory())
         .setAudience(listOf(CLIENT_ID))
         .build()
