@@ -19,7 +19,7 @@ android {
     buildToolsVersion '29.0.2'
     defaultConfig {
         applicationId 'ru.cscenter.fingerpaint'
-        minSdkVersion 15
+        minSdkVersion 19
         targetSdkVersion 29
         versionCode 1
         versionName '1.0'
@@ -83,6 +83,7 @@ dependencies {
 
     // graphics
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+    implementation 'com.github.divyanshub024:AndroidDraw:v0.1'
 
     // network
     implementation project(':Api')

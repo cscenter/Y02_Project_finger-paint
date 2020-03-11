@@ -28,7 +28,6 @@
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="@dimen/normal_margin"
-            android:layout_marginLeft="@dimen/normal_margin"
             android:contentDescription="@string/sound"
             android:src="@drawable/ic_audio" />
     </LinearLayout>

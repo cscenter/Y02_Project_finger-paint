@@ -7,4 +7,5 @@
     <color name="colorAccent">#F44336</color>
     <color name="buttonColor1">#BF9ecbff</color>
     <color name="buttonColor2">#BF69AEFF</color>
+    <color name="icon_color">#727272</color>
 </resources>

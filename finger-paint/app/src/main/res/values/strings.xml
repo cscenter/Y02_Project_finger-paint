@@ -54,4 +54,6 @@
     <string name="extra_tasks">Доп.игры</string>
     <string name="start">Старт</string>
     <string name="choose_task_message">Выберите задания</string>
+    <string name="color">color</string>
+    <string name="menu">menu</string>
 </resources>
