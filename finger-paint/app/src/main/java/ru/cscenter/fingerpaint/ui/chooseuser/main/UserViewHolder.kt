@@ -8,6 +8,7 @@ import kotlinx.coroutines.Job
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.User
+import ru.cscenter.fingerpaint.db.UserStatus
 import ru.cscenter.fingerpaint.ui.chooseuser.base.BaseUserViewHolder
 
 class UserViewHolder(
@@ -31,7 +32,7 @@ class UserViewHolder(
 
         menuButton.setOnClickListener {
             val menu = PopupMenu(view.context, it)
-            val resource = if (MainApplication.settings.isOnlineState())
+            val resource = if (MainApplication.settings.isOnlineState() || user.status == UserStatus.NEW)
                 R.menu.user_menu_online else R.menu.user_menu_offline
             menu.inflate(resource)
             menu.setOnMenuItemClickListener { item ->

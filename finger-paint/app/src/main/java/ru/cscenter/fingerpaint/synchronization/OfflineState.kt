@@ -20,6 +20,8 @@ import ru.cscenter.fingerpaint.network.SuccessHandler
 import ru.cscenter.fingerpaint.network.executeAsync
 import ru.cscenter.fingerpaint.ui.games.base.GameResult
 import ru.cscenter.fingerpaint.ui.games.base.toInt
+import ru.cscenter.fingerpaint.ui.title.TitleChooseUserActivity
+import ru.cscenter.fingerpaint.ui.title.toActivity
 
 class OfflineState(
     auth: AuthenticateController,
@@ -113,9 +115,19 @@ class OfflineState(
         }
     }
 
-    // delete is prohibited while offline
+    // delete is permitted for local users only
     override fun deleteUser(user: User, activity: Activity, onResult: ResultHandler) {
-        onResult(false)
+        if (user.status != UserStatus.NEW) {
+            onResult(false)
+            return
+        }
+        GlobalScope.launch(Dispatchers.IO) {
+            db.deleteUser(user)
+            if (!db.hasCurrentUser()) {
+                toActivity(activity, TitleChooseUserActivity::class.java)
+            }
+            onResult(true)
+        }
     }
 
     override fun updateUser(user: User, onResult: ResultHandler) {
