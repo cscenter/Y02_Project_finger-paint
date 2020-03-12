@@ -1,2 +1,2 @@
-include ':app'
-rootProject.name='FingerPaint'
+include ':app', ':Api', ':server'
+rootProject.name = 'FingerPaint'

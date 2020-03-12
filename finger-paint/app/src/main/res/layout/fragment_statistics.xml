@@ -1,57 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/user_name"
-            style="@style/HugeTextStyle"
+        <ImageView
+            android:id="@+id/export_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/normal_margin"
+            android:contentDescription="@string/export"
+            android:src="@drawable/ic_share_icon"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/statistics_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center" />
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/chart1"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/plot_height"
-            android:layout_marginBottom="@dimen/vertical_margin" />
 
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/chart2"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/plot_height"
-            android:layout_marginBottom="@dimen/vertical_margin" />
+            <TextView
+                android:id="@+id/user_name"
+                style="@style/HugeTextStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center" />
 
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/chart3"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/plot_height"
-            android:layout_marginBottom="@dimen/vertical_margin" />
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/chart1"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/plot_height"
+                android:layout_marginBottom="@dimen/normal_margin" />
 
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/chart4"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/plot_height"
-            android:layout_marginBottom="@dimen/vertical_margin" />
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/chart2"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/plot_height"
+                android:layout_marginBottom="@dimen/normal_margin" />
 
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/chart5"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/plot_height"
-            android:layout_marginBottom="@dimen/vertical_margin" />
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/chart3"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/plot_height"
+                android:layout_marginBottom="@dimen/normal_margin" />
 
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/chart6"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/plot_height"
-            android:layout_marginBottom="@dimen/vertical_margin" />
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/chart4"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/plot_height"
+                android:layout_marginBottom="@dimen/normal_margin" />
 
-    </LinearLayout>
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/chart5"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/plot_height"
+                android:layout_marginBottom="@dimen/normal_margin" />
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/chart6"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/plot_height"
+                android:layout_marginBottom="@dimen/normal_margin" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </ScrollView>

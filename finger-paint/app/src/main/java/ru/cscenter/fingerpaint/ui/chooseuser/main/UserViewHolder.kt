@@ -4,15 +4,19 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.navigation.NavController
+import kotlinx.coroutines.Job
+import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
 import ru.cscenter.fingerpaint.db.User
+import ru.cscenter.fingerpaint.db.UserStatus
 import ru.cscenter.fingerpaint.ui.chooseuser.base.BaseUserViewHolder
-import ru.cscenter.fingerpaint.ui.statistics.StatisticsFragmentArgs
 
 class UserViewHolder(
     private val view: View,
     private val navController: NavController,
-    private val onDeleteUser: (User) -> Unit
+    private val onDeleteUser: (User) -> Unit,
+    private val onUserStatistics: (User) -> Unit,
+    private val onChooseUser: (User) -> Job
 ) : BaseUserViewHolder(view, navController) {
     private val statisticButton: ImageView = view.findViewById(R.id.choose_user_statistics_button)
     private val menuButton: ImageView = view.findViewById(R.id.menuButton)
@@ -20,15 +24,17 @@ class UserViewHolder(
     override fun bindUser(user: User) {
         super.bindUser(user)
         view.setOnClickListener {
-            setUserAsCurrent(user.id)
+            onChooseUser(user)
             navController.popBackStack()
         }
 
-        statisticButton.setOnClickListener { navigateToStatistics(user.id) }
+        statisticButton.setOnClickListener { onUserStatistics(user) }
 
         menuButton.setOnClickListener {
             val menu = PopupMenu(view.context, it)
-            menu.inflate(R.menu.user_menu)
+            val resource = if (MainApplication.settings.isOnlineState() || user.status == UserStatus.NEW)
+                R.menu.user_menu_online else R.menu.user_menu_offline
+            menu.inflate(resource)
             menu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     R.id.item_set -> navigateToSetUser(user.id)
@@ -40,9 +46,4 @@ class UserViewHolder(
             menu.show()
         }
     }
-
-    private fun navigateToStatistics(userId: Int) = navController.navigate(
-        R.id.nav_statistics,
-        StatisticsFragmentArgs(userId).toBundle()
-    )
 }

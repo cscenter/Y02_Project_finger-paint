@@ -2,24 +2,18 @@ package ru.cscenter.fingerpaint.ui.games.singlegames
 
 import android.content.res.Resources
 import ru.cscenter.fingerpaint.R
-import ru.cscenter.fingerpaint.db.Statistic
+import ru.cscenter.fingerpaint.db.GameType
 import ru.cscenter.fingerpaint.resources.Letter
 import ru.cscenter.fingerpaint.resources.MyColor
 import ru.cscenter.fingerpaint.service.images.getImage
 import ru.cscenter.fingerpaint.service.images.getImageCompressed
 import ru.cscenter.fingerpaint.ui.games.base.BaseGameActivity
 import ru.cscenter.fingerpaint.ui.games.base.DrawingGame
-import ru.cscenter.fingerpaint.ui.games.base.GameResult
-import ru.cscenter.fingerpaint.ui.games.base.toInt
 
 class DrawingLetterGame(config: Config, gameActivity: BaseGameActivity) :
     DrawingGame(config, gameActivity) {
 
-    override fun updateStatistics(statistic: Statistic, result: GameResult): Statistic {
-        statistic.contouringTotal++
-        statistic.contouringSuccess += result.toInt()
-        return statistic
-    }
+    override val gameType: GameType = GameType.DRAW_LETTER
 
     companion object {
         private val letterThresholds = Pair(0.7f, 0.1f)

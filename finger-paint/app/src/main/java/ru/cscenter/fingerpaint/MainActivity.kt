@@ -2,6 +2,7 @@ package ru.cscenter.fingerpaint
 
 import android.os.Bundle
 import android.view.Menu
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
@@ -10,16 +11,30 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : ActivitySetUserListenerContainer() {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        MainApplication.synchronizeController.setActivity(this)
+        MainApplication.synchronizeController.info = { info ->
+            Snackbar.make(nav_view.rootView, info, Snackbar.LENGTH_LONG).show()
+        }
+
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
+        toolbar.setOnMenuItemClickListener { item ->
+            if (item.itemId == R.id.exit_item) {
+                MainApplication.synchronizeController.logout(this)
+            }
+            true
+        }
 
         val drawerLayout: DrawerLayout = findViewById(R.id.drawer_layout)
         val navView: NavigationView = findViewById(R.id.nav_view)

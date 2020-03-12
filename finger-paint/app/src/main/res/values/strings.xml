@@ -47,4 +47,15 @@
     <string name="choose_letter_color_task">Выбери %1$s букву</string>
     <string name="letter_contouring_task">Закрась букву</string>
     <string name="sound">sound</string>
+    <string name="logout">Выйти</string>
+    <string name="export">Export</string>
+    <string name="network_state_icon">network_state_icon</string>
+    <string name="tasks_request_failed">Не удалось загрузить задания</string>
+    <string name="extra_tasks">Доп.игры</string>
+    <string name="start">Старт</string>
+    <string name="choose_task_message">Выберите задания</string>
+    <string name="color">color</string>
+    <string name="menu">menu</string>
+    <string name="export_permission_message">Сохранение картинок не разрешено. Пожалуйста, измените настройки для совершения операции.</string>
+    <string name="no_internet_message">Проверьте интернет соединение</string>
 </resources>

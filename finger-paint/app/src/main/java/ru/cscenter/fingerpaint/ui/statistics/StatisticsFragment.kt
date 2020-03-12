@@ -2,12 +2,16 @@ package ru.cscenter.fingerpaint.ui.statistics
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -16,9 +20,20 @@ import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import ru.cscenter.fingerpaint.MainApplication
 import ru.cscenter.fingerpaint.R
+import ru.cscenter.fingerpaint.db.GameType
 import ru.cscenter.fingerpaint.db.Statistic
 import ru.cscenter.fingerpaint.db.User
 import ru.cscenter.fingerpaint.db.dateToString
+import ru.cscenter.fingerpaint.models.StatisticsModel
+import ru.cscenter.fingerpaint.service.exportViewToFile
+
+fun navigateToStatistics(fromFragment: Fragment, user: User) {
+    MainApplication.synchronizeController.syncStatistics(user.id)
+    val navController = fromFragment.findNavController()
+    val statisticsModel: StatisticsModel by fromFragment.activityViewModels()
+    statisticsModel.setUser(user)
+    navController.navigate(R.id.nav_statistics)
+}
 
 class StatisticsFragment : Fragment() {
 
@@ -28,24 +43,8 @@ class StatisticsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_statistics, container, false)
-
-        val dbController = MainApplication.dbController
-        var user: User? = null
-        arguments?.let {
-            val safeArgs = StatisticsFragmentArgs.fromBundle(it)
-            val userId = safeArgs.userId
-            user = dbController.getUser(userId)
-        }
-
-        if (user == null) {
-            Log.e("FingerPaint.Statistics", " Illegal arguments provided.")
-            onDestroy()
-            return null
-        }
-
+        val statisticsModel: StatisticsModel by activityViewModels()
         val userNameView: TextView = root.findViewById(R.id.user_name)
-        userNameView.text = user!!.name
-
         val figureChooseChart: BarChart = root.findViewById(R.id.chart1)
         val letterChooseChart: BarChart = root.findViewById(R.id.chart2)
         val figureColorChooseChart: BarChart = root.findViewById(R.id.chart3)
@@ -53,61 +52,72 @@ class StatisticsFragment : Fragment() {
         val drawingChart: BarChart = root.findViewById(R.id.chart5)
         val contouringChart: BarChart = root.findViewById(R.id.chart6)
 
-        val allStatistics = dbController.getUserAllStatistics(user!!.id)
+        val exportButton: ImageView = root.findViewById(R.id.export_button)
+        val statisticsLayout: LinearLayout = root.findViewById(R.id.statistics_layout)
+        exportButton.setOnClickListener {
+            val date = dateToString(System.currentTimeMillis())
+            val title = "Statistics_${userNameView.text}_$date"
+            exportViewToFile(activity!!, statisticsLayout, title)
+        }
 
-        initChart(
-            allStatistics,
-            { st -> Pair(st.figureChooseSuccess, st.figureChooseTotal) },
-            getString(R.string.choose_figure),
-            figureChooseChart
-        )
+        statisticsModel.getUser().observe(viewLifecycleOwner, Observer { user ->
+            userNameView.text = user.name
+        })
 
-        initChart(
-            allStatistics,
-            { st -> Pair(st.letterChooseSuccess, st.letterChooseTotal) },
-            getString(R.string.choose_letter),
-            letterChooseChart
-        )
 
-        initChart(
-            allStatistics,
-            { st -> Pair(st.figureColorChooseSuccess, st.figureColorChooseTotal) },
-            getString(R.string.choose_figure_color),
-            figureColorChooseChart
-        )
+        statisticsModel.getUserAllStatistics()
+            .observe(viewLifecycleOwner, Observer { allStatistics ->
+                val statisticsMap = allStatistics.groupBy { it.type }
+                fun getList(type: GameType) = statisticsMap[type] ?: emptyList()
 
-        initChart(
-            allStatistics,
-            { st -> Pair(st.letterColorChooseSuccess, st.letterColorChooseTotal) },
-            getString(R.string.choose_letter_color),
-            letterColorChooseChart
-        )
+                initChart(
+                    getList(GameType.CHOOSE_FIGURE),
+                    getString(R.string.choose_figure),
+                    figureChooseChart
+                )
 
-        initChart(
-            allStatistics,
-            { st -> Pair(st.drawingSuccess, st.drawingTotal) },
-            getString(R.string.drawing_figure),
-            drawingChart
-        )
+                initChart(
+                    getList(GameType.CHOOSE_LETTER),
+                    getString(R.string.choose_letter),
+                    letterChooseChart
+                )
 
-        initChart(
-            allStatistics,
-            { st -> Pair(st.contouringSuccess, st.contouringTotal) },
-            getString(R.string.contouring),
-            contouringChart
-        )
+                initChart(
+                    getList(GameType.CHOOSE_FIGURE_COLOR),
+                    getString(R.string.choose_figure_color),
+                    figureColorChooseChart
+                )
+
+                initChart(
+                    getList(GameType.CHOOSE_LETTER_COLOR),
+                    getString(R.string.choose_letter_color),
+                    letterColorChooseChart
+                )
+
+                initChart(
+                    getList(GameType.DRAW_FIGURE),
+                    getString(R.string.drawing_figure),
+                    drawingChart
+                )
+
+                initChart(
+                    getList(GameType.DRAW_LETTER),
+                    getString(R.string.contouring),
+                    contouringChart
+                )
+            })
 
         return root
     }
 
     private fun getDataPointsAndLabels(
-        allStatistics: List<Statistic>,
-        getter: (Statistic) -> Pair<Int, Int>
+        allStatistics: List<Statistic>
     ): Pair<List<BarEntry>, List<String>> {
         val data = mutableListOf<BarEntry>()
         val labels = mutableListOf<String>()
         for (statistic in allStatistics) {
-            val (success, total) = getter(statistic)
+            val success = statistic.success
+            val total = statistic.total
             if (total > 0) { // only days with activity
                 data.add(BarEntry(data.size.toFloat(), 100f * success / total))
                 labels.add(dateToString(statistic.date))
@@ -116,17 +126,27 @@ class StatisticsFragment : Fragment() {
         return Pair(data, labels)
     }
 
+    private fun resetChart(chart: BarChart) = chart.apply {
+        fitScreen()
+        data?.clearValues()
+        xAxis.valueFormatter = null
+        notifyDataSetChanged()
+        clear()
+        invalidate()
+    }
+
     private fun initChart(
         allStatistics: List<Statistic>,
-        getter: (Statistic) -> Pair<Int, Int>,
         name: String,
         chart: BarChart
     ) {
-        val (dataPoints, labels) = getDataPointsAndLabels(allStatistics, getter)
+        val (dataPoints, labels) = getDataPointsAndLabels(allStatistics)
         val barDataSet = BarDataSet(dataPoints, name).apply {
             colors = MainApplication.gameResources.colors.map { color -> color.color }
             axisDependency = YAxis.AxisDependency.LEFT
         }
+
+        resetChart(chart)
 
         chart.apply {
             data = BarData(barDataSet).apply {

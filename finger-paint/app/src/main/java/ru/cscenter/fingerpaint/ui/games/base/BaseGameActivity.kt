@@ -45,7 +45,6 @@ abstract class BaseGameActivity : AppCompatActivity() {
     private fun showFragment(fragment: Fragment) = supportFragmentManager
         .beginTransaction()
         .replace(R.id.fragment_container, fragment)
-        .addToBackStack(null)
         .commit()
 
     private fun runGame(game: Game) = showFragment(game)

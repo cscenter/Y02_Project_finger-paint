@@ -6,3 +6,5 @@
 # Gradle
 .gradle/
 build/
+
+app/src/main/res/values/network.xml
