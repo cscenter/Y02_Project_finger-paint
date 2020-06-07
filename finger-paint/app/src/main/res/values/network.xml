@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="server_client_id">SERVER_CLIENT_ID_HERE</string>
-    <string name="base_url" tools:ignore="TypographyDashes">"http://ec2-54-213-235-214.us-west-2.compute.amazonaws.com:4567/"</string>
+    <string name="base_url" tools:ignore="TypographyDashes">"http://ec2-34-210-204-56.us-west-2.compute.amazonaws.com:4567/"</string>
 </resources>
