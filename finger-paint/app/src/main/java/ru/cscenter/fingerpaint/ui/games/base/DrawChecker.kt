@@ -1,9 +1,9 @@
 package ru.cscenter.fingerpaint.ui.games.base
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.os.Handler
 import android.widget.ProgressBar
 import com.divyanshu.draw.widget.DrawView
 import ru.cscenter.fingerpaint.MainApplication
@@ -11,7 +11,7 @@ import ru.cscenter.fingerpaint.service.MyVibrator
 import java.util.*
 import kotlin.math.roundToInt
 
-
+@SuppressLint("ClickableViewAccessibility")
 class DrawChecker(
     private val context: Context,
     private val drawView: DrawView,
@@ -24,11 +24,11 @@ class DrawChecker(
     private val widthScale = image.width.toFloat() / drawView.width
     private val heightScale = image.height.toFloat() / drawView.height
 
-    private val handler = Handler()
     private val blackPixels: List<Pair<Int, Int>>
     private val whitePixels: List<Pair<Int, Int>>
     private var bitmap: Bitmap? = null
     private var cancelled = false
+    private var lastUpdated = 0L
 
     init {
         val pixels = calculateGoodBadPixels()
@@ -36,7 +36,14 @@ class DrawChecker(
         whitePixels = pixels.second
         progressBars.first.max = (blackPixels.size * thresholds.first + 1).toInt()
         progressBars.second.max = (whitePixels.size * thresholds.second + 1).toInt()
-        updateProgress()
+
+        drawView.setOnTouchListener { _, event ->
+            if (lastUpdated + UPDATE_PERIOD_MS < System.currentTimeMillis()) {
+                lastUpdated = System.currentTimeMillis()
+                updateProgress()
+            }
+            drawView.onTouchEvent(event)
+        }
     }
 
     fun cancel() {
@@ -47,7 +54,7 @@ class DrawChecker(
         return bitmap!!.getPixel((x / widthScale).roundToInt(), (y / heightScale).roundToInt())
     }
 
-    private fun updateProgress() {
+    fun updateProgress() {
         if (cancelled) return
         bitmap?.recycle()
         bitmap = drawView.getBitmap()
@@ -70,8 +77,6 @@ class DrawChecker(
         } else if (countBlack.toFloat() / blackPixels.size >= thresholdSuccess) {
             callback(GameResult.SUCCESS)
             cancel()
-        } else {
-            handler.postDelayed({ updateProgress() }, UPDATE_PERIOD_MS)
         }
     }
 

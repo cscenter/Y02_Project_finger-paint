@@ -122,16 +122,19 @@ abstract class DrawingGame(private val config: Config, gameActivity: BaseGameAct
 
         eraserButton.setOnClickListener {
             drawView.clearCanvas()
+            drawChecker.updateProgress()
             toggleDrawTools(tools, false)
         }
 
         undoButton.setOnClickListener {
             drawView.undo()
+            drawChecker.updateProgress()
             toggleDrawTools(tools, false)
         }
 
         redoButton.setOnClickListener {
             drawView.redo()
+            drawChecker.updateProgress()
             toggleDrawTools(tools, false)
         }
     }
